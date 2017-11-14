@@ -6,30 +6,10 @@ using UnityEngine;
 public class CircuitCalculator {
 
 	public List<Vector2> Calculate(List<Vector2> cloud, float step){
-		cloud = PrepareEqualDistances(cloud, step);
+		cloud = EqualDistanceUtil.Prepare(cloud, step);
 		var result = FindCircuit(cloud, step*1.1f);
 		return result;
 	}
-
-#region Equal Distances
-    public static List<Vector2> PrepareEqualDistances(List<Vector2> line, float step){
-		var result = new List<Vector2>();
-		for (int i = 0; i < line.Count - 1; i++){
-			result.AddRange(GetEqualDistances(line[i], line[i+1], step));
-		}
-		result.AddRange(GetEqualDistances(line[line.Count - 1], line[0], step));
-		return result;
-	}
-
-    private static IEnumerable<Vector2> GetEqualDistances(Vector2 from, Vector2 to, float stepValue) {
-		var diff = to - from;
-		var step = diff.normalized * stepValue;
-		var stepsCount = diff.magnitude / step.magnitude;
-		for (int i = 0; i < stepsCount; i++){
-			yield return from + step*i;
-		}
-    }
-#endregion
 
     private List<Vector2> FindCircuit(List<Vector2> cloud, float radius) {
 		var result = new List<Vector2>();

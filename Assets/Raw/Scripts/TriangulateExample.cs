@@ -10,7 +10,9 @@ public class TriangulateExample : MonoBehaviour, IBeginDragHandler, IEndDragHand
     public LineRenderer line;
     public LineRenderer circuit;
 
-    private CircuitCalculator circuitCalculator;
+    public float step = 10;
+
+    private CircuitCalculator circuitCalculator = new CircuitCalculator();
 
     private List<Vector2> verticles;
 
@@ -28,7 +30,6 @@ public class TriangulateExample : MonoBehaviour, IBeginDragHandler, IEndDragHand
 
     void IBeginDragHandler.OnBeginDrag(PointerEventData eventData) {
         verticles.Clear();
-        verticles.Add(eventData.position);
     }
 
     void IDragHandler.OnDrag(PointerEventData eventData) {
@@ -36,14 +37,17 @@ public class TriangulateExample : MonoBehaviour, IBeginDragHandler, IEndDragHand
     }
 
     void IEndDragHandler.OnEndDrag(PointerEventData eventData) {
-        verticles.Add(eventData.position);
         preview.verticles = verticles.ToArray();
 
         UpdateCircuit();
     }
 
     private void UpdateCircuit(){
-        var circuitPositions = circuitCalculator.Calculate(verticles, 0.1f).Select(x => (Vector3)x).ToArray();
+        var circuitPositions = circuitCalculator.Calculate(ref verticles, step).Select(x => (Vector3)x).ToArray();
+        circuit.positionCount = circuitPositions.Length;
         circuit.SetPositions(circuitPositions);
+
+        preview.equalDistance = verticles.ToArray();
+        preview.circuit = circuitPositions.Select(x => (Vector2)x).ToArray();
     }
 }

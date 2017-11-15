@@ -8,6 +8,8 @@ using UnityEngine;
 public class TriangulatePreview : ScriptableObject {
 
 	public Vector2[] verticles;
+	public Vector2[] equalDistance;
+	public Vector2[] circuit;
 
 	public TriangleNet.Mesh GenerateMesh(Rect bounds) {
 		var verticles = NormilizedVerticles(this.verticles, bounds);

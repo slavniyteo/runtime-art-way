@@ -9,6 +9,7 @@ public class TriangulateExample : MonoBehaviour, IBeginDragHandler, IEndDragHand
     public TriangulatePreview preview;
     public LineRenderer line;
     public LineRenderer circuit;
+    public LineRenderer equalDistance;
 
     public float step = 10;
 
@@ -46,6 +47,9 @@ public class TriangulateExample : MonoBehaviour, IBeginDragHandler, IEndDragHand
         var circuitPositions = circuitCalculator.Calculate(ref verticles, step).Select(x => (Vector3)x).ToArray();
         circuit.positionCount = circuitPositions.Length;
         circuit.SetPositions(circuitPositions);
+
+        equalDistance.positionCount = verticles.Count;
+        equalDistance.SetPositions(verticles.Select(x => (Vector3)x).ToArray());
 
         preview.equalDistance = verticles.ToArray();
         preview.circuit = circuitPositions.Select(x => (Vector2)x).ToArray();

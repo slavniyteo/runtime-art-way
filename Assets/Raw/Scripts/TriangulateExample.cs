@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
+[ExecuteInEditMode]
 public class TriangulateExample : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler {
 
     public TriangulatePreview preview;
     public LineRenderer line;
     public LineRenderer circuit;
     public LineRenderer equalDistance;
+    public Text number;
 
     public float step = 10;
 
@@ -19,6 +22,14 @@ public class TriangulateExample : MonoBehaviour, IBeginDragHandler, IEndDragHand
 
     void Start () {
         verticles = new List<Vector2>();
+        ClearNumbers();
+    }
+
+    [ContextMenu("Draw Lines")]
+    public void DrawLines(){
+        verticles = preview.verticles.ToList();
+
+        UpdateCircuit();
     }
     
     void Update () {
@@ -26,7 +37,6 @@ public class TriangulateExample : MonoBehaviour, IBeginDragHandler, IEndDragHand
             line.positionCount = verticles.Count;
             line.SetPositions(verticles.Select(x => (Vector3) x).ToArray());
         }
-        
     }
 
     void IBeginDragHandler.OnBeginDrag(PointerEventData eventData) {
@@ -43,6 +53,11 @@ public class TriangulateExample : MonoBehaviour, IBeginDragHandler, IEndDragHand
         UpdateCircuit();
     }
 
+
+    private List<GameObject> instances = new List<GameObject>();
+
+    public Transform parentPattern;
+    private Transform parent;
     private void UpdateCircuit(){
         var circuitPositions = circuitCalculator.Calculate(ref verticles, step).Select(x => (Vector3)x).ToArray();
         circuit.positionCount = circuitPositions.Length;
@@ -53,5 +68,26 @@ public class TriangulateExample : MonoBehaviour, IBeginDragHandler, IEndDragHand
 
         preview.equalDistance = verticles.ToArray();
         preview.circuit = circuitPositions.Select(x => (Vector2)x).ToArray();
+
+        for (int i = 0; i < circuitPositions.Length; i++){
+            var verticle = circuitPositions[i];
+            var instance = Instantiate(number.gameObject, verticle, Quaternion.identity);
+            instance.SetActive(true);
+            instance.transform.SetParent(parent, false);
+            instances.Add(instance);
+            int j = i;
+            instance.GetComponent<Text>().text = "" + j;
+        }
+    }
+
+    [ContextMenu("Clear Instances")]
+    public void ClearNumbers(){
+        if (parent){
+            DestroyImmediate(parent.gameObject);
+        }
+        parent = Instantiate(parentPattern.gameObject, Vector3.zero, Quaternion.identity).transform;
+        parent.SetParent(parentPattern.parent, false);
+
+        instances.Clear();
     }
 }

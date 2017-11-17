@@ -9,12 +9,12 @@ public class CircuitCalculator {
 		int count = cloud.Count;
 		cloud = EqualDistanceUtil.Prepare(cloud, step);
 		var cw = CwUtil.IsLineClockWise(cloud);
-		var result = FindCircuit(cloud, step*1.001f, cw);
+		var result = FindCircuit(cloud, step*1.501f, cw);
 		return result;
 	}
 
-    private List<Vector2> FindCircuit(List<Vector2> cloud, float radius, bool cw) {
-		Debug.Log("===============================================");
+    public List<Vector2> FindCircuit(List<Vector2> cloud, float radius, bool cw) {
+		// Debug.Log("===============================================");
 		var result = new List<Vector2>();
 
 		var points = cloud.Select(x => new Point(x)).ToList();
@@ -31,19 +31,21 @@ public class CircuitCalculator {
 			previous = current;
 			current = next;
 		}
+		result.Add(next);
 
 		return result;
     }
 
 	private bool FindNext(List<Point> points, Vector2 previous, Vector2 current, float radius, bool cw, out Vector2 result){
 
-		var candidates = FindCandidates(points, previous, current, radius, cw);
+		var candidates = FindCandidates(points, previous, current, radius, 90, cw);
 		if (candidates.Where(x => x.Point.Enabled).Count() == 0){
-			Debug.Log("Candidates count = 0. Find far away");
-			candidates = FindCandidates(points, previous, current, radius*1.5f, cw);
+			// Debug.Log($"{current} => Candidates count = 0. Find far away");
+			candidates = FindCandidates(points, previous, current, radius*1.5f, 179, cw);
 		}
 		var next = candidates.First().Point;
 
+		// DebugLog(points, current, candidates);
 		if (next.Enabled) {
 			result = next.Position;
 			next.Enabled = false;
@@ -52,12 +54,13 @@ public class CircuitCalculator {
 		else {
 			DebugLog(points, current, candidates);
 
-			result = Vector2.zero;
+			result = next.Position;
+			next.Enabled = false;
 			return false;
 		}
 	}
 
-	private static IEnumerable<Candidate> FindCandidates(IEnumerable<Point> points, Vector2 previous, Vector2 current, float radius, bool cw){
+	private static IEnumerable<Candidate> FindCandidates(IEnumerable<Point> points, Vector2 previous, Vector2 current, float radius, float angleBounds, bool cw){
 		var prevDirection = current - previous;
 
 		var result = from p in points
@@ -66,20 +69,21 @@ public class CircuitCalculator {
 					where (p.Position - current).magnitude <= radius
 					let direction = p.Position - current
 					let angle = cw ? Vector2.SignedAngle(prevDirection, direction) : Vector2.SignedAngle(prevDirection, direction) * -1
-					where angle > -170 && angle < 170
+					where angle > -angleBounds && angle < angleBounds
 					orderby angle ascending
 					select new Candidate(point: p, angle: angle);
 		return result;
 	}
 
 	private static void DebugLog(List<Point> points, Vector2 current, IEnumerable<Candidate> candidates){
-			candidates.ToList().ForEach(x => Debug.LogFormat("Position: {0}, angle: {1}, Enabled: {2}", x.Point.Position, x.Angle, x.Point.Enabled));
-			var index = points.FindIndex(x => x.Position == current);
-			var message = "Points: ";
-			for (int i = Mathf.Max(0, index - 5); i < Mathf.Min(points.Count, index + 5); i++){
-				message += $"({points[i].Position}, {points[i].Enabled}),";
-			}
-			Debug.Log(message);
+		Debug.Log($"Current: {current}");
+		candidates.ToList().ForEach(x => Debug.LogFormat("Position: {0}, angle: {1}, Enabled: {2}", x.Point.Position, x.Angle, x.Point.Enabled));
+		var index = points.FindIndex(x => x.Position == current);
+		var message = "Points: ";
+		for (int i = Mathf.Max(0, index - 5); i < Mathf.Min(points.Count, index + 5); i++){
+			message += $"({points[i].Position}, {points[i].Enabled}),";
+		}
+		Debug.Log(message);
 	}
 
 	private class Point {

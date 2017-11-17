@@ -4,36 +4,12 @@ using UnityEngine;
 using NUnit.Framework;
 using System.Collections;
 
-public class EqualDistanceUtilTest {
+public class EqualDistanceUtilTest : BaseTest {
 
 	[Test, TestCaseSource(typeof(PrepareEqualDistancesSource))]
 	public void PrepareEqualDistances(string name, List<Vector2> line, float distance, List<Vector2> expected){
 		var actual = EqualDistanceUtil.Prepare(line, distance);
-		// actual.ForEach(x => Debug.LogFormat("Actual: [{0}; {1}]", (double)x.x, (double)x.y));
-		// Assert.AreEqual(expected, actual);
 		AssertEqual(expected, actual);
-		// for (int i = 0; i < actual.Count - 1; i++){
-			// var magnitude = (actual[i] - actual[i+1]).magnitude;
-			// Assert.IsTrue(magnitude <= distance, string.Format("Index: {0}, magnitude: {1:f5}, distance: {2:f5}", i, magnitude, distance));
-		// }
-	}
-
-	private void AssertEqual(IEnumerable<Vector2> expected, IEnumerable<Vector2> actual, string message = ""){
-		if (expected.Count() != actual.Count()){
-			foreach (var ex in expected) Debug.Log("Expected: " + ex);
-			foreach (var ac in actual) Debug.Log("Actual: " + ac);
-			Assert.Fail(message + "\nDifferent sizes: expected is {0}, actual is {1}", expected.Count(), actual.Count());
-		}
-
-		var expectedArray = expected.ToArray();
-		var actualArray = actual.ToArray();
-		for (int i = 0; i < expectedArray.Length; i++){
-			if (expectedArray[i] != actualArray[i]){
-				foreach (var ex in expected) Debug.Log("Expected: " + ex);
-				foreach (var ac in actual) Debug.Log("Actual: " + ac);
-				Assert.Fail(message + "\nElement {0} is bad: \nExpected: {1} \nActual: {2}", i, expectedArray[i], actualArray[i]);
-			}
-		}
 	}
 
     public class PrepareEqualDistancesSource : IEnumerable

@@ -4,7 +4,7 @@ using UnityEngine;
 using NUnit.Framework;
 using System.Collections;
 
-public class CwUtilTest {
+public class CwUtilTest : BaseTest {
 
 	[Test, TestCaseSource(typeof(IsLineClockWiseSource))]
 	public void IsLineClockWise(string name, List<Vector2> line, bool expected){

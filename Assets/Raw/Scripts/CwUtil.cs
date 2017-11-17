@@ -21,7 +21,7 @@ public class CwUtil {
         var centerDirection = line.Aggregate((x, sum) => sum += x) / line.Count - line[0];
         var startDirection = line[1] - line[0];
         var angle = Vector2.SignedAngle(centerDirection, startDirection);
-        Debug.LogFormat("To center: {0}, start: {1}, angle: {2}", centerDirection, startDirection, angle);
+        Debug.Log($"To center: {centerDirection}, start: {startDirection}, angle: {angle}");
         return angle < 0;
     }
 }

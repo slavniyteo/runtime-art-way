@@ -4,12 +4,11 @@ using UnityEngine;
 using NUnit.Framework;
 using System.Collections;
 
-public class CircuitCalculatorTest {
+public class CircuitCalculatorTest : BaseTest {
 	[Test, TestCaseSource(typeof(CalculateCircuitTestSource))]
 	public void CalculateCircuitTest(string name, List<Vector2> line, float distance, List<Vector2> expected){
-		var actual = new CircuitCalculator().Calculate(ref line, distance);
-		actual.ForEach(x => Debug.Log(x));
-		Assert.AreEqual(expected, actual);
+		var actual = new CircuitCalculator().FindCircuit(line, distance, true);
+		AssertEqual(expected, actual);
 	}
 
     public class CalculateCircuitTestSource : IEnumerable {
@@ -18,54 +17,60 @@ public class CircuitCalculatorTest {
 				"Trivial",
 				new List<Vector2>() {
 					new Vector2(5,5),
+					new Vector2(5,6),
 					new Vector2(6,5),
-					new Vector2(6,6),
-					new Vector2(5,6)
 				},
-				1,
+				1.5f,
 				new List<Vector2>(){
 					new Vector2(5,5),
-					new Vector2(6,5),
-					new Vector2(6,6),
 					new Vector2(5,6),
+					new Vector2(6,5),
+					new Vector2(5,5),
 				}
 			};
 			yield return new object[] {
 				"Simple",
 				new List<Vector2>() {
 					new Vector2(5,5),
-					new Vector2(7,5),
-					new Vector2(6.5f,6f),
-					new Vector2(7,7),
-					new Vector2(6,6.5f),
-					new Vector2(5,7),
+					new Vector2(6,5),
+					new Vector2(7,6),
+					new Vector2(6,6),
+					new Vector2(5,6),
 				},
 				2,
 				new List<Vector2>(){
 					new Vector2(5,5),
-					new Vector2(7,5),
-					new Vector2(7,7),
-					new Vector2(5,7),
+					new Vector2(6,5),
+					new Vector2(7,6),
+					new Vector2(6,6),
+					new Vector2(5,6),
+					new Vector2(5,5),
 				}
 			};
 			yield return new object[] {
 				"Simple with propagate",
 				new List<Vector2>() {
-					new Vector2(5,5),
-					new Vector2(7,5),
-					new Vector2(7,7),
+					new Vector2(4,6),
 					new Vector2(5,7),
+					new Vector2(5.9f,6),
+					new Vector2(7,5),
+					new Vector2(8,6),
+					new Vector2(7,7),
+					new Vector2(6.1f,6),
+					new Vector2(5,5),
 				},
-				1,
+				Vector2.one.magnitude*1.3f,
 				new List<Vector2>(){
-					new Vector2(5,5),
-					new Vector2(6,5),
-					new Vector2(7,5),
-					new Vector2(7,6),
-					new Vector2(7,7),
-					new Vector2(6,7),
+					new Vector2(4,6),
 					new Vector2(5,7),
-					new Vector2(5,6),
+					new Vector2(5,5),
+					new Vector2(6.1f,6),
+					new Vector2(7,7),
+					new Vector2(8,6),
+					new Vector2(7,5),
+					new Vector2(5.9f,6),
+					new Vector2(5,5),
+					new Vector2(4,6),
 				}
 			};
         }
@@ -74,7 +79,7 @@ public class CircuitCalculatorTest {
 	[Test, TestCaseSource(typeof(CalculateCircuitTestCwwSource))]
 	public void CalculateCircuitTestCWW(string name, List<Vector2> line, float distance, List<Vector2> expected){
 		var actual = new CircuitCalculator().Calculate(ref line, distance);
-		Assert.AreEqual(expected, actual);
+		AssertEqual(expected, actual);
 	}
 
     public class CalculateCircuitTestCwwSource : IEnumerable {

@@ -4,12 +4,14 @@ using System.Linq;
 using TriangleNet;
 using UnityEngine;
 
+namespace RuntimeArtWay {
+
+[CreateAssetMenu]
 public class Sample : ScriptableObject {
 
-    public Vector2[] circuit = new Vector2[]{
-        Vector2.one,
-        Vector2.right,
-        Vector2.up
-    };
+	public Vector2[] verticles = new Vector2[0];
+	public Vector2[] equalDistance = new Vector2[0];
+	public Vector2[] circuit = new Vector2[0];
 
+}
 }

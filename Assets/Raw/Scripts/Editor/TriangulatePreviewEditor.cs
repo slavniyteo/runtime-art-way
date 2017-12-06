@@ -7,12 +7,13 @@ using TriangleNet.Data;
 using TriangleNet.Tools;
 using TriangleNet.Geometry;
 
-[CustomEditor(typeof(TriangulatePreview))]
+namespace RuntimeArtWay {
+[CustomEditor(typeof(Sample))]
 public class TriangulatePreviewEditor : Editor {
 
 	private bool drawFullPreview = false;
 
-	private new TriangulatePreview target { get { return base.target as TriangulatePreview; } }
+	private new Sample target { get { return base.target as Sample; } }
 
 	private void DrawMeshPreview(Rect rect){
 		EditorGUI.DrawRect(rect, Color.gray);
@@ -133,4 +134,5 @@ public class TriangulatePreviewEditor : Editor {
 		DrawCircuit(circuitRect);
 
 	}
+}
 }

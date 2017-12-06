@@ -5,10 +5,11 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
+namespace RuntimeArtWay {
 [ExecuteInEditMode]
 public class TriangulateExample : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler {
 
-    public TriangulatePreview preview;
+    public Sample preview;
     public LineRenderer line;
     public LineRenderer circuit;
     public LineRenderer equalDistance;
@@ -90,4 +91,5 @@ public class TriangulateExample : MonoBehaviour, IBeginDragHandler, IEndDragHand
 
         instances.Clear();
     }
+}
 }

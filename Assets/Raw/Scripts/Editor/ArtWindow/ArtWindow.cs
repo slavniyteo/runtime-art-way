@@ -19,11 +19,12 @@ namespace RuntimeArtWay {
         private IEditorTool<Sample> preview;
 
         public void OnEnable(){
-            Target = ScriptableObject.CreateInstance<Sample>();
-
-            leftPanel = new ToolBox<Sample>();
+            var layers = new Layers();
+            leftPanel = new ToolBox<Sample>(){
+                layers
+            };
             rightPanel = new ToolBox<Sample>();
-            preview = new Preview();
+            preview = new Preview(layers);
 
             Init();
         }
@@ -35,6 +36,10 @@ namespace RuntimeArtWay {
         }
 
         public void OnGUI(){
+            Target = EditorGUILayout.ObjectField(Target, typeof(Sample), false) as Sample;
+
+            if (Target == null) return;
+
             GUILayout.BeginVertical();
             GUILayout.Label("Header");
             GUILayout.BeginHorizontal();
@@ -49,7 +54,6 @@ namespace RuntimeArtWay {
 
         private void DrawLeftPanel(){
             GUILayout.BeginVertical(GUILayout.Width(200));
-            GUILayout.Box(Texture2D.whiteTexture, GUILayout.ExpandHeight(true), GUILayout.ExpandWidth(true));
             leftPanel.Draw();
             GUILayout.EndVertical();
         }

@@ -28,7 +28,7 @@ public class Preview : AbstractEditorTool<Sample> {
 		var rect = GUILayoutUtility.GetAspectRect(1);
 		EditorGUI.DrawRect(rect, Color.gray);
 
-		var mesh = GenerateMesh(rect, target.circuit);
+		if (! target.IsDrawn) return;
 
 		if ((layers.Value & Layer.HandMade) == Layer.HandMade){
 			DrawDots(rect, target.verticles, Color.red);
@@ -36,6 +36,12 @@ public class Preview : AbstractEditorTool<Sample> {
 		if ((layers.Value & Layer.Propogated) == Layer.Propogated){
 			DrawDots(rect, target.equalDistance, Color.green);
 		}
+
+		if (! target.HasCircuit) return;
+
+		var meshCircuit = NormilizedVerticles(target.circuit, rect);
+		var mesh = MeshGenerator.Generate(meshCircuit);
+
 		if ((layers.Value & Layer.MeshSegments) == Layer.MeshSegments){
 			DrawTriangles(rect, mesh);
 		}
@@ -86,25 +92,6 @@ public class Preview : AbstractEditorTool<Sample> {
 	#endregion
 
 	#region Tools
-
-	public TriangleNet.Mesh GenerateMesh(Rect bounds, Vector2[] circuit) {
-		var verticles = NormilizedVerticles(circuit, bounds);
-
-		var geometry = new TriangleNet.Geometry.InputGeometry(verticles.Count);
-		verticles.ForEach(v => geometry.AddPoint(v.x, v.y));
-		for (int i = 0; i < verticles.Count - 1; i++){
-			geometry.AddSegment(i, i + 1, 1);
-		}
-		geometry.AddSegment(verticles.Count - 1, 0, 1);
-
-		var mesh = new TriangleNet.Mesh(new TriangleNet.Behavior{
-			ConformingDelaunay = true,
-			NoBisect = 0
-		});
-		mesh.Triangulate(geometry);
-
-		return mesh;
-	}
 
 	private List<Vector2> NormilizedVerticles(Vector2[] verticles, Rect rect){
 		List<Vector2> result = new List<Vector2>();

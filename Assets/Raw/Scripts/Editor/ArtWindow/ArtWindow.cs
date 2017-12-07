@@ -31,6 +31,16 @@ namespace RuntimeArtWay {
             preview = new Preview(layers);
         }
 
+        public void OnDestroy(){
+            HideAllTools();
+        }
+
+        private void HideAllTools(){
+            leftPanel.Hide();
+            rightPanel.Hide();
+            preview.Hide();
+        }
+
         private void Init(){
             if (Target != null){
                 leftPanel.Show(Target);
@@ -38,9 +48,7 @@ namespace RuntimeArtWay {
                 preview.Show(Target);
             } 
             else {
-                leftPanel.Hide();
-                rightPanel.Hide();
-                preview.Hide();
+                HideAllTools();
             }
         }
 

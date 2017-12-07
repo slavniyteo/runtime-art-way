@@ -12,32 +12,40 @@ namespace RuntimeArtWay {
             window.Show();
         }
 
-        private Sample Target { get; set; }
+        private Target target;
+        private Sample Target { get { return target.Value; } }
 
         private IEditorTool<Sample> leftPanel;
         private IEditorTool<Sample> rightPanel;
         private IEditorTool<Sample> preview;
 
         public void OnEnable(){
+            target = new Target();
+            target.onChange += Init;
+
             var layers = new Layers();
             leftPanel = new ToolBox<Sample>(){
                 layers
             };
             rightPanel = new ToolBox<Sample>();
             preview = new Preview(layers);
-
-            Init();
         }
 
         private void Init(){
-            leftPanel.Show(Target);
-            rightPanel.Show(Target);
-            preview.Show(Target);
+            if (Target != null){
+                leftPanel.Show(Target);
+                rightPanel.Show(Target);
+                preview.Show(Target);
+            } 
+            else {
+                leftPanel.Hide();
+                rightPanel.Hide();
+                preview.Hide();
+            }
         }
 
         public void OnGUI(){
-            Target = EditorGUILayout.ObjectField(Target, typeof(Sample), false) as Sample;
-
+            target.Draw();
             if (Target == null) return;
 
             GUILayout.BeginVertical();

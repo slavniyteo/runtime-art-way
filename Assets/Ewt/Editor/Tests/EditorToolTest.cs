@@ -30,12 +30,15 @@ public class EditorToolTest {
 		tool.Show(null);
 	}
 
-	[Test, ExpectedException(typeof(InvalidOperationException))]
+	[Test]
 	public void ShowTwice() {
 		var tool = new AbstractEditorTool<string>();
 		var target = "I am target";
 		tool.Show(target);
-		tool.Show(target);
+		var target2 = "I am another target";
+		tool.Show(target2);
+
+		Assert.AreEqual(target2, tool.target);
 	}
 
 	[Test]

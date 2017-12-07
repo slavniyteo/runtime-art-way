@@ -13,7 +13,8 @@ namespace EditorWindowTools {
 
         public void Show(T target) {
             if (target == null) throw new ArgumentException("Target must be not null");
-            if (Active) throw new InvalidOperationException("Tool is already active");
+
+            if (Active) Hide();
 
             this.target = target;
             Active = true;

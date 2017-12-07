@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -8,6 +9,8 @@ namespace EditorWindowTools {
         private List<IEditorTool<T>> tools = new List<IEditorTool<T>>();
 
         public void Show(T target) {
+            if (target == null) throw new ArgumentNullException();
+
             foreach (var tool in tools) {
                 tool.Show(target);
             }

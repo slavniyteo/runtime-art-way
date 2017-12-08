@@ -14,6 +14,7 @@ namespace RuntimeArtWay {
 
         private Target target;
         private Sample Target { get { return target.Value; } }
+        private IHistory history;
 
         private IEditorTool<Sample> leftPanel;
         private IEditorTool<Sample> rightPanel;
@@ -21,13 +22,19 @@ namespace RuntimeArtWay {
 
         public void OnEnable(){
             target = new Target();
-            target.onChange += Init;
+            target.onChange += ShowAllTools;
+            target.onReset += HideAllTools;
+            history = new History();
+            target.onChange += () => history.Add(Target);
+            history.onSelect += x => target.Value = x;
 
             var layers = new Layers();
             leftPanel = new ToolBox<Sample>(){
                 layers
             };
-            rightPanel = new ToolBox<Sample>();
+            rightPanel = new ToolBox<Sample>(){
+                history as IEditorTool<Sample>
+            };
             preview = new Preview(layers);
         }
 
@@ -41,15 +48,10 @@ namespace RuntimeArtWay {
             preview.Hide();
         }
 
-        private void Init(){
-            if (Target != null){
-                leftPanel.Show(Target);
-                rightPanel.Show(Target);
-                preview.Show(Target);
-            } 
-            else {
-                HideAllTools();
-            }
+        private void ShowAllTools(){
+            leftPanel.Show(Target);
+            rightPanel.Show(Target);
+            preview.Show(Target);
         }
 
         public void OnGUI(){
@@ -82,7 +84,6 @@ namespace RuntimeArtWay {
 
         private void DrawRightPanel(){
             GUILayout.BeginVertical(GUILayout.Width(200), GUILayout.ExpandWidth(true));
-            GUILayout.Box(Texture2D.whiteTexture, GUILayout.ExpandHeight(true), GUILayout.ExpandWidth(true));
             rightPanel.Draw();
             GUILayout.EndVertical();
         }

@@ -6,15 +6,28 @@ namespace RuntimeArtWay {
     public class Target {
 
         public event Action onChange = () => {};
+        public event Action onReset = () => {};
 
-        public Sample Value { get; private set; }
+        private Sample value;
+        public Sample Value { 
+            get {
+                return value;
+            }
+            set {
+                if (value != this.value) {
+                    this.value = value;
+                    if (value == null){
+                        onReset();
+                    }
+                    else {
+                        onChange();
+                    }
+                }
+            }
+        }
 
         public void Draw(){
-            var oldValue = Value;
             DrawSelectLine();
-            if (Value != oldValue) {
-                onChange();
-            }
 
             if (Value == null) {
                 EditorGUILayout.HelpBox("Select a sample to work", MessageType.Info);

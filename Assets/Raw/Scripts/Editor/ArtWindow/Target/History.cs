@@ -60,17 +60,23 @@ namespace RuntimeArtWay {
         protected override void OnDraw(){
             int i = 0;
             foreach (var target in history) {
+                if (target == null) {
+                    history.Remove(target);
+                    return;
+                }
+
                 var style = currentIndex == i ? backActive : backNormal;
                 var rect = EditorGUILayout.BeginHorizontal(style);
 
                 preview.DrawOnce(target);
+
                 DrawInfo(i, target);
+
+                GUILayout.EndHorizontal();
 
                 if (CheckSelection(rect, i, target)){
                     return;
                 }
-
-                GUILayout.EndHorizontal();
                 i++;
             }
         }
@@ -78,8 +84,22 @@ namespace RuntimeArtWay {
         private void DrawInfo(int index, Sample target){
             EditorGUILayout.BeginVertical();
 
-            var nameStyle = EditorUtility.IsPersistent(target) ? namePersistent : nameTemporary;
-            GUILayout.Box(target.name, nameStyle, GUILayout.ExpandWidth(true));
+            EditorGUILayout.BeginHorizontal();
+
+            target.name = GUILayout.TextField(target.name, GUILayout.ExpandWidth(true));
+
+
+            if (EditorUtility.IsPersistent(target)){
+                GUILayout.Box("S", namePersistent, GUILayout.Width(18));
+            }
+            else if (GUILayout.Button("S", nameTemporary, GUILayout.Width(18))){
+                var path = string.Format("Assets/{0}.asset", target.name);
+                AssetDatabase.CreateAsset(target, path);
+            }
+
+            EditorGUILayout.EndHorizontal();
+
+            // EditorGUILayout.LabelField("lalala");
 
             EditorGUILayout.EndVertical();
         }

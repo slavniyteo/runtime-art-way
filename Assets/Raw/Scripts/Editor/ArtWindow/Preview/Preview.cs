@@ -14,9 +14,13 @@ public class Preview : AbstractEditorTool<Sample> {
 	private ILayers layers;
 	private bool drawFullPreview = false;
 
-	public Preview(ILayers layers) {
+	private float dotSize;
+
+	public Preview(ILayers layers, float dotSize = 5) {
 		this.layers = layers;
 		layers.onChange += OnLayersChange;
+
+		this.dotSize = dotSize;
 	}
 
 	private void OnLayersChange(Layer oldValue, Layer newValue){
@@ -101,8 +105,8 @@ public class Preview : AbstractEditorTool<Sample> {
 		max = max - min;
 		foreach (var vertex in verticles){
 			var v = (vertex - min);
-			v.y = (v.y / max.y) * (rect.height - 20) + 10;
-			v.x = (v.x / max.x) * (rect.width - 20) + 10;
+			v.y = (v.y / max.y) * (rect.height - dotSize * 4) + dotSize * 2;
+			v.x = (v.x / max.x) * (rect.width - dotSize * 4) + dotSize * 2;
 
 			result.Add(v);
 		}
@@ -116,7 +120,7 @@ public class Preview : AbstractEditorTool<Sample> {
 	}
 
 	private void DrawPoint(Rect rect, Vector2 pos, Color color){
-		var position = new Rect(pos - Vector2.one * 2.5f, Vector2.one * 5);
+		var position = new Rect(pos - Vector2.one * dotSize / 2, Vector2.one * dotSize);
 		EditorGUI.DrawRect(position, color);
 	}
 
@@ -129,11 +133,11 @@ public class Preview : AbstractEditorTool<Sample> {
 	}
 
 	private Vector2 ToVector2(Rect rect, TriangleNet.Data.Vertex vertex){
-		return rect.position + new Vector2((float)vertex.X, rect.height - (float)vertex.Y) + Vector2.one * 0.25f;
+		return rect.position + new Vector2((float)vertex.X, rect.height - (float)vertex.Y) + Vector2.one * dotSize / 2;
 	}
 
 	private Vector2 ToVector2(Rect rect, Vector2 position){
-		return rect.position + new Vector2(position.x, rect.height - position.y) + Vector2.one * 0.25f;
+		return rect.position + new Vector2(position.x, rect.height - position.y) + Vector2.one * dotSize / 2;
 	}
 
 	#endregion

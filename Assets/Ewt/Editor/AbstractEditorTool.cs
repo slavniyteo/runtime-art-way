@@ -11,6 +11,8 @@ namespace EditorWindowTools {
 
         public event BecomeDirtyHandler onDirty;
 
+        private bool guiPrepared = false;
+
         public void Show(T target) {
             if (target == null) throw new ArgumentException("Target must be not null");
 
@@ -36,10 +38,25 @@ namespace EditorWindowTools {
         public void Draw() {
             if (! Active) throw new InvalidOperationException("Can not draw while is not active");
 
+            if (!guiPrepared) {
+                PrepareGUI();
+                guiPrepared = true;
+            }
+
             OnDraw();
         }
 
+        public void DrawOnce(T target){
+            Show(target);
+            Draw();
+            Hide();
+        }
+
         #region Virtual
+
+        protected virtual void PrepareGUI(){
+
+        }
 
         protected virtual void OnDraw() {
 

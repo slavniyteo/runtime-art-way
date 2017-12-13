@@ -16,6 +16,10 @@ namespace RuntimeArtWay {
 
         public Layer Value { get; private set; }
 
+        public Layers(Layer value){
+            this.Value = value;
+        }
+
         public Layers() {
             Value = Layer.HandMade | Layer.MeshCircuit;
         }

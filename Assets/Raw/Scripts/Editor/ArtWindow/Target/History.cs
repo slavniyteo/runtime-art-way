@@ -16,6 +16,26 @@ namespace RuntimeArtWay {
 
         public event Action<Sample> onSelect = x => {};
 
+        private Preview preview = new Preview(new Layers(Layer.HandMade), 2);
+
+        private GUIStyle backNormal;
+        private GUIStyle backActive;
+        private GUIStyle nameTemporary;
+        private GUIStyle namePersistent;
+
+        protected override void PrepareGUI(){
+            backNormal = new GUIStyle(GUI.skin.box);
+
+            backActive = new GUIStyle(GUI.skin.box);
+            backActive.normal.background = TextureGenerator.GenerateBox(10, 10, Color.red);
+
+            nameTemporary = new GUIStyle(GUI.skin.box);
+            nameTemporary.normal.background = TextureGenerator.GenerateBox(10, 10, Color.gray);
+
+            namePersistent = new GUIStyle(GUI.skin.box);
+            namePersistent.normal.background = TextureGenerator.GenerateBox(10, 10, Color.green);
+        }
+
         public void Add(Sample current) {
             if (!history.Contains(current)){
                 history.AddFirst(current);
@@ -23,48 +43,6 @@ namespace RuntimeArtWay {
             }
             else {
                 currentIndex = IndexOf(current);
-            }
-        }
-
-        protected override void OnDraw(){
-            int i = 0;
-            foreach (var target in history) {
-                EditorGUILayout.BeginHorizontal();
-                if (currentIndex == i) GUILayout.Box("!");
-                GUILayout.Box(target.name, GUILayout.ExpandWidth(true));
-
-                if (CheckSelection(i, target)){
-                    return;
-                }
-
-                GUILayout.EndHorizontal();
-                i++;
-            }
-        }
-
-        private bool CheckSelection(int index, Sample target){
-            if (Event.current.type == EventType.MouseDown){
-                var rect = GUILayoutUtility.GetLastRect();
-                if (rect.Contains(Event.current.mousePosition)){
-                    onSelect(target);
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        public Sample this[int i] {
-            get {
-                if (i >= history.Count) throw new IndexOutOfRangeException();
-
-                int num = 0;
-                foreach (var target in history){
-                    if (num == i){
-                        return target;
-                    }
-                    num++;
-                }
-                return null;
             }
         }
 
@@ -77,6 +55,43 @@ namespace RuntimeArtWay {
                 i++;
             }
             return -1;
+        }
+
+        protected override void OnDraw(){
+            int i = 0;
+            foreach (var target in history) {
+                var style = currentIndex == i ? backActive : backNormal;
+                var rect = EditorGUILayout.BeginHorizontal(style);
+
+                preview.DrawOnce(target);
+                DrawInfo(i, target);
+
+                if (CheckSelection(rect, i, target)){
+                    return;
+                }
+
+                GUILayout.EndHorizontal();
+                i++;
+            }
+        }
+
+        private void DrawInfo(int index, Sample target){
+            EditorGUILayout.BeginVertical();
+
+            var nameStyle = EditorUtility.IsPersistent(target) ? namePersistent : nameTemporary;
+            GUILayout.Box(target.name, nameStyle, GUILayout.ExpandWidth(true));
+
+            EditorGUILayout.EndVertical();
+        }
+
+        private bool CheckSelection(Rect rect, int index, Sample target){
+            if (Event.current.type == EventType.MouseDown){
+                if (currentIndex != index && rect.Contains(Event.current.mousePosition)){
+                    onSelect(target);
+                    return true;
+                }
+            }
+            return false;
         }
 
     }

@@ -83,7 +83,7 @@ namespace RuntimeArtWay {
         }
 
         private void DrawRightPanel(){
-            GUILayout.BeginVertical(GUILayout.Width(200), GUILayout.ExpandWidth(true));
+            GUILayout.BeginVertical(GUILayout.Width(300), GUILayout.ExpandWidth(true));
             rightPanel.Draw();
             GUILayout.EndVertical();
         }

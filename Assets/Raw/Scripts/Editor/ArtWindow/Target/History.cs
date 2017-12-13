@@ -88,7 +88,6 @@ namespace RuntimeArtWay {
 
             target.name = GUILayout.TextField(target.name, GUILayout.ExpandWidth(true));
 
-
             if (EditorUtility.IsPersistent(target)){
                 GUILayout.Box("S", namePersistent, GUILayout.Width(18));
             }
@@ -98,8 +97,6 @@ namespace RuntimeArtWay {
             }
 
             EditorGUILayout.EndHorizontal();
-
-            // EditorGUILayout.LabelField("lalala");
 
             EditorGUILayout.EndVertical();
         }

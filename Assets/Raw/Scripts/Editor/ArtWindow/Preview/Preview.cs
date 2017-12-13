@@ -30,6 +30,10 @@ public class Preview : AbstractEditorTool<Sample> {
 
 	protected override void OnDraw(){
 		var rect = GUILayoutUtility.GetAspectRect(1);
+		StatelessDraw(rect, target);
+	}
+
+	public void StatelessDraw(Rect rect, Sample target){
 		EditorGUI.DrawRect(rect, Color.gray);
 
 		if (! target.IsDrawn) return;

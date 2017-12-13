@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using EditorWindowTools;
+using RectEx;
 
 namespace RuntimeArtWay {
     public interface IHistory {
@@ -22,6 +23,7 @@ namespace RuntimeArtWay {
         private GUIStyle backActive;
         private GUIStyle nameTemporary;
         private GUIStyle namePersistent;
+        private GUIStyle nameConflict;
 
         protected override void PrepareGUI(){
             backNormal = new GUIStyle(GUI.skin.box);
@@ -34,6 +36,9 @@ namespace RuntimeArtWay {
 
             namePersistent = new GUIStyle(GUI.skin.box);
             namePersistent.normal.background = TextureGenerator.GenerateBox(10, 10, Color.green);
+
+            nameConflict = new GUIStyle(GUI.skin.box);
+            nameConflict.normal.background = TextureGenerator.GenerateBox(10, 10, Color.cyan);
         }
 
         public void Add(Sample current) {
@@ -66,13 +71,14 @@ namespace RuntimeArtWay {
                 }
 
                 var style = currentIndex == i ? backActive : backNormal;
-                var rect = EditorGUILayout.BeginHorizontal(style);
+                GUILayout.Box("", style, GUILayout.MinHeight(50), GUILayout.ExpandWidth(true));
 
-                preview.DrawOnce(target);
+                var rect = GUILayoutUtility.GetLastRect().Intend(1);
+                var rects = rect.CutFromLeft(50);
 
-                DrawInfo(i, target);
+                preview.StatelessDraw(rects[0].Intend(1), target);
 
-                GUILayout.EndHorizontal();
+                DrawInfo(rects[1].Intend(1), i, target);
 
                 if (CheckSelection(rect, i, target)){
                     return;
@@ -81,24 +87,42 @@ namespace RuntimeArtWay {
             }
         }
 
-        private void DrawInfo(int index, Sample target){
-            EditorGUILayout.BeginVertical();
+        private void DrawInfo(Rect rect, int index, Sample target){
+            rect.height = 18;
+            var rects = rect.CutFromRight(18);
 
-            EditorGUILayout.BeginHorizontal();
+            target.name = GUI.TextField(rects[0], target.name);
 
-            target.name = GUILayout.TextField(target.name, GUILayout.ExpandWidth(true));
+            DrawPersistence(rects[1], target);
+        }
 
-            if (EditorUtility.IsPersistent(target)){
-                GUILayout.Box("S", namePersistent, GUILayout.Width(18));
+        private void DrawPersistence(Rect rect, Sample target){
+            bool isPersistent = EditorUtility.IsPersistent(target);
+            var path = isPersistent 
+                            ? AssetDatabase.GetAssetPath(target) 
+                            : string.Format("Assets/{0}.asset", target.name);
+            var objectAtPath = AssetDatabase.LoadAssetAtPath(path, typeof(Sample));
+
+            if (objectAtPath != null) {
+                if (objectAtPath == target){
+                    GUI.Box(rect, "S", namePersistent);
+                }
+                else {
+                    GUI.Box(rect, "S", nameConflict);
+                }
             }
-            else if (GUILayout.Button("S", nameTemporary, GUILayout.Width(18))){
-                var path = string.Format("Assets/{0}.asset", target.name);
-                AssetDatabase.CreateAsset(target, path);
+            else {
+                if (isPersistent){
+                    GUI.Box(rect, "S", namePersistent);
+                }
+                else if (GUI.Button(rect, "S", nameTemporary)){
+                    AssetDatabase.CreateAsset(target, path);
+                    AssetDatabase.ImportAsset(path);
+                    history.Remove(target);
+                    target = AssetDatabase.LoadAssetAtPath(path, typeof(Sample)) as Sample;
+                    Add(target);
+                }
             }
-
-            EditorGUILayout.EndHorizontal();
-
-            EditorGUILayout.EndVertical();
         }
 
         private bool CheckSelection(Rect rect, int index, Sample target){

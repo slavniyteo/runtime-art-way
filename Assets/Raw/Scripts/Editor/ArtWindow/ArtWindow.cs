@@ -35,7 +35,10 @@ namespace RuntimeArtWay {
             rightPanel = new ToolBox<Sample>(){
                 history as IEditorTool<Sample>
             };
+            
             preview = new Preview(layers);
+
+            history.LoadSavedData();
         }
 
         public void OnDestroy(){

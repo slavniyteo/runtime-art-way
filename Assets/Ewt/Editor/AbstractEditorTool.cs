@@ -30,6 +30,8 @@ namespace EditorWindowTools {
             this.target = default(T);
             Active = false;
 
+            guiPrepared = false;
+
             if (needCallOnHide) {
                 OnHide();
             }

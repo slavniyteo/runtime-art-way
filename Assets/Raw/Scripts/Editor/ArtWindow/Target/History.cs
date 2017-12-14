@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using EditorWindowTools;
@@ -9,21 +10,77 @@ namespace RuntimeArtWay {
     public interface IHistory {
         event Action<Sample> onSelect;
         void Add(Sample current);
+        void LoadSavedData();
     }
     public class History : AbstractEditorTool<Sample>, IHistory {
 
-        private LinkedList<Sample> history = new LinkedList<Sample>();
+        private const String EDITOR_PREFS_KEY = "ArtWindow_History";
+
+        private LinkedList<Sample> history;
         private int currentIndex = -1;
 
         public event Action<Sample> onSelect = x => {};
 
-        private Preview preview = new Preview(new Layers(Layer.HandMade), 2);
+        private Preview preview;
+        private SaveButton saveButton;
 
         private GUIStyle backNormal;
         private GUIStyle backActive;
-        private GUIStyle nameTemporary;
-        private GUIStyle namePersistent;
-        private GUIStyle nameConflict;
+
+        protected override void OnShow(){
+            preview = new Preview(new Layers(Layer.HandMade), 2);
+
+            saveButton = new SaveButton((oldTarget, newTarget) => {
+                history.Remove(oldTarget);
+                Add(newTarget);
+            });
+
+            if (history == null) LoadSavedData();
+        }
+
+        protected override void OnHide(){
+            SaveToPrefs(history);
+        }
+
+        public void LoadSavedData(){
+            if (history != null) throw new InvalidOperationException();
+            if (Active) throw new InvalidOperationException();
+
+            history = LoadFromPrefs();
+
+            if (currentIndex < 0 && history.Any()){
+                currentIndex = 0;
+                onSelect(history.First.Value);
+            }
+        }
+
+        private static LinkedList<Sample> LoadFromPrefs(){
+            var result = new LinkedList<Sample>();
+
+            if (EditorPrefs.HasKey(EDITOR_PREFS_KEY)){
+                var saved = EditorPrefs.GetString(EDITOR_PREFS_KEY)
+                                .Split('|')
+                                .Select(x => AssetDatabase.LoadAssetAtPath(x, typeof(Sample)) as Sample);
+
+                foreach (var sample in saved){
+                    result.AddLast(sample);
+                }
+            }
+
+
+            return result;
+        }
+
+        private static void SaveToPrefs(LinkedList<Sample> history){
+            EditorPrefs.DeleteKey(EDITOR_PREFS_KEY);
+            var result = history.
+                            Where(EditorUtility.IsPersistent)
+                            .Select(AssetDatabase.GetAssetPath);
+            if (result.Any()){
+                var toSave = result.Aggregate((x, y) => x + "|" + y);
+                EditorPrefs.SetString(EDITOR_PREFS_KEY, toSave);
+            }
+        }
 
         protected override void PrepareGUI(){
             backNormal = new GUIStyle(GUI.skin.box);
@@ -31,14 +88,7 @@ namespace RuntimeArtWay {
             backActive = new GUIStyle(GUI.skin.box);
             backActive.normal.background = TextureGenerator.GenerateBox(10, 10, Color.red);
 
-            nameTemporary = new GUIStyle(GUI.skin.box);
-            nameTemporary.normal.background = TextureGenerator.GenerateBox(10, 10, Color.gray);
-
-            namePersistent = new GUIStyle(GUI.skin.box);
-            namePersistent.normal.background = TextureGenerator.GenerateBox(10, 10, Color.green);
-
-            nameConflict = new GUIStyle(GUI.skin.box);
-            nameConflict.normal.background = TextureGenerator.GenerateBox(10, 10, Color.cyan);
+            saveButton.PrepareGUI();
         }
 
         public void Add(Sample current) {
@@ -93,36 +143,7 @@ namespace RuntimeArtWay {
 
             target.name = GUI.TextField(rects[0], target.name);
 
-            DrawPersistence(rects[1], target);
-        }
-
-        private void DrawPersistence(Rect rect, Sample target){
-            bool isPersistent = EditorUtility.IsPersistent(target);
-            var path = isPersistent 
-                            ? AssetDatabase.GetAssetPath(target) 
-                            : string.Format("Assets/{0}.asset", target.name);
-            var objectAtPath = AssetDatabase.LoadAssetAtPath(path, typeof(Sample));
-
-            if (objectAtPath != null) {
-                if (objectAtPath == target){
-                    GUI.Box(rect, "S", namePersistent);
-                }
-                else {
-                    GUI.Box(rect, "S", nameConflict);
-                }
-            }
-            else {
-                if (isPersistent){
-                    GUI.Box(rect, "S", namePersistent);
-                }
-                else if (GUI.Button(rect, "S", nameTemporary)){
-                    AssetDatabase.CreateAsset(target, path);
-                    AssetDatabase.ImportAsset(path);
-                    history.Remove(target);
-                    target = AssetDatabase.LoadAssetAtPath(path, typeof(Sample)) as Sample;
-                    Add(target);
-                }
-            }
+            saveButton.Draw(rects[1], target);
         }
 
         private bool CheckSelection(Rect rect, int index, Sample target){

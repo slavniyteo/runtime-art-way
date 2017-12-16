@@ -23,13 +23,6 @@ public class TriangulateExample : MonoBehaviour, IBeginDragHandler, IEndDragHand
     void Start () {
         verticles = new List<Vector2>();
     }
-
-    [ContextMenu("Draw Lines")]
-    public void DrawLines(){
-        verticles = new List<Vector2>(preview.verticles);
-
-        UpdateCircuit();
-    }
     
     void Update () {
         if (line.positionCount != verticles.Count){

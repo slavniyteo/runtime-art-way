@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
@@ -51,26 +52,31 @@ public class Preview : AbstractEditorTool<Sample> {
 
 		if (! target.IsDrawn) return;
 
+		var factor = Factor(rect, target.verticles);
+
 		if ((layers.Value & Layer.HandMade) == Layer.HandMade){
-			DrawDots(rect, target.verticles, Color.red);
+			var verticles = NormilizedVerticles(target.verticles, factor);
+			DrawDots(rect, verticles, Color.red);
 		}
 
 		if (! target.IsPropagated) return; 
 
 		if ((layers.Value & Layer.Propogated) == Layer.Propogated){
-			DrawDots(rect, target.equalDistance, Color.green);
+			var equalDistance = NormilizedVerticles(target.equalDistance, factor);
+			DrawDots(rect, equalDistance, Color.green);
 		}
 
 		if (! target.HasCircuit) return;
 
-		var meshCircuit = NormilizedVerticles(target.circuit, rect);
+		var meshCircuit = NormilizedVerticles(target.circuit, factor);
 		var mesh = MeshGenerator.Generate(meshCircuit);
 
 		if ((layers.Value & Layer.MeshSegments) == Layer.MeshSegments){
 			DrawTriangles(rect, mesh);
 		}
 		if ((layers.Value & Layer.MeshCircuit ) == Layer.MeshCircuit){
-			DrawLine(rect, target.circuit, Color.magenta);
+			var circuit = NormilizedVerticles(target.circuit, factor);
+			DrawLine(rect, circuit, Color.magenta);
 		}
 		if ((layers.Value & Layer.MeshVerticles) == Layer.MeshVerticles){
 			DrawVerticles(rect, mesh);
@@ -78,16 +84,14 @@ public class Preview : AbstractEditorTool<Sample> {
 	}
 
 	private void DrawDots(Rect rect, IList<Vector2> line, Color color){
-		var circuit = NormilizedVerticles(line, rect);
-		for (int i = 1; i < circuit.Count; i++){
-			DrawPoint(rect, ToVector2(rect, circuit[i]), color);
+		for (int i = 1; i < line.Count; i++){
+			DrawPoint(rect, ToVector2(rect, line[i]), color);
 		}
 	}
 
-	private void DrawLine(Rect rect, Vector2[] line, Color color){
-		var circuit = NormilizedVerticles(line, rect);
-		for (int i = 1; i < circuit.Count; i++){
-			DrawLine(rect, ToVector2(rect, circuit[i - 1]), ToVector2(rect, circuit[i]), color);
+	private void DrawLine(Rect rect, List<Vector2> line, Color color){
+		for (int i = 1; i < line.Count; i++){
+			DrawLine(rect, ToVector2(rect, line[i - 1]), ToVector2(rect, line[i]), color);
 		}
 	}
 
@@ -117,21 +121,22 @@ public class Preview : AbstractEditorTool<Sample> {
 
 	#region Tools
 
-	private List<Vector2> NormilizedVerticles(IEnumerable<Vector2> verticles, Rect rect){
-		List<Vector2> result = new List<Vector2>();
-
+	private Func<Vector2, Vector2> Factor(Rect rect, Vector2[] verticles){
 		var min = verticles.Aggregate((v, res) => new Vector2(Mathf.Min(v.x, res.x), Mathf.Min(v.y, res.y)));
 		var max = verticles.Aggregate((v, res) => new Vector2(Mathf.Max(v.x, res.x), Mathf.Max(v.y, res.y)));
 		max = max - min;
-		foreach (var vertex in verticles){
-			var v = (vertex - min);
-			v.y = (v.y / max.y) * (rect.height - dotSize * 4) + dotSize * 2;
-			v.x = (v.x / max.x) * (rect.width - dotSize * 4) + dotSize * 2;
 
-			result.Add(v);
-		}
+		return (pos) => {
+			Vector2 v = pos - min;
+			return new Vector2(
+				x: (v.x / max.x) * (rect.width - dotSize * 4) + dotSize * 2,
+				y: (v.y / max.y) * (rect.height - dotSize * 4) + dotSize * 2
+			);
+		};
+	}
 
-		return result;
+	private List<Vector2> NormilizedVerticles(Vector2[] verticles, Func<Vector2, Vector2> factor){
+		return verticles.Select(factor).ToList();
 	}
 
 	private void DrawVerticle(Rect rect, Vertex verticle, Color color){

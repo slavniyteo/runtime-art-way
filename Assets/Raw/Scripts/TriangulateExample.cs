@@ -13,7 +13,6 @@ public class TriangulateExample : MonoBehaviour, IBeginDragHandler, IEndDragHand
     public LineRenderer line;
     public LineRenderer circuit;
     public LineRenderer equalDistance;
-    public Text number;
 
     public float step = 10;
 
@@ -23,7 +22,6 @@ public class TriangulateExample : MonoBehaviour, IBeginDragHandler, IEndDragHand
 
     void Start () {
         verticles = new List<Vector2>();
-        ClearNumbers();
     }
 
     [ContextMenu("Draw Lines")]
@@ -54,44 +52,18 @@ public class TriangulateExample : MonoBehaviour, IBeginDragHandler, IEndDragHand
         UpdateCircuit();
     }
 
-
-    private List<GameObject> instances = new List<GameObject>();
-
-    public Transform parentPattern;
-    private Transform parent;
     private void UpdateCircuit(){
 		var equalDistanceCloud = EqualDistanceUtil.Prepare(verticles, step);
-        equalDistance.positionCount = verticles.Count;
-        equalDistance.SetPositions(verticles.Select(x => (Vector3)x).ToArray());
+        equalDistance.positionCount = equalDistanceCloud.Count;
+        equalDistance.SetPositions(equalDistanceCloud.Select(x => (Vector3)x).ToArray());
 
-        preview.equalDistance = new List<Vector2>(verticles);
+        preview.equalDistance = new List<Vector2>(equalDistanceCloud);
 
         var circuitPositions = circuitCalculator.Calculate(equalDistanceCloud, step);
         circuit.positionCount = circuitPositions.Count;
         circuit.SetPositions(circuitPositions.Select(x => (Vector3)x).ToArray());
 
         preview.circuit = circuitPositions.Select(x => (Vector2)x).ToArray();
-
-        for (int i = 0; i < circuitPositions.Count; i++){
-            var verticle = circuitPositions[i];
-            var instance = Instantiate(number.gameObject, verticle, Quaternion.identity);
-            instance.SetActive(true);
-            instance.transform.SetParent(parent, false);
-            instances.Add(instance);
-            int j = i;
-            instance.GetComponent<Text>().text = "" + j;
-        }
-    }
-
-    [ContextMenu("Clear Instances")]
-    public void ClearNumbers(){
-        if (parent){
-            DestroyImmediate(parent.gameObject);
-        }
-        parent = Instantiate(parentPattern.gameObject, Vector3.zero, Quaternion.identity).transform;
-        parent.SetParent(parentPattern.parent, false);
-
-        instances.Clear();
     }
 }
 }

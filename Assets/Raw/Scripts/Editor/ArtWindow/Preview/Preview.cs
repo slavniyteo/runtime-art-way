@@ -11,12 +11,16 @@ using EditorWindowTools;
 namespace RuntimeArtWay {
 public class Preview : AbstractEditorTool<Sample> {
 
+	private Drawer drawer;
+
 	private ILayers layers;
 	private bool drawFullPreview = false;
 
 	private float dotSize;
 
 	public Preview(ILayers layers, float dotSize = 5) {
+		drawer = new Drawer();
+
 		this.layers = layers;
 		layers.onChange += OnLayersChange;
 
@@ -26,10 +30,19 @@ public class Preview : AbstractEditorTool<Sample> {
 	private void OnLayersChange(Layer oldValue, Layer newValue){
 	}
 
+	protected override void OnShow() {
+		drawer.Show(target);
+	}
+
+	protected override void OnHide(){
+		drawer.Hide();
+	}
+
 	#region Draw Mesh Preview
 
 	protected override void OnDraw(){
 		var rect = GUILayoutUtility.GetAspectRect(1);
+		drawer.Draw(rect);
 		StatelessDraw(rect, target);
 	}
 
@@ -41,6 +54,9 @@ public class Preview : AbstractEditorTool<Sample> {
 		if ((layers.Value & Layer.HandMade) == Layer.HandMade){
 			DrawDots(rect, target.verticles, Color.red);
 		}
+
+		if (! target.IsPropagated) return; 
+
 		if ((layers.Value & Layer.Propogated) == Layer.Propogated){
 			DrawDots(rect, target.equalDistance, Color.green);
 		}
@@ -61,7 +77,7 @@ public class Preview : AbstractEditorTool<Sample> {
 		}
 	}
 
-	private void DrawDots(Rect rect, Vector2[] line, Color color){
+	private void DrawDots(Rect rect, IList<Vector2> line, Color color){
 		var circuit = NormilizedVerticles(line, rect);
 		for (int i = 1; i < circuit.Count; i++){
 			DrawPoint(rect, ToVector2(rect, circuit[i]), color);
@@ -101,7 +117,7 @@ public class Preview : AbstractEditorTool<Sample> {
 
 	#region Tools
 
-	private List<Vector2> NormilizedVerticles(Vector2[] verticles, Rect rect){
+	private List<Vector2> NormilizedVerticles(IEnumerable<Vector2> verticles, Rect rect){
 		List<Vector2> result = new List<Vector2>();
 
 		var min = verticles.Aggregate((v, res) => new Vector2(Mathf.Min(v.x, res.x), Mathf.Min(v.y, res.y)));

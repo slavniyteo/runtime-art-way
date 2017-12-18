@@ -28,7 +28,7 @@ public class TriangulateExample : MonoBehaviour, IBeginDragHandler, IEndDragHand
 
     [ContextMenu("Draw Lines")]
     public void DrawLines(){
-        verticles = preview.verticles.ToList();
+        verticles = new List<Vector2>(preview.verticles);
 
         UpdateCircuit();
     }
@@ -49,7 +49,7 @@ public class TriangulateExample : MonoBehaviour, IBeginDragHandler, IEndDragHand
     }
 
     void IEndDragHandler.OnEndDrag(PointerEventData eventData) {
-        preview.verticles = verticles.ToArray();
+        preview.verticles = new List<Vector2>(verticles);
 
         UpdateCircuit();
     }
@@ -60,17 +60,19 @@ public class TriangulateExample : MonoBehaviour, IBeginDragHandler, IEndDragHand
     public Transform parentPattern;
     private Transform parent;
     private void UpdateCircuit(){
-        var circuitPositions = circuitCalculator.Calculate(ref verticles, step).Select(x => (Vector3)x).ToArray();
-        circuit.positionCount = circuitPositions.Length;
-        circuit.SetPositions(circuitPositions);
-
+		var equalDistanceCloud = EqualDistanceUtil.Prepare(verticles, step);
         equalDistance.positionCount = verticles.Count;
         equalDistance.SetPositions(verticles.Select(x => (Vector3)x).ToArray());
 
-        preview.equalDistance = verticles.ToArray();
+        preview.equalDistance = new List<Vector2>(verticles);
+
+        var circuitPositions = circuitCalculator.Calculate(equalDistanceCloud, step);
+        circuit.positionCount = circuitPositions.Count;
+        circuit.SetPositions(circuitPositions.Select(x => (Vector3)x).ToArray());
+
         preview.circuit = circuitPositions.Select(x => (Vector2)x).ToArray();
 
-        for (int i = 0; i < circuitPositions.Length; i++){
+        for (int i = 0; i < circuitPositions.Count; i++){
             var verticle = circuitPositions[i];
             var instance = Instantiate(number.gameObject, verticle, Quaternion.identity);
             instance.SetActive(true);

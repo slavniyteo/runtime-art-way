@@ -78,7 +78,8 @@ public class CircuitCalculatorTest : BaseTest {
 
 	[Test, TestCaseSource(typeof(CalculateCircuitTestCwwSource))]
 	public void CalculateCircuitTestCWW(string name, List<Vector2> line, float distance, List<Vector2> expected){
-		var actual = new CircuitCalculator().Calculate(ref line, distance);
+		line = EqualDistanceUtil.Prepare(line, distance);
+		var actual = new CircuitCalculator().Calculate(line, distance);
 		AssertEqual(expected, actual);
 	}
 

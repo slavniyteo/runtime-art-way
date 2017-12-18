@@ -5,11 +5,9 @@ using UnityEngine;
 
 public class CircuitCalculator {
 
-	public List<Vector2> Calculate(ref List<Vector2> cloud, float step){
-		int count = cloud.Count;
-		cloud = EqualDistanceUtil.Prepare(cloud, step);
-		var cw = CwUtil.IsLineClockWise(cloud);
-		var result = FindCircuit(cloud, step*1.501f, cw);
+	public List<Vector2> Calculate(List<Vector2> equalDistanceCloud, float step){
+		var cw = CwUtil.IsLineClockWise(equalDistanceCloud);
+		var result = FindCircuit(equalDistanceCloud, step*1.501f, cw);
 		return result;
 	}
 

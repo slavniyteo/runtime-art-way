@@ -12,16 +12,34 @@ namespace RuntimeArtWay {
     }
     public class Layers : AbstractEditorTool<Sample>, ILayers {
 
+        private static readonly string EDITOR_PREFS_KEY = "ArtWindow_Layers_key";
+        private static readonly int DEFAULT_LAYERS = (int)(Layer.HandMade | Layer.MeshCircuit);
+
         public event ChangeLayersHandler onChange = (x, y) => {};
 
-        public Layer Value { get; private set; }
+        private bool isValueFixed;
+        private Layer fixedValue;
+        public Layer Value { 
+            get {
+                return isValueFixed ? fixedValue : (Layer) EditorPrefs.GetInt(EDITOR_PREFS_KEY, DEFAULT_LAYERS);
+            } 
+            private set {
+                if (isValueFixed) {
+                    fixedValue = value;
+                }
+                else {
+                    EditorPrefs.SetInt(EDITOR_PREFS_KEY, (int) value);
+                }
+            } 
+        }
 
         public Layers(Layer value){
+            isValueFixed = true;
             this.Value = value;
         }
 
         public Layers() {
-            Value = Layer.HandMade | Layer.MeshCircuit;
+            isValueFixed = false;
         }
 
         protected override void OnDraw(){

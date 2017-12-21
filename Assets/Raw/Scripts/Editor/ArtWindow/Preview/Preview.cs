@@ -8,6 +8,7 @@ using TriangleNet.Data;
 using TriangleNet.Tools;
 using TriangleNet.Geometry;
 using EditorWindowTools;
+using RectEx;
 
 namespace RuntimeArtWay {
 public class Preview : AbstractEditorTool<Sample> {
@@ -30,6 +31,12 @@ public class Preview : AbstractEditorTool<Sample> {
 		layers.onChange += OnLayersChange;
 
 		this.dotSize = dotSize;
+		
+		var materials = AssetDatabase.FindAssets("t:Material ArtWindowPreviewSample"); 
+		if (materials.Length > 0){
+			var path = AssetDatabase.GUIDToAssetPath(materials[0]);
+			material = (Material) AssetDatabase.LoadAssetAtPath(path, typeof(Material));
+		}
 	}
 
 	private void OnLayersChange(Layer oldValue, Layer newValue){
@@ -78,7 +85,7 @@ public class Preview : AbstractEditorTool<Sample> {
 		if (! target.HasCircuit) return;
 
 		var meshCircuit = NormilizedVerticles(target.circuit, factor);
-		var mesh = MeshGenerator.Generate(meshCircuit);
+		var mesh = ThirdPartyMeshGenerator.Generate(meshCircuit);
 
 		if ((layers.Value & Layer.MeshSegments) == Layer.MeshSegments){
 			DrawTriangles(rect, mesh);
@@ -88,7 +95,31 @@ public class Preview : AbstractEditorTool<Sample> {
 			DrawLine(rect, circuit, Color.magenta);
 		}
 		if ((layers.Value & Layer.MeshVerticles) == Layer.MeshVerticles){
-			DrawVerticles(rect, mesh);
+			// DrawVerticles(rect, mesh);
+			var trueMesh = new MeshGenerator(UvAlgorithm.Sequence).Generate(meshCircuit);
+			DrawMeshPreview(rect, trueMesh);
+		}
+	}
+
+	private Material material;
+
+	private void DrawMeshPreview(Rect rect, UnityEngine.Mesh mesh){
+		var materialRect = rect.CutFromBottom(20)[1].MoveDown();
+		
+		material = (Material) EditorGUI.ObjectField(materialRect, "material", material, typeof(Material), false);
+
+		if (material == null) return;
+
+		//For details see http://t-machine.org/index.php/2016/03/13/trying-to-paint-a-mesh-in-unity3d-so-hard-it-makes-you-hate-unity/
+
+		var position = new Vector2(
+			x: rect.position.x,
+			y: rect.position.y + rect.height
+		);
+		Matrix4x4 matrix = Matrix4x4.TRS(position, Quaternion.Euler(180,0,0), Vector3.one);
+
+		if (material.SetPass(0)){
+			Graphics.DrawMeshNow(mesh, matrix);
 		}
 	}
 

@@ -1,36 +1,43 @@
+using System;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
-using TriangleNet.Geometry;
 
 namespace RuntimeArtWay {
     public class MeshGenerator {
 
-        private static TriangleNet.Behavior Behavior = new TriangleNet.Behavior{
-                ConformingDelaunay = true,
-                NoBisect = 0
-            };
+        private IUvCalculator uvCalculator;
 
-        public static TriangleNet.Mesh Generate(List<Vector2> circuit) {
-            var mesh = new TriangleNet.Mesh(Behavior);
-
-            var geometry = GetGeometryFor(circuit);
-            mesh.Triangulate(geometry);
-
-            return mesh;
+        public MeshGenerator(UvAlgorithm algorithm){
+            switch (algorithm) {
+                case UvAlgorithm.Sequence : {
+                    uvCalculator = new SequenceUvCalculator();
+                    break;
+                }
+                default: {
+                    throw new NotImplementedException();
+                }
+            }
         }
 
-        private static InputGeometry GetGeometryFor(List<Vector2> circuit){
-            var result = new TriangleNet.Geometry.InputGeometry(circuit.Count);
-
-            circuit.ForEach(v => result.AddPoint(v.x, v.y));
-            for (int i = 0; i < circuit.Count - 1; i++){
-                result.AddSegment(i, i + 1, 1);
-            }
-
-            result.AddSegment(circuit.Count - 1, 0, 1);
+        public Mesh Generate(IEnumerable<Vector2> line){
+            var mesh = ThirdPartyMeshGenerator.Generate(line);
+            
+            var result = new Mesh();
+            result.vertices = CalculateVertices(mesh);
+            result.triangles = CalculateTriangles(mesh);
+            result.uv = uvCalculator.Calculate(mesh);
 
             return result;
         }
+
+        public static Vector3[] CalculateVertices(TriangleNet.Mesh mesh){
+            return mesh.Vertices.Select(x => new Vector3((float) x.X, (float) x.Y)).ToArray();
+        }
+
+        private static int[] CalculateTriangles(TriangleNet.Mesh mesh){
+            return mesh.Triangles.SelectMany(t => new int[]{t.P0, t.P1, t.P2}).ToArray();
+        }
+
     }
 }

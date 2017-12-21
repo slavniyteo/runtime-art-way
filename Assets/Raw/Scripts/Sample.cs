@@ -11,7 +11,7 @@ public class Sample : ScriptableObject {
 
     public List<Vector2> verticles = new List<Vector2>();
     public List<Vector2> equalDistance = new List<Vector2>();
-    public Vector2[] circuit = new Vector2[0];
+    public List<Vector2> circuit = new List<Vector2>();
 
 
     public bool IsDrawn { 
@@ -22,7 +22,7 @@ public class Sample : ScriptableObject {
         get { return equalDistance != null && equalDistance.Count > 0; }
     }
     public bool HasCircuit { 
-        get { return circuit != null && circuit.Length > 0; } 
+        get { return circuit != null && circuit.Count > 0; } 
     }
 }
 }

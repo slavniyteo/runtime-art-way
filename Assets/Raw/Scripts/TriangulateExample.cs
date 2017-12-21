@@ -56,7 +56,7 @@ public class TriangulateExample : MonoBehaviour, IBeginDragHandler, IEndDragHand
         circuit.positionCount = circuitPositions.Count;
         circuit.SetPositions(circuitPositions.Select(x => (Vector3)x).ToArray());
 
-        preview.circuit = circuitPositions.Select(x => (Vector2)x).ToArray();
+        preview.circuit = circuitPositions.Select(x => (Vector2)x).ToList();
     }
 }
 }

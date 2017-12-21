@@ -78,7 +78,9 @@ public class Drawer : AbstractEditorTool<Sample> {
 	}
 
 	private void MouseUp(MousePosition position){
-		target.equalDistance = EqualDistanceUtil.Prepare(target.verticles, 1f);
+		float step = 5;
+		target.equalDistance = EqualDistanceUtil.Prepare(target.verticles, step);
+		target.circuit = new CircuitCalculator().Calculate(target.equalDistance, step);
 		isDrawing = false;
 
 		onFinishDrawing();

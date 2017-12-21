@@ -19,7 +19,6 @@ public class Preview : AbstractEditorTool<Sample> {
 
 	private float dotSize;
 
-	private Func<Vector2, Vector2> factor;
 	private bool fixFactor = false;
 
 	public Preview(ILayers layers, float dotSize = 5) {
@@ -43,7 +42,6 @@ public class Preview : AbstractEditorTool<Sample> {
 	protected override void OnHide(){
 		drawer.Hide();
 
-		factor = null;
 		fixFactor = false;
 	}
 
@@ -63,7 +61,7 @@ public class Preview : AbstractEditorTool<Sample> {
 
 		if (! target.IsDrawn) return;
 
-		factor = Factor(rect, target.verticles);
+		var factor = Factor(rect, target.verticles);
 
 		if ((layers.Value & Layer.HandMade) == Layer.HandMade){
 			var verticles = NormilizedVerticles(target.verticles, factor);

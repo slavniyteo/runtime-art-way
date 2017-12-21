@@ -13,6 +13,8 @@ using RectEx;
 namespace RuntimeArtWay {
 public class Preview : AbstractEditorTool<Sample> {
 
+	public static readonly string MATERIAL_FILTER = "t:Material ArtWindowPreviewSample";
+
 	private Drawer drawer;
 
 	private ILayers layers;
@@ -32,7 +34,7 @@ public class Preview : AbstractEditorTool<Sample> {
 
 		this.dotSize = dotSize;
 		
-		var materials = AssetDatabase.FindAssets("t:Material ArtWindowPreviewSample"); 
+		var materials = AssetDatabase.FindAssets(MATERIAL_FILTER); 
 		if (materials.Length > 0){
 			var path = AssetDatabase.GUIDToAssetPath(materials[0]);
 			material = (Material) AssetDatabase.LoadAssetAtPath(path, typeof(Material));
@@ -95,8 +97,10 @@ public class Preview : AbstractEditorTool<Sample> {
 			DrawLine(rect, circuit, Color.magenta);
 		}
 		if ((layers.Value & Layer.MeshVerticles) == Layer.MeshVerticles){
-			// DrawVerticles(rect, mesh);
-			var trueMesh = new MeshGenerator(UvAlgorithm.Sequence).Generate(meshCircuit);
+			DrawVerticles(rect, mesh);
+		}
+		if ((layers.Value & Layer.Texture) == Layer.Texture){
+			var trueMesh = new MeshGenerator(UvAlgorithm.Mask).Generate(meshCircuit);
 			DrawMeshPreview(rect, trueMesh);
 		}
 	}

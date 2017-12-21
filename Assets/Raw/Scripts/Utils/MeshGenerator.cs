@@ -14,6 +14,10 @@ namespace RuntimeArtWay {
                     uvCalculator = new SequenceUvCalculator();
                     break;
                 }
+                case UvAlgorithm.Mask : {
+                    uvCalculator = new MaskUvCalculator();
+                    break;
+                }
                 default: {
                     throw new NotImplementedException();
                 }

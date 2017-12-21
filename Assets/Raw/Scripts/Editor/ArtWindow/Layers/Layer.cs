@@ -8,5 +8,6 @@ namespace RuntimeArtWay {
         MeshSegments = 4,
         MeshCircuit = 8,
         MeshVerticles = 16,
+        Texture = 32,
     }
 }

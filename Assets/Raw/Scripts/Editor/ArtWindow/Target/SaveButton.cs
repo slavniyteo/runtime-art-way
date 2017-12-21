@@ -12,14 +12,6 @@ namespace RuntimeArtWay {
         private GUIStyle namePersistent;
         private GUIStyle nameConflict;
 
-        private event Action<Sample, Sample> updateAsset;
-
-        public SaveButton(Action<Sample, Sample> updateAsset){
-            if (updateAsset == null) throw new ArgumentNullException("UpdateAsset event is null");
-
-            this.updateAsset = updateAsset;
-        }
-
         public void PrepareGUI(){
             nameTemporary = new GUIStyle(GUI.skin.box);
             nameTemporary.normal.background = TextureGenerator.GenerateBox(10, 10, Color.gray);
@@ -31,7 +23,9 @@ namespace RuntimeArtWay {
             nameConflict.normal.background = TextureGenerator.GenerateBox(10, 10, Color.cyan);
         }
 
-        public void Draw(Rect rect, Sample target){
+        public void Draw(Rect rect, Sample target, Action<Sample, Sample> updateAsset){
+            if (updateAsset == null) throw new ArgumentNullException("UpdateAsset event is null");
+
             bool isPersistent = EditorUtility.IsPersistent(target);
             var path = isPersistent 
                             ? AssetDatabase.GetAssetPath(target) 

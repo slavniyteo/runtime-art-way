@@ -30,10 +30,7 @@ namespace RuntimeArtWay {
         protected override void OnShow(){
             preview = new Preview(new Layers(Layer.HandMade), 2);
 
-            saveButton = new SaveButton((oldTarget, newTarget) => {
-                history.Remove(oldTarget);
-                Add(newTarget);
-            });
+            saveButton = new SaveButton();
 
             if (history == null) LoadSavedData();
         }
@@ -113,47 +110,77 @@ namespace RuntimeArtWay {
         }
 
         protected override void OnDraw(){
+            bool isModified = false;
+            Action onModify = () => isModified = true;
             int i = 0;
             foreach (var target in history) {
                 if (target == null) {
                     history.Remove(target);
-                    return;
+                    break;
                 }
 
-                var style = currentIndex == i ? backActive : backNormal;
-                GUILayout.Box("", style, GUILayout.MinHeight(50), GUILayout.ExpandWidth(true));
-
-                var rect = GUILayoutUtility.GetLastRect().Intend(1);
-                var rects = rect.CutFromLeft(50);
-
-                preview.StatelessDraw(rects[0].Intend(1), target);
-
-                DrawInfo(rects[1].Intend(1), i, target);
-
-                if (CheckSelection(rect, i, target)){
-                    return;
-                }
+                int count = history.Count;
+                DrawElement(i, target, onModify);
                 i++;
+
+                if (isModified){
+                    break;
+                }
             }
         }
 
-        private void DrawInfo(Rect rect, int index, Sample target){
+        private void DrawElement(int index, Sample target, Action onModify){
+            var style = currentIndex == index ? backActive : backNormal;
+            GUILayout.Box("", style, GUILayout.MinHeight(50), GUILayout.ExpandWidth(true));
+
+            var rect = GUILayoutUtility.GetLastRect().Intend(1);
+            var rects = rect.CutFromLeft(50);
+
+            preview.StatelessDraw(rects[0].Intend(1), target);
+
+            DrawInfo(rects[1].Intend(1), index, target, onModify);
+
+            CheckSelection(rect, index, target, onModify);
+        }
+
+        private void DrawInfo(Rect rect, int index, Sample target, Action onModify){
             rect.height = 18;
-            var rects = rect.CutFromRight(18);
+            var rects = rect.Row(
+                new float[]{1,  0,  0}, 
+                new float[]{0, 18, 18}
+            );
 
             target.name = GUI.TextField(rects[0], target.name);
 
-            saveButton.Draw(rects[1], target);
-        }
+            saveButton.Draw(rects[1], target, (oldTarget, newTarget) => {
+                history.Remove(oldTarget);
+                onModify();
 
-        private bool CheckSelection(Rect rect, int index, Sample target){
-            if (Event.current.type == EventType.MouseDown){
-                if (currentIndex != index && rect.Contains(Event.current.mousePosition)){
-                    onSelect(target);
-                    return true;
+                Add(newTarget);
+            });
+
+            if (GUI.Button(rects[2], "H")){
+                history.Remove(target);
+                onModify();
+
+                if (index == currentIndex){
+                    if (history.Count > 0){
+                        onSelect(history.First.Value);
+                    }
+                    else {
+                        onSelect(null);
+                    }
                 }
             }
-            return false;
+        }
+
+        private void CheckSelection(Rect rect, int index, Sample target, Action onModify){
+            if (Event.current.type != EventType.MouseDown) return;
+
+            if (currentIndex != index && rect.Contains(Event.current.mousePosition)){
+                onSelect(target);
+                onModify();
+            }
         }
 
     }

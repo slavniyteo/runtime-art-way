@@ -121,7 +121,7 @@ public class Preview : AbstractEditorTool<Sample> {
 
 	#region Tools
 
-	private Func<Vector2, Vector2> Factor(Rect rect, Vector2[] verticles){
+	private Func<Vector2, Vector2> Factor(Rect rect, IEnumerable<Vector2> verticles){
 		var min = verticles.Aggregate((v, res) => new Vector2(Mathf.Min(v.x, res.x), Mathf.Min(v.y, res.y)));
 		var max = verticles.Aggregate((v, res) => new Vector2(Mathf.Max(v.x, res.x), Mathf.Max(v.y, res.y)));
 		max = max - min;
@@ -135,7 +135,7 @@ public class Preview : AbstractEditorTool<Sample> {
 		};
 	}
 
-	private List<Vector2> NormilizedVerticles(Vector2[] verticles, Func<Vector2, Vector2> factor){
+	private List<Vector2> NormilizedVerticles(IEnumerable<Vector2> verticles, Func<Vector2, Vector2> factor){
 		return verticles.Select(factor).ToList();
 	}
 

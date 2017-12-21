@@ -15,12 +15,14 @@ public class Drawer : AbstractEditorTool<Sample> {
 	public event Action onStartDrawing = () => {};
 	public event Action onFinishDrawing = () => {};
 
+	private SampleBuilder builder;
+	private bool isDrawing { get { return builder != null; } }
+	private Rect rect;
+
 	public Drawer(){
 
 	}
 
-	private bool isDrawing;
-	private Rect rect;
 
 	public void Draw(Rect rect){
 		this.rect = rect;
@@ -64,8 +66,7 @@ public class Drawer : AbstractEditorTool<Sample> {
 
 		if (!position.IsInsideRect) return;
 
-		target.verticles.Add(position.Position);
-		isDrawing = true;
+		builder = SampleBuilder.UpdateSample(target, position.Position);
 
 		onStartDrawing();
 		Debug.Log("Begin");
@@ -73,17 +74,16 @@ public class Drawer : AbstractEditorTool<Sample> {
 
 	private void MouseDrag(MousePosition position){
 		if (!isDrawing) return;
-		target.verticles.Add(position.Position);
+
+		builder.Add(position.Position);
+
 		Debug.Log("Update");
 	}
 
 	private void MouseUp(MousePosition position){
 		if (!isDrawing) return;
 
-		float step = 5;
-		target.equalDistance = EqualDistanceUtil.Prepare(target.verticles, step);
-		target.circuit = new CircuitCalculator().Calculate(target.equalDistance, step);
-		isDrawing = false;
+		builder.Build(5);
 
 		onFinishDrawing();
 		Debug.Log("Finished");

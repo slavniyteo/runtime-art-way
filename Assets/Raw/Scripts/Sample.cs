@@ -13,7 +13,6 @@ public class Sample : ScriptableObject {
     public List<Vector2> equalDistance = new List<Vector2>();
     public List<Vector2> circuit = new List<Vector2>();
 
-
     public bool IsDrawn { 
         get { return verticles != null && verticles.Count > 0; } 
     }

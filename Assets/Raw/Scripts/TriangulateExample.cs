@@ -9,7 +9,6 @@ namespace RuntimeArtWay {
 [ExecuteInEditMode]
 public class TriangulateExample : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler {
 
-    public Sample preview;
     public LineRenderer line;
     public LineRenderer circuit;
     public LineRenderer equalDistance;
@@ -40,23 +39,19 @@ public class TriangulateExample : MonoBehaviour, IBeginDragHandler, IEndDragHand
     }
 
     void IEndDragHandler.OnEndDrag(PointerEventData eventData) {
-        preview.verticles = new List<Vector2>(verticles);
-
         UpdateCircuit();
     }
 
     private void UpdateCircuit(){
-		var equalDistanceCloud = EqualDistanceUtil.Prepare(verticles, step);
+        var sample = SampleBuilder.CreateSample(verticles, step);
+
+		var equalDistanceCloud = sample.equalDistance;
         equalDistance.positionCount = equalDistanceCloud.Count;
         equalDistance.SetPositions(equalDistanceCloud.Select(x => (Vector3)x).ToArray());
 
-        preview.equalDistance = new List<Vector2>(equalDistanceCloud);
-
-        var circuitPositions = circuitCalculator.Calculate(equalDistanceCloud, step);
+        var circuitPositions = sample.circuit;
         circuit.positionCount = circuitPositions.Count;
         circuit.SetPositions(circuitPositions.Select(x => (Vector3)x).ToArray());
-
-        preview.circuit = circuitPositions.Select(x => (Vector2)x).ToList();
     }
 }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,6 +11,9 @@ using EditorWindowTools;
 
 namespace RuntimeArtWay {
 public class Drawer : AbstractEditorTool<Sample> {
+
+	public event Action onStartDrawing = () => {};
+	public event Action onFinishDrawing = () => {};
 
 	public Drawer(){
 
@@ -62,6 +66,8 @@ public class Drawer : AbstractEditorTool<Sample> {
 
 		target.verticles.Add(position.Position);
 		isDrawing = true;
+
+		onStartDrawing();
 		Debug.Log("Begin");
 	}
 
@@ -74,6 +80,8 @@ public class Drawer : AbstractEditorTool<Sample> {
 	private void MouseUp(MousePosition position){
 		target.equalDistance = EqualDistanceUtil.Prepare(target.verticles, 1f);
 		isDrawing = false;
+
+		onFinishDrawing();
 		Debug.Log("Finished");
 	}
 

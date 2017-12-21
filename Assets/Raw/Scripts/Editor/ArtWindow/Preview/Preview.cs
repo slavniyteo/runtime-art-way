@@ -19,8 +19,13 @@ public class Preview : AbstractEditorTool<Sample> {
 
 	private float dotSize;
 
+	private Func<Vector2, Vector2> factor;
+	private bool fixFactor = false;
+
 	public Preview(ILayers layers, float dotSize = 5) {
 		drawer = new Drawer();
+		drawer.onStartDrawing += () => fixFactor = true;
+		drawer.onFinishDrawing += () => fixFactor = false;
 
 		this.layers = layers;
 		layers.onChange += OnLayersChange;
@@ -37,22 +42,28 @@ public class Preview : AbstractEditorTool<Sample> {
 
 	protected override void OnHide(){
 		drawer.Hide();
+
+		factor = null;
+		fixFactor = false;
 	}
 
 	#region Draw Mesh Preview
 
 	protected override void OnDraw(){
 		var rect = GUILayoutUtility.GetAspectRect(1);
+
 		drawer.Draw(rect);
 		StatelessDraw(rect, target);
 	}
 
 	public void StatelessDraw(Rect rect, Sample target){
+		if (Event.current.type == EventType.Layout) return;
+
 		EditorGUI.DrawRect(rect, Color.gray);
 
 		if (! target.IsDrawn) return;
 
-		var factor = Factor(rect, target.verticles);
+		factor = Factor(rect, target.verticles);
 
 		if ((layers.Value & Layer.HandMade) == Layer.HandMade){
 			var verticles = NormilizedVerticles(target.verticles, factor);
@@ -122,9 +133,18 @@ public class Preview : AbstractEditorTool<Sample> {
 	#region Tools
 
 	private Func<Vector2, Vector2> Factor(Rect rect, IEnumerable<Vector2> verticles){
-		var min = verticles.Aggregate((v, res) => new Vector2(Mathf.Min(v.x, res.x), Mathf.Min(v.y, res.y)));
-		var max = verticles.Aggregate((v, res) => new Vector2(Mathf.Max(v.x, res.x), Mathf.Max(v.y, res.y)));
-		max = max - min;
+		Vector2 min;
+		Vector2 max;
+
+		if (fixFactor) {
+			min = Vector2.zero;
+			max = rect.size;
+		}
+		else {
+			min = verticles.Aggregate((v, res) => new Vector2(Mathf.Min(v.x, res.x), Mathf.Min(v.y, res.y)));
+			max = verticles.Aggregate((v, res) => new Vector2(Mathf.Max(v.x, res.x), Mathf.Max(v.y, res.y)));
+			max = max - min;
+		}
 
 		return (pos) => {
 			Vector2 v = pos - min;

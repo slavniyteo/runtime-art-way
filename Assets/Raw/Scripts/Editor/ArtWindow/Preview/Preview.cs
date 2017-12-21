@@ -146,9 +146,14 @@ public class Preview : AbstractEditorTool<Sample> {
 
 		return (pos) => {
 			Vector2 v = pos - min;
+			var factor = new Vector2(
+				x:(rect.width - dotSize * 4) / max.x,
+				y:(rect.height - dotSize * 4) / max.y
+			);
+			var min_factor = Mathf.Min(factor.x, factor.y);
 			return new Vector2(
-				x: (v.x / max.x) * (rect.width - dotSize * 4) + dotSize * 2,
-				y: (v.y / max.y) * (rect.height - dotSize * 4) + dotSize * 2
+				x: v.x * min_factor + dotSize * 2,
+				y: v.y * min_factor + dotSize * 2
 			);
 		};
 	}

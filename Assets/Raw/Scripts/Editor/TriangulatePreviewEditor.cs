@@ -14,13 +14,18 @@ public class TriangulatePreviewEditor : Editor {
 
 	private new Sample target { get { return base.target as Sample; } }
 
+	private SettingsLoader settings;
+
 	private ToolBox<Sample> tools;
 	
 	public void OnEnable(){
+		settings = new SettingsLoader();
+		settings.Load();
+
 		var layers = new Layers();
 		tools = new ToolBox<Sample>(){
 			layers,
-			new Preview(layers)
+			new Preview(layers, () => settings.Value.PreviewMaterial)
 		};
 		tools.Show(target);
 	}

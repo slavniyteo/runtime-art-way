@@ -27,10 +27,16 @@ namespace RuntimeArtWay {
         private GUIStyle backNormal;
         private GUIStyle backActive;
 
-        protected override void OnShow(){
-            preview = new Preview(new Layers(Layer.HandMade), 2);
+        private Func<String> getStorePath;
 
-            saveButton = new SaveButton();
+        public History(Func<String> getStorePath){
+            this.getStorePath = getStorePath;
+        }
+
+        protected override void OnShow(){
+            preview = new Preview(new Layers(Layer.HandMade), null, 2);
+
+            saveButton = new SaveButton(getStorePath);
 
             if (history == null) LoadSavedData();
         }

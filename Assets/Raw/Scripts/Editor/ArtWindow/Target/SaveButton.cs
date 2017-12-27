@@ -12,6 +12,12 @@ namespace RuntimeArtWay {
         private GUIStyle namePersistent;
         private GUIStyle nameConflict;
 
+        private Func<String> getStorePath;
+
+        public SaveButton(Func<String> getStorePath){
+            this.getStorePath = getStorePath;
+        }
+
         public void PrepareGUI(){
             nameTemporary = new GUIStyle(GUI.skin.box);
             nameTemporary.normal.background = TextureGenerator.GenerateBox(10, 10, Color.gray);
@@ -29,7 +35,7 @@ namespace RuntimeArtWay {
             bool isPersistent = EditorUtility.IsPersistent(target);
             var path = isPersistent 
                             ? AssetDatabase.GetAssetPath(target) 
-                            : string.Format("Assets/{0}.asset", target.name);
+                            : string.Format("Assets/{0}/{1}.asset", getStorePath(), target.name);
             var objectAtPath = AssetDatabase.LoadAssetAtPath(path, typeof(Sample));
 
             if (objectAtPath != null) {

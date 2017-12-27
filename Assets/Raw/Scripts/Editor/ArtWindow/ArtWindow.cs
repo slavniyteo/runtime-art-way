@@ -15,6 +15,7 @@ namespace RuntimeArtWay {
         private Target target;
         private Sample Target { get { return target.Value; } }
         private IHistory history;
+        private ISettingsLoader settings;
 
         private IEditorTool<Sample> leftPanel;
         private IEditorTool<Sample> rightPanel;
@@ -24,9 +25,12 @@ namespace RuntimeArtWay {
             target = new Target();
             target.onChange += ShowAllTools;
             target.onReset += HideAllTools;
-            history = new History();
+            history = new History(() => settings.Value.StorePath);
             target.onChange += () => history.Add(Target);
             history.onSelect += x => target.Value = x;
+
+            settings = new SettingsLoader();
+            settings.Load();
 
             var layers = new Layers();
             leftPanel = new ToolBox<Sample>(){
@@ -36,7 +40,7 @@ namespace RuntimeArtWay {
                 history as IEditorTool<Sample>
             };
             
-            preview = new Preview(layers);
+            preview = new Preview(layers, () => settings.Value.PreviewMaterial);
 
             history.LoadSavedData();
         }

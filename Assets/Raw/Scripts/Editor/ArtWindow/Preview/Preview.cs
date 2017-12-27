@@ -13,8 +13,6 @@ using RectEx;
 namespace RuntimeArtWay {
 public class Preview : AbstractEditorTool<Sample> {
 
-	public static readonly string MATERIAL_FILTER = "t:Material ArtWindowPreviewSample";
-
 	private Drawer drawer;
 
 	private ILayers layers;
@@ -24,7 +22,10 @@ public class Preview : AbstractEditorTool<Sample> {
 
 	private bool fixFactor = false;
 
-	public Preview(ILayers layers, float dotSize = 5) {
+	private Func<Material> getMaterial;
+	private Material material { get { return getMaterial(); } }
+
+	public Preview(ILayers layers, Func<Material> getMaterial, float dotSize = 5) {
 		drawer = new Drawer();
 		drawer.onStartDrawing += () => fixFactor = true;
 		drawer.onFinishDrawing += () => fixFactor = false;
@@ -34,11 +35,7 @@ public class Preview : AbstractEditorTool<Sample> {
 
 		this.dotSize = dotSize;
 		
-		var materials = AssetDatabase.FindAssets(MATERIAL_FILTER); 
-		if (materials.Length > 0){
-			var path = AssetDatabase.GUIDToAssetPath(materials[0]);
-			material = (Material) AssetDatabase.LoadAssetAtPath(path, typeof(Material));
-		}
+		this.getMaterial = getMaterial;
 	}
 
 	private void OnLayersChange(Layer oldValue, Layer newValue){
@@ -105,12 +102,9 @@ public class Preview : AbstractEditorTool<Sample> {
 		}
 	}
 
-	private Material material;
 
 	private void DrawMeshPreview(Rect rect, UnityEngine.Mesh mesh){
 		var materialRect = rect.CutFromBottom(20)[1].MoveDown();
-		
-		material = (Material) EditorGUI.ObjectField(materialRect, "material", material, typeof(Material), false);
 
 		if (material == null) return;
 

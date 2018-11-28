@@ -159,13 +159,6 @@
             <e p="TriangleLocator.cs" t="Include" />
           </e>
         </e>
-        <e p="VSCode" t="Include">
-          <e p="Plugins" t="Include">
-            <e p="Editor" t="Include">
-              <e p="VSCode.cs" t="Include" />
-            </e>
-          </e>
-        </e>
       </e>
       <e p="Library" t="ExcludeRecursive" />
       <e p="obj" t="ExcludeRecursive" />

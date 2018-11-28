@@ -63,7 +63,8 @@ namespace RuntimeArtWay
 
         protected override void OnDraw()
         {
-            zoom = GUILayout.HorizontalSlider(zoom, 0.1f, 10);
+            target.Limit = EditorGUILayout.IntSlider("Limit", target.Limit, 1, target.Count);
+            zoom = EditorGUILayout.Slider("Zoom", zoom, 0.1f, 10);
             const int height = 500;
 
             var position = GUILayoutUtility.GetRect(-1, height);
@@ -91,7 +92,7 @@ namespace RuntimeArtWay
 
             if ((layers.Value & Layer.HandMade) == Layer.HandMade)
             {
-                var verticles = NormilizedVerticles(target.verticles, factor);
+                var verticles = NormilizedVerticles(target.Verticles, factor);
                 DrawDots(rect, verticles, Color.red);
             }
 
@@ -99,13 +100,13 @@ namespace RuntimeArtWay
 
             if ((layers.Value & Layer.Propogated) == Layer.Propogated)
             {
-                var equalDistance = NormilizedVerticles(target.equalDistance, factor);
+                var equalDistance = NormilizedVerticles(target.EqualDistance, factor);
                 DrawDots(rect, equalDistance, Color.green);
             }
 
             if (!target.HasCircuit) return;
 
-            var meshCircuit = NormilizedVerticles(target.circuit, factor);
+            var meshCircuit = NormilizedVerticles(target.Circuit, factor);
             var mesh = ThirdPartyMeshGenerator.Generate(meshCircuit);
 
             if ((layers.Value & Layer.MeshSegments) == Layer.MeshSegments)
@@ -115,7 +116,7 @@ namespace RuntimeArtWay
 
             if ((layers.Value & Layer.MeshCircuit) == Layer.MeshCircuit)
             {
-                var circuit = NormilizedVerticles(target.circuit, factor);
+                var circuit = NormilizedVerticles(target.Circuit, factor);
                 DrawLine(rect, circuit, Color.magenta);
             }
 

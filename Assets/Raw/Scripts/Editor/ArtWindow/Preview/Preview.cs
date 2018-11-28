@@ -1,14 +1,13 @@
 ﻿using System;
-using System.Collections;
-using System.Linq;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEditor;
-using TriangleNet.Data;
-using TriangleNet.Tools;
-using TriangleNet.Geometry;
+using System.Linq;
 using EditorWindowTools;
 using RectEx;
+using TriangleNet.Data;
+using UnityEditor;
+using UnityEditor.Experimental.UIElements.GraphView;
+using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace RuntimeArtWay
 {
@@ -21,14 +20,14 @@ namespace RuntimeArtWay
 
         private float dotSize;
 
-        private bool fixFactor = false;
+        private bool fixFactor;
+
+        private Vector2 scrollPosition;
+        private float zoom = 1;
 
         private Func<Material> getMaterial;
 
-        private Material material
-        {
-            get { return getMaterial(); }
-        }
+        private Material material => getMaterial();
 
         public Preview(ILayers layers, Func<Material> getMaterial, float dotSize = 5)
         {
@@ -64,10 +63,20 @@ namespace RuntimeArtWay
 
         protected override void OnDraw()
         {
-            var rect = GUILayoutUtility.GetAspectRect(1);
+            zoom = GUILayout.HorizontalSlider(zoom, 0.1f, 10);
+            const int height = 500;
 
-            drawer.Draw(rect);
-            StatelessDraw(rect, target);
+            var position = GUILayoutUtility.GetRect(-1, height);
+
+
+            var width = position.width - 20;
+            var viewRect = new Rect(position.position, new Vector2(width * zoom, width * zoom));
+
+            drawer.Draw(position);
+
+            scrollPosition = GUI.BeginScrollView(position, scrollPosition, viewRect);
+            StatelessDraw(viewRect, target);
+            GUI.EndScrollView();
         }
 
         public void StatelessDraw(Rect rect, Sample target)
@@ -123,7 +132,7 @@ namespace RuntimeArtWay
         }
 
 
-        private void DrawMeshPreview(Rect rect, UnityEngine.Mesh mesh)
+        private void DrawMeshPreview(Rect rect, Mesh mesh)
         {
             var materialRect = rect.CutFromBottom(20)[1].MoveDown();
 
@@ -209,7 +218,7 @@ namespace RuntimeArtWay
                 max = max - min;
             }
 
-            return (pos) =>
+            return pos =>
             {
                 Vector2 v = pos - min;
                 var factor = new Vector2(
@@ -251,7 +260,7 @@ namespace RuntimeArtWay
             Drawing.DrawLine(from, to, color, 2, false);
         }
 
-        private Vector2 ToVector2(Rect rect, TriangleNet.Data.Vertex vertex)
+        private Vector2 ToVector2(Rect rect, Vertex vertex)
         {
             return rect.position + new Vector2((float) vertex.X, rect.height - (float) vertex.Y) +
                    Vector2.one * dotSize / 2;

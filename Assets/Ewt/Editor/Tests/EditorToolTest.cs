@@ -5,127 +5,139 @@ using NUnit.Framework;
 using System.Collections;
 using System;
 
-namespace EditorWindowTools.Test {
-public class EditorToolTest {
+namespace EditorWindowTools.Test
+{
+    public class EditorToolTest
+    {
+        [Test]
+        public void IsActiveBeforeShow()
+        {
+            var tool = new AbstractEditorTool<string>();
+            Assert.IsFalse(tool.Active);
+        }
 
-	[Test]
-	public void IsActiveBeforeShow() {
-		var tool = new AbstractEditorTool<string>();
-		Assert.IsFalse(tool.Active);
-	}
+        [Test]
+        public void Show()
+        {
+            var tool = new AbstractEditorTool<string>();
+            var target = "I am target";
+            tool.Show(target);
 
-	[Test]
-	public void Show() {
-		var tool = new AbstractEditorTool<string>();
-		var target = "I am target";
-		tool.Show(target);
-		
-		Assert.AreEqual(target, tool.target);
-		Assert.IsTrue(tool.Active);
-	}
+            Assert.AreEqual(target, tool.target);
+            Assert.IsTrue(tool.Active);
+        }
 
-	[Test, ExpectedException(typeof(ArgumentException))]
-	public void ShowNullTarget() {
-		var tool = new AbstractEditorTool<string>();
-		tool.Show(null);
-	}
+        [Test, ExpectedException(typeof(ArgumentException))]
+        public void ShowNullTarget()
+        {
+            var tool = new AbstractEditorTool<string>();
+            tool.Show(null);
+        }
 
-	[Test]
-	public void ShowTwice() {
-		var tool = new AbstractEditorTool<string>();
-		var target = "I am target";
-		tool.Show(target);
-		var target2 = "I am another target";
-		tool.Show(target2);
+        [Test]
+        public void ShowTwice()
+        {
+            var tool = new AbstractEditorTool<string>();
+            var target = "I am target";
+            tool.Show(target);
+            var target2 = "I am another target";
+            tool.Show(target2);
 
-		Assert.AreEqual(target2, tool.target);
-	}
+            Assert.AreEqual(target2, tool.target);
+        }
 
-	[Test]
-	public void Hide() {
-		var tool = new AbstractEditorTool<string>();
-		var target = "I am target";
-		tool.Show(target);
-		tool.Hide();
-		
-		Assert.AreEqual(null, tool.target);
-		Assert.IsFalse(tool.Active);
-	}
+        [Test]
+        public void Hide()
+        {
+            var tool = new AbstractEditorTool<string>();
+            var target = "I am target";
+            tool.Show(target);
+            tool.Hide();
 
-	[Test]
-	public void HideBeforeShow() {
-		var tool = new DelegateEditorTool<string>();
-		int num = 0;
-		tool.onHide += () => num++;
-		tool.Hide();
-		
-		Assert.AreEqual(null, tool.target);
-		Assert.IsFalse(tool.Active);
-		Assert.AreEqual(0, num, "OnHide was called");
-	}
-	
-	[Test]
-	public void HideTwice() {
-		var tool = new DelegateEditorTool<string>();
-		var target = "I am target";
-		tool.Show(target);
+            Assert.AreEqual(null, tool.target);
+            Assert.IsFalse(tool.Active);
+        }
 
-		int num = 0;
-		tool.onHide += () => num++;
-		tool.Hide();
-		tool.Hide();
+        [Test]
+        public void HideBeforeShow()
+        {
+            var tool = new DelegateEditorTool<string>();
+            int num = 0;
+            tool.onHide += () => num++;
+            tool.Hide();
 
-		Assert.AreEqual(1, num, "OnHide was called twice");
-	}
+            Assert.AreEqual(null, tool.target);
+            Assert.IsFalse(tool.Active);
+            Assert.AreEqual(0, num, "OnHide was called");
+        }
 
-	[Test]
-	public void Draw() {
-		var tool = new AbstractEditorTool<string>();
-		var target = "I am target";
-		tool.Show(target);
-		tool.Draw();
-	}
+        [Test]
+        public void HideTwice()
+        {
+            var tool = new DelegateEditorTool<string>();
+            var target = "I am target";
+            tool.Show(target);
 
-	[Test, ExpectedException(typeof(InvalidOperationException))]
-	public void DrawInNotActive() {
-		var tool = new AbstractEditorTool<string>();
-		tool.Draw();
-	}
+            int num = 0;
+            tool.onHide += () => num++;
+            tool.Hide();
+            tool.Hide();
 
-	[Test]
-	public void OnShow(){
-		var tool = new DelegateEditorTool<string>();
-		var num = 0;
-		tool.onShow += () => num++; 
+            Assert.AreEqual(1, num, "OnHide was called twice");
+        }
 
-		tool.Show("I am target");
+        [Test]
+        public void Draw()
+        {
+            var tool = new AbstractEditorTool<string>();
+            var target = "I am target";
+            tool.Show(target);
+            tool.Draw();
+        }
 
-		Assert.AreEqual(1, num);
-	}
+        [Test, ExpectedException(typeof(InvalidOperationException))]
+        public void DrawInNotActive()
+        {
+            var tool = new AbstractEditorTool<string>();
+            tool.Draw();
+        }
 
-	[Test]
-	public void OnHide(){
-		var tool = new DelegateEditorTool<string>();
-		var num = 0;
-		tool.onHide += () => num++;
+        [Test]
+        public void OnShow()
+        {
+            var tool = new DelegateEditorTool<string>();
+            var num = 0;
+            tool.onShow += () => num++;
 
-		tool.Show("");
-		tool.Hide();
+            tool.Show("I am target");
 
-		Assert.AreEqual(1, num);
-	}
+            Assert.AreEqual(1, num);
+        }
 
-	[Test]
-	public void OnDraw (){
-		var tool = new DelegateEditorTool<string>();
-		var num = 0;
-		tool.onDraw += () => num++;
+        [Test]
+        public void OnHide()
+        {
+            var tool = new DelegateEditorTool<string>();
+            var num = 0;
+            tool.onHide += () => num++;
 
-		tool.Show("");
-		tool.Draw();
+            tool.Show("");
+            tool.Hide();
 
-		Assert.AreEqual(1, num);
-	}
+            Assert.AreEqual(1, num);
+        }
 
-}
+        [Test]
+        public void OnDraw()
+        {
+            var tool = new DelegateEditorTool<string>();
+            var num = 0;
+            tool.onDraw += () => num++;
+
+            tool.Show("");
+            tool.Draw();
+
+            Assert.AreEqual(1, num);
+        }
+    }
 }

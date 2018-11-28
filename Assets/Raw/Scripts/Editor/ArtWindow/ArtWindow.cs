@@ -3,17 +3,24 @@ using UnityEngine;
 using UnityEditor;
 using EditorWindowTools;
 
-namespace RuntimeArtWay {
-    public class ArtWindow : EditorWindow {
-
+namespace RuntimeArtWay
+{
+    public class ArtWindow : EditorWindow
+    {
         [MenuItem("ArtWay/ArtWindow")]
-        public static void ShowWindow(){
+        public static void ShowWindow()
+        {
             var window = EditorWindow.GetWindow<ArtWindow>();
             window.Show();
         }
 
         private Target target;
-        private Sample Target { get { return target.Value; } }
+
+        private Sample Target
+        {
+            get { return target.Value; }
+        }
+
         private IHistory history;
         private ISettingsLoader settings;
 
@@ -21,7 +28,8 @@ namespace RuntimeArtWay {
         private IEditorTool<Sample> rightPanel;
         private IEditorTool<Sample> preview;
 
-        public void OnEnable(){
+        public void OnEnable()
+        {
             target = new Target();
             target.onChange += ShowAllTools;
             target.onReset += HideAllTools;
@@ -33,35 +41,41 @@ namespace RuntimeArtWay {
             settings.Load();
 
             var layers = new Layers();
-            leftPanel = new ToolBox<Sample>(){
+            leftPanel = new ToolBox<Sample>()
+            {
                 layers
             };
-            rightPanel = new ToolBox<Sample>(){
+            rightPanel = new ToolBox<Sample>()
+            {
                 history as IEditorTool<Sample>
             };
-            
+
             preview = new Preview(layers, () => settings.Value.PreviewMaterial);
 
             history.LoadSavedData();
         }
 
-        public void OnDestroy(){
+        public void OnDestroy()
+        {
             HideAllTools();
         }
 
-        private void HideAllTools(){
+        private void HideAllTools()
+        {
             leftPanel.Hide();
             rightPanel.Hide();
             preview.Hide();
         }
 
-        private void ShowAllTools(){
+        private void ShowAllTools()
+        {
             leftPanel.Show(Target);
             rightPanel.Show(Target);
             preview.Show(Target);
         }
 
-        public void OnGUI(){
+        public void OnGUI()
+        {
             target.Draw();
             if (Target == null) return;
 
@@ -77,19 +91,22 @@ namespace RuntimeArtWay {
             GUILayout.EndVertical();
         }
 
-        private void DrawLeftPanel(){
+        private void DrawLeftPanel()
+        {
             GUILayout.BeginVertical(GUILayout.Width(200));
             leftPanel.Draw();
             GUILayout.EndVertical();
         }
 
-        private void DrawCenter(){
+        private void DrawCenter()
+        {
             GUILayout.BeginVertical(GUILayout.ExpandWidth(true));
             preview.Draw();
             GUILayout.EndVertical();
         }
 
-        private void DrawRightPanel(){
+        private void DrawRightPanel()
+        {
             GUILayout.BeginVertical(GUILayout.Width(300), GUILayout.ExpandWidth(true));
             rightPanel.Draw();
             GUILayout.EndVertical();

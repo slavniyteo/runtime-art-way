@@ -22,10 +22,12 @@ namespace TriangleNet.Geometry
         /// First vertex id of the triangle.
         /// </summary>
         int P0 { get; }
+
         /// <summary>
         /// Second vertex id of the triangle.
         /// </summary>
         int P1 { get; }
+
         /// <summary>
         /// Third vertex id of the triangle.
         /// </summary>
@@ -47,10 +49,12 @@ namespace TriangleNet.Geometry
         /// First neighbor.
         /// </summary>
         int N0 { get; }
+
         /// <summary>
         /// Second neighbor.
         /// </summary>
         int N1 { get; }
+
         /// <summary>
         /// Third neighbor.
         /// </summary>

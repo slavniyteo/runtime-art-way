@@ -43,7 +43,8 @@ namespace TriangleNet.Log
 
         public SimpleLogItem(LogLevel level, string message)
             : this(level, message, "")
-        { }
+        {
+        }
 
         public SimpleLogItem(LogLevel level, string message, string info)
         {

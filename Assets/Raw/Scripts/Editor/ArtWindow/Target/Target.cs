@@ -2,51 +2,60 @@ using System;
 using UnityEditor;
 using UnityEngine;
 
-namespace RuntimeArtWay {
-    public class Target {
-
-        public event Action onChange = () => {};
-        public event Action onReset = () => {};
+namespace RuntimeArtWay
+{
+    public class Target
+    {
+        public event Action onChange = () => { };
+        public event Action onReset = () => { };
 
         private Sample value;
-        public Sample Value { 
-            get {
-                return value;
-            }
-            set {
-                if (value != this.value) {
+
+        public Sample Value
+        {
+            get { return value; }
+            set
+            {
+                if (value != this.value)
+                {
                     this.value = value;
-                    if (value == null){
+                    if (value == null)
+                    {
                         onReset();
                     }
-                    else {
+                    else
+                    {
                         onChange();
                     }
                 }
             }
         }
 
-        public void Draw(){
+        public void Draw()
+        {
             DrawSelectLine();
 
-            if (Value == null) {
+            if (Value == null)
+            {
                 EditorGUILayout.HelpBox("Select a sample to work", MessageType.Info);
             }
         }
 
-        private void DrawSelectLine(){
+        private void DrawSelectLine()
+        {
             EditorGUILayout.BeginHorizontal();
 
-            if (GUILayout.Button("+", GUILayout.Width(20))){
+            if (GUILayout.Button("+", GUILayout.Width(20)))
+            {
                 Value = Sample.CreateInstance<Sample>();
                 Value.name = "New Sample";
             }
-            else {
+            else
+            {
                 Value = EditorGUILayout.ObjectField(Value, typeof(Sample), false) as Sample;
             }
 
             EditorGUILayout.EndHorizontal();
         }
-
     }
 }

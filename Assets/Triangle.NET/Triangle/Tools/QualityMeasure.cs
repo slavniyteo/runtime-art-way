@@ -270,10 +270,13 @@ namespace TriangleNet.Tools
         {
             // Minimum area
             public double area_min = double.MaxValue;
+
             // Maximum area
             public double area_max = -double.MaxValue;
+
             // Total area of geometry
             public double area_total = 0;
+
             // Nmber of triangles with zero area
             public int area_zero = 0;
 
@@ -328,10 +331,13 @@ namespace TriangleNet.Tools
         {
             // Minimum value over all triangles
             public double alpha_min;
+
             // Maximum value over all triangles
             public double alpha_max;
+
             // Value averaged over all triangles
             public double alpha_ave;
+
             // Value averaged over all triangles and weighted by area
             public double alpha_area;
 
@@ -477,10 +483,13 @@ namespace TriangleNet.Tools
         {
             // Minimum value over all triangles
             public double q_min;
+
             // Maximum value over all triangles
             public double q_max;
+
             // Average value
             public double q_ave;
+
             // Average value weighted by the area of each triangle
             public double q_area;
 

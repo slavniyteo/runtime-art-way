@@ -1,8 +1,10 @@
 using System;
 
-namespace RuntimeArtWay {
+namespace RuntimeArtWay
+{
     [Flags]
-    public enum Layer {
+    public enum Layer
+    {
         HandMade = 1,
         Propogated = 2,
         MeshSegments = 4,

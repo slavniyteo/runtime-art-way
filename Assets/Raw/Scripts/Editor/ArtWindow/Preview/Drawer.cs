@@ -9,114 +9,134 @@ using TriangleNet.Tools;
 using TriangleNet.Geometry;
 using EditorWindowTools;
 
-namespace RuntimeArtWay {
-public class Drawer : AbstractEditorTool<Sample> {
+namespace RuntimeArtWay
+{
+    public class Drawer : AbstractEditorTool<Sample>
+    {
+        public event Action onStartDrawing = () => { };
+        public event Action onFinishDrawing = () => { };
 
-	public event Action onStartDrawing = () => {};
-	public event Action onFinishDrawing = () => {};
+        private SampleBuilder builder;
 
-	private SampleBuilder builder;
-	private bool isDrawing { get { return builder != null; } }
-	private Rect rect;
+        private bool isDrawing
+        {
+            get { return builder != null; }
+        }
 
-	public Drawer(){
+        private Rect rect;
 
-	}
+        public Drawer()
+        {
+        }
 
 
-	public void Draw(Rect rect){
-		this.rect = rect;
+        public void Draw(Rect rect)
+        {
+            this.rect = rect;
 
-		Draw();
-	}
+            Draw();
+        }
 
-	protected override void OnDraw(){
-		var e = Event.current;
-		
-		if (!e.isMouse) {
-			return;
-		}
+        protected override void OnDraw()
+        {
+            var e = Event.current;
 
-		var position = new MousePosition(rect, e.mousePosition);
+            if (!e.isMouse)
+            {
+                return;
+            }
 
-		switch (e.type){
-			case EventType.MouseDown: {
-				MouseDown(position);
-				break;
-			}
-			case EventType.MouseDrag: {
-				MouseDrag(position);
-				break;
-			}
-			case EventType.MouseUp: {
-				MouseUp(position);
-				break;
-			}
-			default: {
-				Debug.Log("Hmmmm " + e.type);
-				break;
-			}
-		}
+            var position = new MousePosition(rect, e.mousePosition);
 
-	}
+            switch (e.type)
+            {
+                case EventType.MouseDown:
+                {
+                    MouseDown(position);
+                    break;
+                }
+                case EventType.MouseDrag:
+                {
+                    MouseDrag(position);
+                    break;
+                }
+                case EventType.MouseUp:
+                {
+                    MouseUp(position);
+                    break;
+                }
+                default:
+                {
+                    Debug.Log("Hmmmm " + e.type);
+                    break;
+                }
+            }
+        }
 
-	private void MouseDown(MousePosition position){
-		if (target.IsDrawn) return;
-		if (isDrawing) MouseUp(position);
+        private void MouseDown(MousePosition position)
+        {
+            if (target.IsDrawn) return;
+            if (isDrawing) MouseUp(position);
 
-		if (!position.IsInsideRect) return;
+            if (!position.IsInsideRect) return;
 
-		builder = SampleBuilder.UpdateSample(target, position.Position);
+            builder = SampleBuilder.UpdateSample(target, position.Position);
 
-		onStartDrawing();
-		Debug.Log("Begin");
-	}
+            onStartDrawing();
+            Debug.Log("Begin");
+        }
 
-	private void MouseDrag(MousePosition position){
-		if (!isDrawing) return;
+        private void MouseDrag(MousePosition position)
+        {
+            if (!isDrawing) return;
 
-		builder.Add(position.Position);
+            builder.Add(position.Position);
 
-		Debug.Log("Update");
-	}
+            Debug.Log("Update");
+        }
 
-	private void MouseUp(MousePosition position){
-		if (!isDrawing) return;
+        private void MouseUp(MousePosition position)
+        {
+            if (!isDrawing) return;
 
-		builder.Build(5);
+            builder.Build(5);
 
-		onFinishDrawing();
-		Debug.Log("Finished");
-	}
+            onFinishDrawing();
+            Debug.Log("Finished");
+        }
 
-	public class MousePosition{
-		public Vector2 Position { get; private set; }
-		public bool IsInsideRect { get; private set; }
+        public class MousePosition
+        {
+            public Vector2 Position { get; private set; }
+            public bool IsInsideRect { get; private set; }
 
-		public MousePosition(Rect rect, Vector2 position){
-			IsInsideRect = rect.Contains(position);
-			Position = getMousePosition(rect, position);
-		}
-		private Vector2 getMousePosition(Rect rect, Vector2 position){
-			var result = new Vector2(
-				x: position.x - rect.x,
-				y: rect.y + rect.height - position.y
-			);
+            public MousePosition(Rect rect, Vector2 position)
+            {
+                IsInsideRect = rect.Contains(position);
+                Position = getMousePosition(rect, position);
+            }
 
-			if (result.x < 0) result.x = 0;
-			if (result.x > rect.width) result.x = rect.width;
-			if (result.y < 0) result.y = 0;
-			if (result.y > rect.height) result.y = rect.height;
+            private Vector2 getMousePosition(Rect rect, Vector2 position)
+            {
+                var result = new Vector2(
+                    x: position.x - rect.x,
+                    y: rect.y + rect.height - position.y
+                );
 
-			return result;
-		}
+                if (result.x < 0) result.x = 0;
+                if (result.x > rect.width) result.x = rect.width;
+                if (result.y < 0) result.y = 0;
+                if (result.y > rect.height) result.y = rect.height;
 
-		private static float Between(float min, float value, float max){
-			if (value < min) value = min;
-			if (value > max) value = max;
-			return value;
-		}
-	}
+                return result;
+            }
 
-}
+            private static float Between(float min, float value, float max)
+            {
+                if (value < min) value = min;
+                if (value > max) value = max;
+                return value;
+            }
+        }
+    }
 }

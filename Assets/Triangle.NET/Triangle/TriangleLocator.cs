@@ -106,7 +106,7 @@ namespace TriangleNet
         /// However, it can still be used to find the circumcenter of a triangle, as
         /// long as the search is begun from the triangle in question.</remarks>
         public LocateResult PreciseLocate(Point searchpoint, ref Otri searchtri,
-                                        bool stopatsubsegment)
+            bool stopatsubsegment)
         {
             Otri backtracktri = default(Otri);
             Osub checkedge = default(Osub);
@@ -126,6 +126,7 @@ namespace TriangleNet
                     searchtri.LprevSelf();
                     return LocateResult.OnVertex;
                 }
+
                 // Does the point lie on the other side of the line defined by the
                 // triangle edge opposite the triangle's destination?
                 destorient = Primitives.CounterClockwise(forg, fapex, searchpoint);
@@ -164,11 +165,13 @@ namespace TriangleNet
                             searchtri.LprevSelf();
                             return LocateResult.OnEdge;
                         }
+
                         if (orgorient == 0.0)
                         {
                             searchtri.LnextSelf();
                             return LocateResult.OnEdge;
                         }
+
                         return LocateResult.InTriangle;
                     }
                 }
@@ -186,6 +189,7 @@ namespace TriangleNet
                     searchtri.Lnext(ref backtracktri);
                     forg = fapex;
                 }
+
                 backtracktri.Sym(ref searchtri);
 
                 if (mesh.checksegments && stopatsubsegment)
@@ -199,6 +203,7 @@ namespace TriangleNet
                         return LocateResult.Outside;
                     }
                 }
+
                 // Check for walking right out of the triangulation.
                 if (searchtri.triangle == Mesh.dummytri)
                 {
@@ -273,6 +278,7 @@ namespace TriangleNet
                         recenttri.Copy(ref searchtri);
                         return LocateResult.OnVertex;
                     }
+
                     dist = (searchpoint.X - torg.x) * (searchpoint.X - torg.x) +
                            (searchpoint.Y - torg.y) * (searchpoint.Y - torg.y);
                     if (dist < searchdist)
@@ -311,11 +317,13 @@ namespace TriangleNet
             {
                 return LocateResult.OnVertex;
             }
+
             if ((tdest.x == searchpoint.X) && (tdest.y == searchpoint.Y))
             {
                 searchtri.LnextSelf();
                 return LocateResult.OnVertex;
             }
+
             // Orient 'searchtri' to fit the preconditions of calling preciselocate().
             ahead = Primitives.CounterClockwise(torg, tdest, searchpoint);
             if (ahead < 0.0)
@@ -333,6 +341,7 @@ namespace TriangleNet
                     return LocateResult.OnEdge;
                 }
             }
+
             return PreciseLocate(searchpoint, ref searchtri, false);
         }
     }

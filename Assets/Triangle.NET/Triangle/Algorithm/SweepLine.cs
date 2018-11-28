@@ -31,7 +31,7 @@ namespace TriangleNet.Algorithm
         }
 
         Mesh mesh;
-        double xminextreme;      // Nonexistent x value used as a flag in sweepline.
+        double xminextreme; // Nonexistent x value used as a flag in sweepline.
         List<SplayNode> splaynodes;
 
         #region Heap
@@ -65,6 +65,7 @@ namespace TriangleNet.Algorithm
                     notdone = eventnum > 0;
                 }
             }
+
             heap[eventnum] = newevent;
             newevent.heapposition = eventnum;
         }
@@ -94,6 +95,7 @@ namespace TriangleNet.Algorithm
                 {
                     smallest = eventnum;
                 }
+
                 rightchild = leftchild + 1;
                 if (rightchild < heapsize)
                 {
@@ -104,6 +106,7 @@ namespace TriangleNet.Algorithm
                         smallest = rightchild;
                     }
                 }
+
                 if (smallest == eventnum)
                 {
                     notdone = false;
@@ -153,6 +156,7 @@ namespace TriangleNet.Algorithm
                     }
                 } while (notdone);
             }
+
             heap[eventnum] = moveevent;
             moveevent.heapposition = eventnum;
             Heapify(heap, heapsize - 1, eventnum);
@@ -177,7 +181,6 @@ namespace TriangleNet.Algorithm
                 evt.xkey = thisvertex.x;
                 evt.ykey = thisvertex.y;
                 HeapInsert(eventheap, i++, evt);
-                
             }
         }
 
@@ -197,6 +200,7 @@ namespace TriangleNet.Algorithm
             {
                 return null;
             }
+
             checkvertex = splaytree.keyedge.Dest();
             if (checkvertex == splaytree.keydest)
             {
@@ -210,10 +214,12 @@ namespace TriangleNet.Algorithm
                 {
                     child = splaytree.lchild;
                 }
+
                 if (child == null)
                 {
                     return splaytree;
                 }
+
                 checkvertex = child.keyedge.Dest();
                 if (checkvertex != child.keydest)
                 {
@@ -228,9 +234,11 @@ namespace TriangleNet.Algorithm
                         {
                             splaytree.lchild = null;
                         }
+
                         return splaytree;
                     }
                 }
+
                 rightofchild = RightOfHyperbola(ref child.keyedge, searchpoint);
                 if (rightofchild)
                 {
@@ -243,6 +251,7 @@ namespace TriangleNet.Algorithm
                     grandchild = Splay(child.lchild, searchpoint, ref searchtri);
                     child.lchild = grandchild;
                 }
+
                 if (grandchild == null)
                 {
                     if (rightofroot)
@@ -255,8 +264,10 @@ namespace TriangleNet.Algorithm
                         splaytree.lchild = child.rchild;
                         child.rchild = splaytree;
                     }
+
                     return child;
                 }
+
                 if (rightofchild)
                 {
                     if (rightofroot)
@@ -269,6 +280,7 @@ namespace TriangleNet.Algorithm
                         splaytree.lchild = grandchild.rchild;
                         grandchild.rchild = splaytree;
                     }
+
                     child.rchild = grandchild.lchild;
                     grandchild.lchild = child;
                 }
@@ -284,9 +296,11 @@ namespace TriangleNet.Algorithm
                         splaytree.lchild = child.rchild;
                         child.rchild = splaytree;
                     }
+
                     child.lchild = grandchild.rchild;
                     grandchild.rchild = child;
                 }
+
                 return grandchild;
             }
             else
@@ -323,6 +337,7 @@ namespace TriangleNet.Algorithm
                     {
                         leftright = leftright.rchild;
                     }
+
                     leftright.rchild = righttree;
                     return lefttree;
                 }
@@ -354,13 +369,14 @@ namespace TriangleNet.Algorithm
                 newsplaynode.rchild = splayroot;
                 splayroot.lchild = null;
             }
+
             return newsplaynode;
         }
 
         #endregion
 
         SplayNode CircleTopInsert(SplayNode splayroot, Otri newkey,
-                                  Vertex pa, Vertex pb, Vertex pc, double topy)
+            Vertex pa, Vertex pb, Vertex pc, double topy)
         {
             double ccwabc;
             double xac, yac, xbc, ybc;
@@ -405,6 +421,7 @@ namespace TriangleNet.Algorithm
                     return false;
                 }
             }
+
             dxa = leftvertex.x - newsite.x;
             dya = leftvertex.y - newsite.y;
             dxb = rightvertex.x - newsite.x;
@@ -450,7 +467,7 @@ namespace TriangleNet.Algorithm
         }
 
         SplayNode FrontLocate(SplayNode splayroot, Otri bottommost, Vertex searchvertex,
-                              ref Otri searchtri, ref bool farright)
+            ref Otri searchtri, ref bool farright)
         {
             bool farrightflag;
 
@@ -463,6 +480,7 @@ namespace TriangleNet.Algorithm
                 searchtri.OnextSelf();
                 farrightflag = searchtri.Equal(bottommost);
             }
+
             farright = farrightflag;
             return splayroot;
         }
@@ -510,6 +528,7 @@ namespace TriangleNet.Algorithm
                         }
                     }
                 }
+
                 // Remove a bounding triangle from a convex hull triangle.
                 dissolveedge.Dissolve();
                 // Find the next bounding triangle.
@@ -554,7 +573,7 @@ namespace TriangleNet.Algorithm
             splaynodes = new List<SplayNode>();
             splayroot = null;
 
-            CreateHeap(out eventheap);//, out events, out freeevents);
+            CreateHeap(out eventheap); //, out events, out freeevents);
             heapsize = mesh.invertices;
 
             mesh.MakeTriangle(ref lefttri);
@@ -577,6 +596,7 @@ namespace TriangleNet.Algorithm
                     SimpleLog.Instance.Error("Input vertices are all identical.", "SweepLine.SweepLineDelaunay()");
                     throw new Exception("Input vertices are all identical.");
                 }
+
                 secondvertex = eventheap[0].vertexEvent;
                 HeapDelete(eventheap, heapsize, 0);
                 heapsize--;
@@ -585,14 +605,16 @@ namespace TriangleNet.Algorithm
                 {
                     if (Behavior.Verbose)
                     {
-                        SimpleLog.Instance.Warning("A duplicate vertex appeared and was ignored.", 
+                        SimpleLog.Instance.Warning("A duplicate vertex appeared and was ignored.",
                             "SweepLine.SweepLineDelaunay().1");
                     }
+
                     secondvertex.type = VertexType.UndeadVertex;
                     mesh.undeads++;
                 }
             } while ((firstvertex.x == secondvertex.x) &&
                      (firstvertex.y == secondvertex.y));
+
             lefttri.SetOrg(firstvertex);
             lefttri.SetDest(secondvertex);
             righttri.SetOrg(secondvertex);
@@ -618,6 +640,7 @@ namespace TriangleNet.Algorithm
                     {
                         fliptri.Lprev(ref bottommost);
                     }
+
                     mesh.Flip(ref fliptri);
                     fliptri.SetApex(null);
                     fliptri.Lprev(ref lefttri);
@@ -630,7 +653,8 @@ namespace TriangleNet.Algorithm
                         leftvertex = fliptri.Dest();
                         midvertex = fliptri.Apex();
                         rightvertex = fliptri.Org();
-                        splayroot = CircleTopInsert(splayroot, lefttri, leftvertex, midvertex, rightvertex, nextevent.ykey);
+                        splayroot = CircleTopInsert(splayroot, lefttri, leftvertex, midvertex, rightvertex,
+                            nextevent.ykey);
                     }
                 }
                 else
@@ -641,9 +665,10 @@ namespace TriangleNet.Algorithm
                     {
                         if (Behavior.Verbose)
                         {
-                            SimpleLog.Instance.Warning("A duplicate vertex appeared and was ignored.", 
+                            SimpleLog.Instance.Warning("A duplicate vertex appeared and was ignored.",
                                 "SweepLine.SweepLineDelaunay().2");
                         }
+
                         nextvertex.type = VertexType.UndeadVertex;
                         mesh.undeads++;
                         check4events = false;
@@ -653,7 +678,7 @@ namespace TriangleNet.Algorithm
                         lastvertex = nextvertex;
 
                         splayroot = FrontLocate(splayroot, bottommost, nextvertex,
-                                                ref searchtri, ref farrightflag);
+                            ref searchtri, ref farrightflag);
                         //
                         bottommost.Copy(ref searchtri);
                         farrightflag = false;
@@ -717,6 +742,7 @@ namespace TriangleNet.Algorithm
                         heapsize++;
                         lefttri.SetOrg(new SweepEventVertex(newevent));
                     }
+
                     leftvertex = righttri.Apex();
                     midvertex = righttri.Org();
                     rightvertex = farrighttri.Apex();
@@ -755,10 +781,10 @@ namespace TriangleNet.Algorithm
         /// </remarks>
         class SweepEvent
         {
-            public double xkey, ykey;     // Coordinates of the event.
-            public Vertex vertexEvent;    // Vertex event.
-            public Otri otriEvent;        // Circle event.
-            public int heapposition;      // Marks this event's position in the heap.
+            public double xkey, ykey; // Coordinates of the event.
+            public Vertex vertexEvent; // Vertex event.
+            public Otri otriEvent; // Circle event.
+            public int heapposition; // Marks this event's position in the heap.
         }
 
         /// <summary>
@@ -794,9 +820,9 @@ namespace TriangleNet.Algorithm
         /// </remarks>
         class SplayNode
         {
-            public Otri keyedge;              // Lprev of an edge on the front.
-            public Vertex keydest;            // Used to verify that splay node is still live.
-            public SplayNode lchild, rchild;  // Children in splay tree.
+            public Otri keyedge; // Lprev of an edge on the front.
+            public Vertex keydest; // Used to verify that splay node is still live.
+            public SplayNode lchild, rchild; // Children in splay tree.
         }
 
         #endregion

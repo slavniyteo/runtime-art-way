@@ -311,7 +311,7 @@ namespace TriangleNet.Tools
                 key = a[offset + i];
                 ifree = i;
 
-                for (; ; )
+                for (;;)
                 {
                     // Positions 2*IFREE + 1 and 2*IFREE + 2 are the descendants of position
                     // IFREE.  (One or both may not exist because they equal or exceed N.)

@@ -17,8 +17,10 @@ namespace TriangleNet
     /// </summary>
     public static class Primitives
     {
-        static double splitter;       // Used to split double factors for exact multiplication.
-        static double epsilon;        // Floating-point machine epsilon.
+        static double splitter; // Used to split double factors for exact multiplication.
+
+        static double epsilon; // Floating-point machine epsilon.
+
         //static double resulterrbound;
         static double ccwerrboundA; // ccwerrboundB, ccwerrboundC;
         static double iccerrboundA; // iccerrboundB, iccerrboundC;
@@ -63,9 +65,11 @@ namespace TriangleNet
                 {
                     splitter *= 2.0;
                 }
+
                 every_other = !every_other;
                 check = 1.0 + epsilon;
             } while ((check != 1.0) && (check != lastcheck));
+
             splitter += 1.0;
             // Error bounds for orientation and incircle tests.
             //resulterrbound = (3.0 + 8.0 * epsilon) * epsilon;
@@ -147,7 +151,7 @@ namespace TriangleNet
                 return det;
             }
 
-            return (double)CounterClockwiseDecimal(pa, pb, pc);
+            return (double) CounterClockwiseDecimal(pa, pb, pc);
         }
 
         private static decimal CounterClockwiseDecimal(Point pa, Point pb, Point pc)
@@ -156,8 +160,8 @@ namespace TriangleNet
 
             decimal detleft, detright, det, detsum;
 
-            detleft = ((decimal)pa.x - (decimal)pc.x) * ((decimal)pb.y - (decimal)pc.y);
-            detright = ((decimal)pa.y - (decimal)pc.y) * ((decimal)pb.x - (decimal)pc.x);
+            detleft = ((decimal) pa.x - (decimal) pc.x) * ((decimal) pb.y - (decimal) pc.y);
+            detright = ((decimal) pa.y - (decimal) pc.y) * ((decimal) pb.x - (decimal) pc.x);
             det = detleft - detright;
 
             if (detleft > 0.0m)
@@ -238,8 +242,8 @@ namespace TriangleNet
             clift = cdx * cdx + cdy * cdy;
 
             det = alift * (bdxcdy - cdxbdy)
-                + blift * (cdxady - adxcdy)
-                + clift * (adxbdy - bdxady);
+                  + blift * (cdxady - adxcdy)
+                  + clift * (adxbdy - bdxady);
 
             if (Behavior.NoExact)
             {
@@ -247,15 +251,15 @@ namespace TriangleNet
             }
 
             permanent = (Math.Abs(bdxcdy) + Math.Abs(cdxbdy)) * alift
-                      + (Math.Abs(cdxady) + Math.Abs(adxcdy)) * blift
-                      + (Math.Abs(adxbdy) + Math.Abs(bdxady)) * clift;
+                        + (Math.Abs(cdxady) + Math.Abs(adxcdy)) * blift
+                        + (Math.Abs(adxbdy) + Math.Abs(bdxady)) * clift;
             errbound = iccerrboundA * permanent;
             if ((det > errbound) || (-det > errbound))
             {
                 return det;
             }
 
-            return (double)InCircleDecimal(pa, pb, pc, pd);
+            return (double) InCircleDecimal(pa, pb, pc, pd);
         }
 
         private static decimal InCircleDecimal(Point pa, Point pb, Point pc, Point pd)
@@ -266,12 +270,12 @@ namespace TriangleNet
             decimal bdxcdy, cdxbdy, cdxady, adxcdy, adxbdy, bdxady;
             decimal alift, blift, clift;
 
-            adx = (decimal)pa.x - (decimal)pd.x;
-            bdx = (decimal)pb.x - (decimal)pd.x;
-            cdx = (decimal)pc.x - (decimal)pd.x;
-            ady = (decimal)pa.y - (decimal)pd.y;
-            bdy = (decimal)pb.y - (decimal)pd.y;
-            cdy = (decimal)pc.y - (decimal)pd.y;
+            adx = (decimal) pa.x - (decimal) pd.x;
+            bdx = (decimal) pb.x - (decimal) pd.x;
+            cdx = (decimal) pc.x - (decimal) pd.x;
+            ady = (decimal) pa.y - (decimal) pd.y;
+            bdy = (decimal) pb.y - (decimal) pd.y;
+            cdy = (decimal) pc.y - (decimal) pd.y;
 
             bdxcdy = bdx * cdy;
             cdxbdy = cdx * bdy;
@@ -286,8 +290,8 @@ namespace TriangleNet
             clift = cdx * cdx + cdy * cdy;
 
             return alift * (bdxcdy - cdxbdy)
-                + blift * (cdxady - adxcdy)
-                + clift * (adxbdy - bdxady);
+                   + blift * (cdxady - adxcdy)
+                   + clift * (adxbdy - bdxady);
         }
 
         /// <summary>
@@ -321,7 +325,7 @@ namespace TriangleNet
         /// <param name="offconstant">Off-center constant.</param>
         /// <returns>Coordinates of the circumcenter (or off-center)</returns>
         public static Point FindCircumcenter(Point torg, Point tdest, Point tapex,
-                              ref double xi, ref double eta, double offconstant)
+            ref double xi, ref double eta, double offconstant)
         {
             double xdo, ydo, xao, yao;
             double dodist, aodist, dadist;
@@ -440,7 +444,7 @@ namespace TriangleNet
         /// shortest edge.
         /// </remarks>
         public static Point FindCircumcenter(Point torg, Point tdest, Point tapex,
-                              ref double xi, ref double eta)
+            ref double xi, ref double eta)
         {
             double xdo, ydo, xao, yao;
             double dodist, aodist;

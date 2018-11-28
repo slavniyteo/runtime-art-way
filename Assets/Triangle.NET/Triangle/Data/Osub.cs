@@ -32,6 +32,7 @@ namespace TriangleNet.Data
             {
                 return "O-TID [null]";
             }
+
             return String.Format("O-SID {0}", seg.hash);
         }
 

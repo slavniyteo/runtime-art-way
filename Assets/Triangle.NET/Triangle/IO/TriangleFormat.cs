@@ -55,7 +55,7 @@ namespace TriangleNet.IO
             {
                 return FileReader.ReadNodeFile(filename);
             }
-            
+
             if (ext == ".poly")
             {
                 return FileReader.ReadPolyFile(filename);

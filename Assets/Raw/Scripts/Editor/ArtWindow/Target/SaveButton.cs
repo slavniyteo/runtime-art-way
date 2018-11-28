@@ -5,20 +5,23 @@ using UnityEngine;
 using EditorWindowTools;
 using RectEx;
 
-namespace RuntimeArtWay {
-    public class SaveButton {
-
+namespace RuntimeArtWay
+{
+    public class SaveButton
+    {
         private GUIStyle nameTemporary;
         private GUIStyle namePersistent;
         private GUIStyle nameConflict;
 
         private Func<String> getStorePath;
 
-        public SaveButton(Func<String> getStorePath){
+        public SaveButton(Func<String> getStorePath)
+        {
             this.getStorePath = getStorePath;
         }
 
-        public void PrepareGUI(){
+        public void PrepareGUI()
+        {
             nameTemporary = new GUIStyle(GUI.skin.box);
             nameTemporary.normal.background = TextureGenerator.GenerateBox(10, 10, Color.gray);
 
@@ -29,28 +32,35 @@ namespace RuntimeArtWay {
             nameConflict.normal.background = TextureGenerator.GenerateBox(10, 10, Color.cyan);
         }
 
-        public void Draw(Rect rect, Sample target, Action<Sample, Sample> updateAsset){
+        public void Draw(Rect rect, Sample target, Action<Sample, Sample> updateAsset)
+        {
             if (updateAsset == null) throw new ArgumentNullException("UpdateAsset event is null");
 
             bool isPersistent = EditorUtility.IsPersistent(target);
-            var path = isPersistent 
-                            ? AssetDatabase.GetAssetPath(target) 
-                            : string.Format("Assets/{0}/{1}.asset", getStorePath(), target.name);
+            var path = isPersistent
+                ? AssetDatabase.GetAssetPath(target)
+                : string.Format("Assets/{0}/{1}.asset", getStorePath(), target.name);
             var objectAtPath = AssetDatabase.LoadAssetAtPath(path, typeof(Sample));
 
-            if (objectAtPath != null) {
-                if (objectAtPath == target){
+            if (objectAtPath != null)
+            {
+                if (objectAtPath == target)
+                {
                     GUI.Box(rect, "S", namePersistent);
                 }
-                else {
+                else
+                {
                     GUI.Box(rect, "S", nameConflict);
                 }
             }
-            else {
-                if (isPersistent){
+            else
+            {
+                if (isPersistent)
+                {
                     GUI.Box(rect, "S", namePersistent);
                 }
-                else if (GUI.Button(rect, "S", nameTemporary)){
+                else if (GUI.Button(rect, "S", nameTemporary))
+                {
                     AssetDatabase.CreateAsset(target, path);
                     AssetDatabase.ImportAsset(path);
                     var newTarget = AssetDatabase.LoadAssetAtPath(path, typeof(Sample)) as Sample;

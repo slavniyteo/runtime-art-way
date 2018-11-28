@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace EditorWindowTools {
-
-    public class AbstractEditorTool<T> : IEditorTool<T> {
-
+namespace EditorWindowTools
+{
+    public class AbstractEditorTool<T> : IEditorTool<T>
+    {
         internal T target { get; private set; }
         internal bool Active { get; private set; }
 
@@ -13,7 +13,8 @@ namespace EditorWindowTools {
 
         private bool guiPrepared = false;
 
-        public void Show(T target) {
+        public void Show(T target)
+        {
             if (target == null) throw new ArgumentException("Target must be not null");
 
             if (Active) Hide();
@@ -24,7 +25,8 @@ namespace EditorWindowTools {
             OnShow();
         }
 
-        public void Hide() {
+        public void Hide()
+        {
             bool needCallOnHide = Active;
 
             this.target = default(T);
@@ -32,15 +34,18 @@ namespace EditorWindowTools {
 
             guiPrepared = false;
 
-            if (needCallOnHide) {
+            if (needCallOnHide)
+            {
                 OnHide();
             }
         }
 
-        public void Draw() {
-            if (! Active) throw new InvalidOperationException("Can not draw while is not active");
+        public void Draw()
+        {
+            if (!Active) throw new InvalidOperationException("Can not draw while is not active");
 
-            if (!guiPrepared) {
+            if (!guiPrepared)
+            {
                 PrepareGUI();
                 guiPrepared = true;
             }
@@ -48,7 +53,8 @@ namespace EditorWindowTools {
             OnDraw();
         }
 
-        public void DrawOnce(T target){
+        public void DrawOnce(T target)
+        {
             Show(target);
             Draw();
             Hide();
@@ -56,20 +62,20 @@ namespace EditorWindowTools {
 
         #region Virtual
 
-        protected virtual void PrepareGUI(){
-
+        protected virtual void PrepareGUI()
+        {
         }
 
-        protected virtual void OnDraw() {
-
+        protected virtual void OnDraw()
+        {
         }
 
-        protected virtual void OnShow() {
-
+        protected virtual void OnShow()
+        {
         }
 
-        protected virtual void OnHide() {
-
+        protected virtual void OnHide()
+        {
         }
 
         protected virtual Overview Overview { get; }
@@ -80,15 +86,15 @@ namespace EditorWindowTools {
 
         #region Protected
 
-        protected void SetDirty() {
+        protected void SetDirty()
+        {
             throw new NotImplementedException();
         }
 
-        protected void SetUndo(Action undo) {
-
+        protected void SetUndo(Action undo)
+        {
         }
 
         #endregion
-
     }
 }

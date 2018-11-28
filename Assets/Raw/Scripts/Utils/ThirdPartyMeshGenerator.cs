@@ -3,15 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using TriangleNet.Geometry;
 
-namespace RuntimeArtWay {
-    public class ThirdPartyMeshGenerator {
+namespace RuntimeArtWay
+{
+    public class ThirdPartyMeshGenerator
+    {
+        private static TriangleNet.Behavior Behavior = new TriangleNet.Behavior
+        {
+            ConformingDelaunay = true,
+            NoBisect = 0
+        };
 
-        private static TriangleNet.Behavior Behavior = new TriangleNet.Behavior{
-                ConformingDelaunay = true,
-                NoBisect = 0
-            };
-
-        public static TriangleNet.Mesh Generate(IEnumerable<Vector2> circuit) {
+        public static TriangleNet.Mesh Generate(IEnumerable<Vector2> circuit)
+        {
             var mesh = new TriangleNet.Mesh(Behavior);
 
             var geometry = GetGeometryFor(circuit);
@@ -20,14 +23,17 @@ namespace RuntimeArtWay {
             return mesh;
         }
 
-        private static InputGeometry GetGeometryFor(IEnumerable<Vector2> circuit){
+        private static InputGeometry GetGeometryFor(IEnumerable<Vector2> circuit)
+        {
             var result = new TriangleNet.Geometry.InputGeometry(circuit.Count());
 
-            foreach (var v in circuit){
+            foreach (var v in circuit)
+            {
                 result.AddPoint(v.x, v.y);
             }
 
-            for (int i = 0; i < result.Count - 1; i++){
+            for (int i = 0; i < result.Count - 1; i++)
+            {
                 result.AddSegment(i, i + 1, 1);
             }
 

@@ -1,19 +1,20 @@
 using System;
 using UnityEngine;
 
-namespace EditorWindowTools {
-
+namespace EditorWindowTools
+{
     public delegate void ShortcutHandler();
 
-    public class Shortcuts {
-
-        public void RegisterShortcut(KeyCode shortcut, ShortcutHandler handler){
+    public class Shortcuts
+    {
+        public void RegisterShortcut(KeyCode shortcut, ShortcutHandler handler)
+        {
             throw new NotImplementedException();
         }
 
-        public void Check(){
+        public void Check()
+        {
             throw new NotImplementedException();
         }
-
     }
 }

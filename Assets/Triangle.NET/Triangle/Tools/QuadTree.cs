@@ -107,6 +107,7 @@ namespace TriangleNet.Tools
                 // Point is inside or on the edge of this triangle.
                 return true;
             }
+
             return false;
         }
 
@@ -130,7 +131,7 @@ namespace TriangleNet.Tools
 
         const double EPS = 1e-6;
 
-        static readonly byte[] BITVECTOR = { 0x1, 0x2, 0x4, 0x8 };
+        static readonly byte[] BITVECTOR = {0x1, 0x2, 0x4, 0x8};
 
         BoundingBox bounds;
         Point pivot;
@@ -176,6 +177,7 @@ namespace TriangleNet.Tools
             {
                 return triangles;
             }
+
             return regions[region].FindTriangles(searchPoint);
         }
 
@@ -272,6 +274,7 @@ namespace TriangleNet.Tools
                 {
                     FindIntersectionsWithX(dx, dy, triangle, index, k);
                 }
+
                 if (dy != 0.0)
                 {
                     FindIntersectionsWithY(dx, dy, triangle, index, k);
@@ -303,6 +306,7 @@ namespace TriangleNet.Tools
                     AddToRegion(index, NE);
                 }
             }
+
             // find intersection with plane x = m_boundingBox[0].dX
             t = (bounds.Xmin - triangle[k].X) / dx;
             if (t < (1 + EPS) && t > -EPS)
@@ -319,6 +323,7 @@ namespace TriangleNet.Tools
                     AddToRegion(index, NW);
                 }
             }
+
             // find intersection with plane x = m_boundingBox[1].dX
             t = (bounds.Xmax - triangle[k].X) / dx;
             if (t < (1 + EPS) && t > -EPS)
@@ -360,6 +365,7 @@ namespace TriangleNet.Tools
                     AddToRegion(index, NW);
                 }
             }
+
             // find intersection with plane y = m_boundingBox[0].dY
             t = (bounds.Ymin - triangle[k].Y) / dy;
             if (t < (1 + EPS) && t > -EPS)
@@ -376,6 +382,7 @@ namespace TriangleNet.Tools
                     AddToRegion(index, SE);
                 }
             }
+
             // find intersection with plane y = m_boundingBox[1].dY
             t = (bounds.Ymax - triangle[k].Y) / dy;
             if (t < (1 + EPS) && t > -EPS)
@@ -401,10 +408,12 @@ namespace TriangleNet.Tools
             {
                 b = 0;
             }
+
             if (point.X > pivot.X)
             {
                 b++;
             }
+
             return b;
         }
 

@@ -266,6 +266,7 @@ namespace TriangleNet.Tools
                                 perm[offset + l] = lperm;
                                 l = l - 1;
                             }
+
                             perm[offset + l] = nbr;
                         }
                     }
@@ -334,7 +335,7 @@ namespace TriangleNet.Tools
         ///    ACM Transactions on Mathematical Software,
         ///    Volume 2, pages 378-387, 1976.
         /// </remarks>
-        void FindRoot(ref int root, int[] mask, ref int level_num, int[] level_row, 
+        void FindRoot(ref int root, int[] mask, ref int level_num, int[] level_row,
             int[] level, int offset)
         {
             int[] adj_row = matrix.AdjacencyRow;
@@ -367,7 +368,7 @@ namespace TriangleNet.Tools
 
             // Pick any node from the last level that has minimum degree
             // as the starting point to generate a new level set.
-            for (; ; )
+            for (;;)
             {
                 mindeg = iccsze;
 
@@ -447,7 +448,7 @@ namespace TriangleNet.Tools
         ///    Computer Solution of Large Sparse Positive Definite Systems,
         ///    Prentice Hall, 1981.
         /// </remarks>
-        void GetLevelSet(ref int root, int[] mask, ref int level_num, int[] level_row, 
+        void GetLevelSet(ref int root, int[] mask, ref int level_num, int[] level_row,
             int[] level, int offset)
         {
             int[] adj_row = matrix.AdjacencyRow;
@@ -467,7 +468,7 @@ namespace TriangleNet.Tools
 
             // LBEGIN is the pointer to the beginning of the current level, and
             // LVLEND points to the end of this level.
-            for (; ; )
+            for (;;)
             {
                 lbegin = lvlend + 1;
                 lvlend = iccsze;
@@ -585,6 +586,7 @@ namespace TriangleNet.Tools
                             }
                         }
                     }
+
                     deg[node] = ideg;
                 }
 

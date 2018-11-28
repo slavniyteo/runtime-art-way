@@ -20,7 +20,7 @@ namespace TriangleNet.IO
 
         public InputTriangle(int p0, int p1, int p2)
         {
-            this.vertices = new int[] { p0, p1, p2 };
+            this.vertices = new int[] {p0, p1, p2};
         }
 
         #region Public properties

@@ -52,16 +52,17 @@ namespace TriangleNet.IO
 
         // Explicit static constructor to tell C# compiler
         // not to mark type as beforefieldinit
-        static DebugWriter() { }
+        static DebugWriter()
+        {
+        }
 
-        private DebugWriter() { }
+        private DebugWriter()
+        {
+        }
 
         public static DebugWriter Session
         {
-            get
-            {
-                return instance;
-            }
+            get { return instance; }
         }
 
         #endregion

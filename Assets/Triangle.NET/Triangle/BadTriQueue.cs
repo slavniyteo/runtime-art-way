@@ -22,7 +22,10 @@ namespace TriangleNet
     {
         static readonly double SQRT2 = 1.4142135623730950488016887242096980785696718753769480732;
 
-        public int Count { get { return this.count; } }
+        public int Count
+        {
+            get { return this.count; }
+        }
 
         // Variables that maintain the bad triangle queues.  The queues are
         // ordered from 4095 (highest priority) to 0 (lowest priority).
@@ -74,6 +77,7 @@ namespace TriangleNet
                 length = 1.0 / badtri.key;
                 posexponent = 0;
             }
+
             // 'length' is approximately 2.0 to what exponent?  The following code
             // determines the answer in time logarithmic in the exponent.
             exponent = 0;
@@ -87,10 +91,12 @@ namespace TriangleNet
                     expincrement *= 2;
                     multiplier *= multiplier;
                 }
+
                 // Reduce the value of 'length', then iterate if necessary.
                 exponent += expincrement;
                 length *= multiplier;
             }
+
             // 'length' is approximately squareroot(2.0) to what exponent?
             exponent = 2 * exponent + (length > SQRT2 ? 1 : 0);
             // 'exponent' is now in the range 0...2047 for IEEE double precision.
@@ -125,10 +131,12 @@ namespace TriangleNet
                     {
                         i++;
                     }
+
                     // Mark the newly nonempty queue as following a higher-priority queue.
                     nextnonemptyq[queuenumber] = nextnonemptyq[i];
                     nextnonemptyq[i] = queuenumber;
                 }
+
                 // Put the bad triangle at the beginning of the (empty) queue.
                 queuefront[queuenumber] = badtri;
             }
@@ -137,6 +145,7 @@ namespace TriangleNet
                 // Add the bad triangle to the end of an already nonempty queue.
                 queuetail[queuenumber].nexttriang = badtri;
             }
+
             // Maintain a pointer to the last triangle of the queue.
             queuetail[queuenumber] = badtri;
             // Newly enqueued bad triangle has no successor in the queue.

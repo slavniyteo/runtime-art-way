@@ -46,7 +46,7 @@ namespace TriangleNet.IO
                 line = reader.ReadLine().Trim();
             }
 
-            token = line.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+            token = line.Split(new char[] {' ', '\t'}, StringSplitOptions.RemoveEmptyEntries);
 
             return true;
         }

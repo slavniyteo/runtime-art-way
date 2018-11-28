@@ -5,30 +5,38 @@ using NUnit.Framework;
 using System.Collections;
 using System;
 
-namespace EditorWindowTools.Test {
-	public class DelegateEditorTool<T> : AbstractEditorTool<T> {
-		public event Action onShow;
-		protected override void OnShow(){
-			if (onShow != null) {
-				onShow();
-			}
-		}
+namespace EditorWindowTools.Test
+{
+    public class DelegateEditorTool<T> : AbstractEditorTool<T>
+    {
+        public event Action onShow;
 
-		public event Action onHide;
-		protected override void OnHide(){
-			if (onHide != null) {
-				onHide();
-			}
-		}
+        protected override void OnShow()
+        {
+            if (onShow != null)
+            {
+                onShow();
+            }
+        }
 
-		public event Action onDraw;
-		protected override void OnDraw(){
-			if (onDraw != null) {
-				onDraw();
-			}
-		}
+        public event Action onHide;
 
+        protected override void OnHide()
+        {
+            if (onHide != null)
+            {
+                onHide();
+            }
+        }
 
-	}
+        public event Action onDraw;
 
+        protected override void OnDraw()
+        {
+            if (onDraw != null)
+            {
+                onDraw();
+            }
+        }
+    }
 }

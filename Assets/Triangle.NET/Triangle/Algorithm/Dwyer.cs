@@ -80,6 +80,7 @@ namespace TriangleNet.Algorithm
                         sortarray[j + 1] = sortarray[j];
                         j--;
                     }
+
                     sortarray[j + 1] = a;
                 }
 
@@ -99,16 +100,15 @@ namespace TriangleNet.Algorithm
                 do
                 {
                     left++;
-                }
-                while ((left <= right) && ((sortarray[left].x < pivotx) ||
+                } while ((left <= right) && ((sortarray[left].x < pivotx) ||
                                              ((sortarray[left].x == pivotx) &&
                                               (sortarray[left].y < pivoty))));
+
                 // Search for a vertex whose x-coordinate is too small for the right.
                 do
                 {
                     right--;
-                }
-                while ((left <= right) && ((sortarray[right].x > pivotx) ||
+                } while ((left <= right) && ((sortarray[right].x > pivotx) ||
                                              ((sortarray[right].x == pivotx) &&
                                               (sortarray[right].y > pivoty))));
 
@@ -120,11 +120,13 @@ namespace TriangleNet.Algorithm
                     sortarray[right] = temp;
                 }
             }
+
             if (left > oleft)
             {
                 // Recursively sort the left subset.
                 VertexSort(oleft, left);
             }
+
             if (oright > right + 1)
             {
                 // Recursively sort the right subset.
@@ -164,8 +166,10 @@ namespace TriangleNet.Algorithm
                     sortarray[right] = sortarray[left];
                     sortarray[left] = temp;
                 }
+
                 return;
             }
+
             // Choose a random pivot to split the array.
             pivot = rand.Next(left, right); //left + arraysize / 2;
             pivot1 = sortarray[pivot][axis];
@@ -179,18 +183,18 @@ namespace TriangleNet.Algorithm
                 do
                 {
                     left++;
-                }
-                while ((left <= right) && ((sortarray[left][axis] < pivot1) ||
+                } while ((left <= right) && ((sortarray[left][axis] < pivot1) ||
                                              ((sortarray[left][axis] == pivot1) &&
                                               (sortarray[left][1 - axis] < pivot2))));
+
                 // Search for a vertex whose x-coordinate is too small for the right.
                 do
                 {
                     right--;
-                }
-                while ((left <= right) && ((sortarray[right][axis] > pivot1) ||
+                } while ((left <= right) && ((sortarray[right][axis] > pivot1) ||
                                              ((sortarray[right][axis] == pivot1) &&
                                               (sortarray[right][1 - axis] > pivot2))));
+
                 if (left < right)
                 {
                     // Swap the left and right vertices.
@@ -206,6 +210,7 @@ namespace TriangleNet.Algorithm
                 // Recursively shuffle the left subset.
                 VertexMedian(oleft, left - 1, median, axis);
             }
+
             if (right < median - 1)
             {
                 // Recursively shuffle the right subset.
@@ -238,6 +243,7 @@ namespace TriangleNet.Algorithm
                 // handled specially, and should always be sorted by x-coordinate.
                 axis = 0;
             }
+
             // Partition with a horizontal or vertical cut.
             VertexMedian(left, right, left + divider, axis);
             // Recursively partition the subsets with a cross cut.
@@ -247,6 +253,7 @@ namespace TriangleNet.Algorithm
                 {
                     AlternateAxes(left, left + divider - 1, 1 - axis);
                 }
+
                 AlternateAxes(left + divider, right, 1 - axis);
             }
         }
@@ -289,7 +296,7 @@ namespace TriangleNet.Algorithm
         /// vertex.
         /// </remarks>
         void MergeHulls(ref Otri farleft, ref Otri innerleft, ref Otri innerright,
-                        ref Otri farright, int axis)
+            ref Otri farright, int axis)
         {
             Otri leftcand = default(Otri), rightcand = default(Otri);
             Otri nextedge = default(Otri);
@@ -330,6 +337,7 @@ namespace TriangleNet.Algorithm
                     farleftpt = farleftapex;
                     farleftapex = farleft.Apex();
                 }
+
                 innerleft.Sym(ref checkedge);
                 checkvertex = checkedge.Apex();
                 while (checkvertex.y > innerleftdest.y)
@@ -340,6 +348,7 @@ namespace TriangleNet.Algorithm
                     innerleft.Sym(ref checkedge);
                     checkvertex = checkedge.Apex();
                 }
+
                 while (innerrightapex.y < innerrightorg.y)
                 {
                     innerright.LnextSelf();
@@ -347,6 +356,7 @@ namespace TriangleNet.Algorithm
                     innerrightorg = innerrightapex;
                     innerrightapex = innerright.Apex();
                 }
+
                 farright.Sym(ref checkedge);
                 checkvertex = checkedge.Apex();
                 while (checkvertex.y > farrightpt.y)
@@ -358,6 +368,7 @@ namespace TriangleNet.Algorithm
                     checkvertex = checkedge.Apex();
                 }
             }
+
             // Find a line tangent to and below both hulls.
             do
             {
@@ -371,6 +382,7 @@ namespace TriangleNet.Algorithm
                     innerleftapex = innerleft.Apex();
                     changemade = true;
                 }
+
                 // Make innerrightorg the "bottommost" vertex of the right hull.
                 if (Primitives.CounterClockwise(innerrightapex, innerrightorg, innerleftdest) > 0.0)
                 {
@@ -402,11 +414,13 @@ namespace TriangleNet.Algorithm
             {
                 baseedge.Lnext(ref farleft);
             }
+
             farrightpt = farright.Dest();
             if (innerrightorg == farrightpt)
             {
                 baseedge.Lprev(ref farright);
             }
+
             // The vertices of the current knitting edge.
             lowerleft = innerleftdest;
             lowerright = innerrightorg;
@@ -456,6 +470,7 @@ namespace TriangleNet.Algorithm
                             farleft.Sym(ref checkedge);
                             checkvertex = checkedge.Apex();
                         }
+
                         while (farrightapex.x > farrightpt.x)
                         {
                             farright.LprevSelf();
@@ -464,8 +479,10 @@ namespace TriangleNet.Algorithm
                             farrightapex = farright.Apex();
                         }
                     }
+
                     return;
                 }
+
                 // Consider eliminating edges from the left triangulation.
                 if (!leftfinished)
                 {
@@ -518,6 +535,7 @@ namespace TriangleNet.Algorithm
                         }
                     }
                 }
+
                 // Consider eliminating edges from the right triangulation.
                 if (!rightfinished)
                 {
@@ -570,8 +588,9 @@ namespace TriangleNet.Algorithm
                         }
                     }
                 }
+
                 if (leftfinished || (!rightfinished &&
-                       (Primitives.InCircle(upperleft, lowerleft, lowerright, upperright) > 0.0)))
+                                     (Primitives.InCircle(upperleft, lowerleft, lowerright, upperright) > 0.0)))
                 {
                     // Knit the triangulations, adding an edge from 'lowerleft'
                     // to 'upperright'.
@@ -616,7 +635,7 @@ namespace TriangleNet.Algorithm
         /// lowest rightmost vertex).
         /// </remarks>
         void DivconqRecurse(int left, int right, int axis,
-                            ref Otri farleft, ref Otri farright)
+            ref Otri farleft, ref Otri farright)
         {
             Otri midtri = default(Otri);
             Otri tri1 = default(Otri);
@@ -720,6 +739,7 @@ namespace TriangleNet.Algorithm
                         tri2.SetOrg(sortarray[left + 1]);
                         tri3.SetDest(sortarray[left + 1]);
                     }
+
                     // The topology does not depend on how the vertices are ordered.
                     midtri.Bond(ref tri1);
                     midtri.LnextSelf();
@@ -810,6 +830,7 @@ namespace TriangleNet.Algorithm
                         }
                     }
                 }
+
                 // Remove a bounding triangle from a convex hull triangle.
                 dissolveedge.Dissolve();
                 // Find the next bounding triangle.
@@ -848,6 +869,7 @@ namespace TriangleNet.Algorithm
             {
                 sortarray[i++] = v;
             }
+
             // Sort the vertices.
             //Array.Sort(sortarray);
             VertexSort(0, m.invertices - 1);
@@ -861,9 +883,10 @@ namespace TriangleNet.Algorithm
                     if (Behavior.Verbose)
                     {
                         SimpleLog.Instance.Warning(
-                            String.Format("A duplicate vertex appeared and was ignored (ID {0}).", sortarray[j].hash), 
+                            String.Format("A duplicate vertex appeared and was ignored (ID {0}).", sortarray[j].hash),
                             "DivConquer.DivconqDelaunay()");
                     }
+
                     sortarray[j].type = VertexType.UndeadVertex;
                     m.undeads++;
                 }
@@ -873,6 +896,7 @@ namespace TriangleNet.Algorithm
                     sortarray[i] = sortarray[j];
                 }
             }
+
             i++;
             if (useDwyer)
             {
@@ -884,12 +908,13 @@ namespace TriangleNet.Algorithm
                     {
                         AlternateAxes(0, divider - 1, 1);
                     }
+
                     AlternateAxes(divider, i - 1, 1);
                 }
             }
 
             // Form the Delaunay triangulation.
-            DivconqRecurse(0, i-1, 0, ref hullleft, ref hullright);
+            DivconqRecurse(0, i - 1, 0, ref hullleft, ref hullright);
 
             //DebugWriter.Session.Write(mesh);
             //DebugWriter.Session.Finish();

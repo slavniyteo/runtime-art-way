@@ -135,7 +135,11 @@ namespace TriangleNet
         public double MinAngle
         {
             get { return minAngle; }
-            set { minAngle = value; Update(); }
+            set
+            {
+                minAngle = value;
+                Update();
+            }
         }
 
         /// <summary>
@@ -144,7 +148,11 @@ namespace TriangleNet
         public double MaxAngle
         {
             get { return maxAngle; }
-            set { maxAngle = value; Update(); }
+            set
+            {
+                maxAngle = value;
+                Update();
+            }
         }
 
         /// <summary>

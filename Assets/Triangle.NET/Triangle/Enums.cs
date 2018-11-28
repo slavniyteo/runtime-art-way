@@ -23,7 +23,13 @@ namespace TriangleNet
     /// <remarks>The result of a search indicates that the point falls in the 
     /// interior of a triangle, on an edge, on a vertex, or outside the mesh.
     /// </remarks>
-    enum LocateResult { InTriangle, OnEdge, OnVertex, Outside };
+    enum LocateResult
+    {
+        InTriangle,
+        OnEdge,
+        OnVertex,
+        Outside
+    };
 
     /// <summary>
     /// Labels that signify the result of vertex insertion.
@@ -33,7 +39,13 @@ namespace TriangleNet
     /// because it lies on a segment, or was not inserted because another vertex 
     /// occupies the same location.
     /// </remarks>
-    enum InsertVertexResult { Successful, Encroaching, Violating, Duplicate };
+    enum InsertVertexResult
+    {
+        Successful,
+        Encroaching,
+        Violating,
+        Duplicate
+    };
 
     /// <summary>
     /// Labels that signify the result of direction finding.
@@ -42,15 +54,32 @@ namespace TriangleNet
     /// points falls within the direction triangle, along the left edge of the 
     /// direction triangle, or along the right edge of the direction triangle.
     /// </remarks>
-    enum FindDirectionResult { Within, Leftcollinear, Rightcollinear };
+    enum FindDirectionResult
+    {
+        Within,
+        Leftcollinear,
+        Rightcollinear
+    };
 
     /// <summary>
     /// The type of the mesh vertex.
     /// </summary>
-    public enum VertexType { InputVertex, SegmentVertex, FreeVertex, DeadVertex, UndeadVertex };
+    public enum VertexType
+    {
+        InputVertex,
+        SegmentVertex,
+        FreeVertex,
+        DeadVertex,
+        UndeadVertex
+    };
 
     /// <summary>
     /// Node renumbering algorithms.
     /// </summary>
-    public enum NodeNumbering { None, Linear, CuthillMcKee };
+    public enum NodeNumbering
+    {
+        None,
+        Linear,
+        CuthillMcKee
+    };
 }

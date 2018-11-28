@@ -75,6 +75,7 @@ namespace TriangleNet
                             {
                                 horg.mark = 1;
                             }
+
                             if (hdest.mark == 0)
                             {
                                 hdest.mark = 1;
@@ -82,6 +83,7 @@ namespace TriangleNet
                         }
                     }
                 }
+
                 // To find the next hull edge, go clockwise around the next vertex.
                 hulltri.LnextSelf();
                 hulltri.Oprev(ref nexttri);
@@ -90,7 +92,6 @@ namespace TriangleNet
                     nexttri.Copy(ref hulltri);
                     hulltri.Oprev(ref nexttri);
                 }
-
             } while (!hulltri.Equal(starttri));
         }
 
@@ -160,7 +161,8 @@ namespace TriangleNet
                         }
                     }
                     else
-                    {   // The neighbor exists and is not infected.
+                    {
+                        // The neighbor exists and is not infected.
                         if (neighborsubseg.seg == Mesh.dummysub)
                         {
                             // There is no subsegment protecting the neighbor, so
@@ -179,12 +181,14 @@ namespace TriangleNet
                             {
                                 neighborsubseg.seg.boundary = 1;
                             }
+
                             norg = neighbor.Org();
                             ndest = neighbor.Dest();
                             if (norg.mark == 0)
                             {
                                 norg.mark = 1;
                             }
+
                             if (ndest.mark == 0)
                             {
                                 ndest.mark = 1;
@@ -192,6 +196,7 @@ namespace TriangleNet
                         }
                     }
                 }
+
                 // Remark the triangle as infected, so it doesn't get added to the
                 // virus pool again.
                 testtri.Infect();
@@ -229,9 +234,11 @@ namespace TriangleNet
                                 // A live triangle.  The vertex survives.
                                 killorg = false;
                             }
+
                             // Walk counterclockwise about the vertex.
                             neighbor.OnextSelf();
                         }
+
                         // If we reached a boundary, we must walk clockwise as well.
                         if (neighbor.triangle == Mesh.dummytri)
                         {
@@ -250,10 +257,12 @@ namespace TriangleNet
                                     // A live triangle.  The vertex survives.
                                     killorg = false;
                                 }
+
                                 // Walk clockwise about the vertex.
                                 neighbor.OprevSelf();
                             }
                         }
+
                         if (killorg)
                         {
                             // Deleting vertex
@@ -284,6 +293,7 @@ namespace TriangleNet
                         mesh.hullsize++;
                     }
                 }
+
                 // Return the dead triangle to the pool of triangles.
                 mesh.TriangleDealloc(testtri.triangle);
             }

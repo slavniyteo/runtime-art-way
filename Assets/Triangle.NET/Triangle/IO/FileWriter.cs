@@ -322,13 +322,13 @@ namespace TriangleNet.IO
                                     else
                                     {
                                         writer.WriteLine("{0} {1} {2} {3}", index, p1.id, p2.id,
-                                                checkmark.seg.boundary);
+                                            checkmark.seg.boundary);
                                     }
                                 }
                                 else
                                 {
                                     writer.WriteLine("{0} {1} {2} {3}", index, p1.id, p2.id,
-                                            trisym.triangle == Mesh.dummytri ? "1" : "0");
+                                        trisym.triangle == Mesh.dummytri ? "1" : "0");
                                 }
                             }
                             else
@@ -436,6 +436,7 @@ namespace TriangleNet.IO
                         //writer.Write(" {0}", torg.attribs[i] + xi * (tdes.attribst[i] - torg.attribs[i]) + 
                         //    eta * (tapex.attribs[i] - torg.attribs[i]));
                     }
+
                     writer.WriteLine();
 
                     tri.triangle.id = index++;
@@ -473,8 +474,8 @@ namespace TriangleNet.IO
                                 // -1, and x and y coordinates of a vector representing the
                                 // direction of the ray.
                                 writer.WriteLine("{0} {1} -1 {2} {3}", index, p1,
-                                        (tdest[1] - torg[1]).ToString(nfi),
-                                        (torg[0] - tdest[0]).ToString(nfi));
+                                    (tdest[1] - torg[1]).ToString(nfi),
+                                    (torg[0] - tdest[0]).ToString(nfi));
                             }
                             else
                             {

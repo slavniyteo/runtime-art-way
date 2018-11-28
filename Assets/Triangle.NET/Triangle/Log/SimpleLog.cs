@@ -29,16 +29,17 @@ namespace TriangleNet.Log
 
         // Explicit static constructor to tell C# compiler
         // not to mark type as beforefieldinit
-        static SimpleLog() { }
+        static SimpleLog()
+        {
+        }
 
-        private SimpleLog() { }
+        private SimpleLog()
+        {
+        }
 
         public static ILog<SimpleLogItem> Instance
         {
-            get
-            {
-                return instance;
-            }
+            get { return instance; }
         }
 
         #endregion

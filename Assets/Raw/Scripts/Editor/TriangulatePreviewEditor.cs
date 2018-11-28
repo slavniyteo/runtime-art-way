@@ -8,37 +8,45 @@ using TriangleNet.Tools;
 using TriangleNet.Geometry;
 using EditorWindowTools;
 
-namespace RuntimeArtWay {
-[CustomEditor(typeof(Sample))]
-public class TriangulatePreviewEditor : Editor {
+namespace RuntimeArtWay
+{
+    [CustomEditor(typeof(Sample))]
+    public class TriangulatePreviewEditor : Editor
+    {
+        private new Sample target
+        {
+            get { return base.target as Sample; }
+        }
 
-	private new Sample target { get { return base.target as Sample; } }
+        private SettingsLoader settings;
 
-	private SettingsLoader settings;
+        private ToolBox<Sample> tools;
 
-	private ToolBox<Sample> tools;
-	
-	public void OnEnable(){
-		settings = new SettingsLoader();
-		settings.Load();
+        public void OnEnable()
+        {
+            settings = new SettingsLoader();
+            settings.Load();
 
-		var layers = new Layers();
-		tools = new ToolBox<Sample>(){
-			layers,
-			new Preview(layers, () => settings.Value.PreviewMaterial)
-		};
-		tools.Show(target);
-	}
+            var layers = new Layers();
+            tools = new ToolBox<Sample>()
+            {
+                layers,
+                new Preview(layers, () => settings.Value.PreviewMaterial)
+            };
+            tools.Show(target);
+        }
 
-	public void OnDestroy(){
-		tools.Hide();
-	}
+        public void OnDestroy()
+        {
+            tools.Hide();
+        }
 
-	public override void OnInspectorGUI(){
-		DrawDefaultInspector();
+        public override void OnInspectorGUI()
+        {
+            DrawDefaultInspector();
 
-		EditorGUILayout.Separator();
-		tools.Draw();
-	}
-}
+            EditorGUILayout.Separator();
+            tools.Draw();
+        }
+    }
 }

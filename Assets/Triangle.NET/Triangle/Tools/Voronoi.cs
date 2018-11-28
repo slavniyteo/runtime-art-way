@@ -229,7 +229,7 @@ namespace TriangleNet.Tools
             // Find the boundary segment id.
             f.SegPivot(ref sub);
             sid = sub.seg.hash;
-            
+
             if (rayPoints.ContainsKey(sid))
             {
                 vpoints.Add(rayPoints[sid]);

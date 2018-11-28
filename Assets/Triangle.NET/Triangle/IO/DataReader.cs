@@ -180,12 +180,14 @@ namespace TriangleNet.IO
                                 tri.Lprev(ref triangleleft);
                                 triangleleft.Bond(ref checktri);
                             }
+
                             if (tdest == checkapex)
                             {
                                 // The two triangles share an edge; bond them together.
                                 checktri.Lprev(ref checkleft);
                                 tri.Bond(ref checkleft);
                             }
+
                             // Find the next triangle in the stack.
                             index--;
                             nexttri = vertexarray[aroundvertex][index];
@@ -218,7 +220,8 @@ namespace TriangleNet.IO
                     {
                         if ((end[j] < 0) || (end[j] >= mesh.invertices))
                         {
-                            SimpleLog.Instance.Error("Segment has an invalid vertex index.", "MeshReader.Reconstruct()");
+                            SimpleLog.Instance.Error("Segment has an invalid vertex index.",
+                                "MeshReader.Reconstruct()");
                             throw new Exception("Segment has an invalid vertex index.");
                         }
                     }
@@ -273,8 +276,10 @@ namespace TriangleNet.IO
                                     mesh.InsertSubseg(ref checktri, 1);
                                     hullsize++;
                                 }
+
                                 notfound = false;
                             }
+
                             index--;
                             // Find the next triangle in the stack.
                             prevlink = vertexarray[aroundvertex][index];

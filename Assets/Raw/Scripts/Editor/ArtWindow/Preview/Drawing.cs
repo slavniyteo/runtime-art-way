@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 using UnityEngine;
- 
+
 // Line drawing routine originally courtesy of Linusmartensson:
 // http://forum.unity3d.com/threads/71979-Drawing-lines-in-the-editor
 //
@@ -17,7 +17,7 @@ using UnityEngine;
 //
 // For a graph of benchmark results in a standalone Windows build, see this image:
 // https://app.box.com/s/hyuhi565dtolqdm97e00
- 
+
 public static class Drawing
 {
     private static Texture2D aaLineTex = null;
@@ -25,7 +25,7 @@ public static class Drawing
     private static Material blitMaterial = null;
     private static Material blendMaterial = null;
     private static Rect lineRect = new Rect(0, 0, 1, 1);
- 
+
     // Draw a line in screen space, suitable for use from OnGUI calls from either
     // MonoBehaviour or EditorWindow. Note that this should only be called during repaint
     // events, when (Event.current.type == EventType.Repaint).
@@ -42,31 +42,31 @@ public static class Drawing
     // By working out the matrices and applying some trigonometry, the matrix calculation comes
     // out pretty simple. See https://app.box.com/s/xi08ow8o8ujymazg100j for a picture of my
     // notebook with the calculations.
-    public static void DrawLine(Vector2 pointA, Vector2 pointB, Color color, float width, 
-                                bool antiAlias)
+    public static void DrawLine(Vector2 pointA, Vector2 pointB, Color color, float width,
+        bool antiAlias)
     {
         // Normally the static initializer does this, but to handle texture reinitialization
         // after editor play mode stops we need this check in the Editor.
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         if (!lineTex)
         {
             Initialize();
         }
-        #endif
- 
+#endif
+
         // Note that theta = atan2(dy, dx) is the angle we want to rotate by, but instead
         // of calculating the angle we just use the sine (dy/len) and cosine (dx/len).
         float dx = pointB.x - pointA.x;
         float dy = pointB.y - pointA.y;
         float len = Mathf.Sqrt(dx * dx + dy * dy);
- 
+
         // Early out on tiny lines to avoid divide by zero.
         // Plus what's the point of drawing a line 1/1000th of a pixel long??
         if (len < 0.001f)
         {
             return;
         }
- 
+
         // Pick texture and material (and tweak width) based on anti-alias setting.
         Texture2D tex;
         Material mat;
@@ -83,10 +83,10 @@ public static class Drawing
             tex = lineTex;
             mat = blitMaterial;
         }
- 
+
         float wdx = width * dy / len;
         float wdy = width * dx / len;
- 
+
         Matrix4x4 matrix = Matrix4x4.identity;
         matrix.m00 = dx;
         matrix.m01 = -wdx;
@@ -94,7 +94,7 @@ public static class Drawing
         matrix.m10 = dy;
         matrix.m11 = wdy;
         matrix.m13 = pointA.y - 0.5f * wdy;
- 
+
         // Use GL matrix and Graphics.DrawTexture rather than GUI.matrix and GUI.DrawTexture,
         // for better performance. (Setting GUI.matrix is slow, and GUI.DrawTexture is just a
         // wrapper on Graphics.DrawTexture.)
@@ -103,33 +103,33 @@ public static class Drawing
         Graphics.DrawTexture(lineRect, tex, lineRect, 0, 0, 0, 0, color, mat);
         GL.PopMatrix();
     }
- 
-    public static void DrawBezierLine(Vector2 start, Vector2 startTangent, Vector2 end, 
-                                      Vector2 endTangent, Color color, float width, 
-                                      bool antiAlias, int segments)
+
+    public static void DrawBezierLine(Vector2 start, Vector2 startTangent, Vector2 end,
+        Vector2 endTangent, Color color, float width,
+        bool antiAlias, int segments)
     {
         Vector2 lastV = CubeBezier(start, startTangent, end, endTangent, 0);
         for (int i = 1; i < segments; ++i)
         {
-            Vector2 v = CubeBezier(start, startTangent, end, endTangent, i/(float)segments);
+            Vector2 v = CubeBezier(start, startTangent, end, endTangent, i / (float) segments);
             Drawing.DrawLine(lastV, v, color, width, antiAlias);
             lastV = v;
         }
     }
- 
+
     private static Vector2 CubeBezier(Vector2 s, Vector2 st, Vector2 e, Vector2 et, float t)
     {
         float rt = 1 - t;
         return rt * rt * rt * s + 3 * rt * rt * t * st + 3 * rt * t * t * et + t * t * t * e;
     }
- 
+
     // This static initializer works for runtime, but apparently isn't called when
     // Editor play mode stops, so DrawLine will re-initialize if needed.
     static Drawing()
     {
         Initialize();
     }
- 
+
     private static void Initialize()
     {
         if (lineTex == null)
@@ -138,6 +138,7 @@ public static class Drawing
             lineTex.SetPixel(0, 1, Color.white);
             lineTex.Apply();
         }
+
         if (aaLineTex == null)
         {
             aaLineTex = new Texture2D(1, 3, TextureFormat.ARGB32, false);
@@ -146,14 +147,14 @@ public static class Drawing
             aaLineTex.SetPixel(0, 2, new Color(1, 1, 1, 0));
             aaLineTex.Apply();
         }
- 
+
         // GUI.blitMaterial and GUI.blendMaterial are used internally by GUI.DrawTexture,
         // depending on the alphaBlend parameter. Use reflection to "borrow" these references.
-        blitMaterial = (Material)typeof(GUI).GetMethod(
-    "get_blitMaterial", 
-    BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, null);
-        blendMaterial = (Material)typeof(GUI).GetMethod(
-    "get_blendMaterial", 
-    BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, null);
+        blitMaterial = (Material) typeof(GUI).GetMethod(
+            "get_blitMaterial",
+            BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, null);
+        blendMaterial = (Material) typeof(GUI).GetMethod(
+            "get_blendMaterial",
+            BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, null);
     }
 }

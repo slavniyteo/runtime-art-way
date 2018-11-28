@@ -23,12 +23,14 @@ namespace TriangleNet.Tools
         /// Number of incircle tests performed.
         /// </summary>
         public static long InCircleCount = 0;
+
         public static long InCircleCountDecimal = 0;
 
         /// <summary>
         /// Number of counterclockwise tests performed.
         /// </summary>
         public static long CounterClockwiseCount = 0;
+
         public static long CounterClockwiseCountDecimal = 0;
 
         /// <summary>
@@ -61,131 +63,215 @@ namespace TriangleNet.Tools
         #region Properties
 
         double minEdge = 0;
+
         /// <summary>
         /// Gets the shortest edge.
         /// </summary>
-        public double ShortestEdge { get { return minEdge; } }
+        public double ShortestEdge
+        {
+            get { return minEdge; }
+        }
 
         double maxEdge = 0;
+
         /// <summary>
         /// Gets the longest edge.
         /// </summary>
-        public double LongestEdge { get { return maxEdge; } }
+        public double LongestEdge
+        {
+            get { return maxEdge; }
+        }
 
         //
         double minAspect = 0;
+
         /// <summary>
         /// Gets the shortest altitude.
         /// </summary>
-        public double ShortestAltitude { get { return minAspect; } }
+        public double ShortestAltitude
+        {
+            get { return minAspect; }
+        }
 
         double maxAspect = 0;
+
         /// <summary>
         /// Gets the largest aspect ratio.
         /// </summary>
-        public double LargestAspectRatio { get { return maxAspect; } }
+        public double LargestAspectRatio
+        {
+            get { return maxAspect; }
+        }
 
         double minArea = 0;
+
         /// <summary>
         /// Gets the smallest area.
         /// </summary>
-        public double SmallestArea { get { return minArea; } }
+        public double SmallestArea
+        {
+            get { return minArea; }
+        }
 
         double maxArea = 0;
+
         /// <summary>
         /// Gets the largest area.
         /// </summary>
-        public double LargestArea { get { return maxArea; } }
+        public double LargestArea
+        {
+            get { return maxArea; }
+        }
 
         double minAngle = 0;
+
         /// <summary>
         /// Gets the smallest angle.
         /// </summary>
-        public double SmallestAngle { get { return minAngle; } }
+        public double SmallestAngle
+        {
+            get { return minAngle; }
+        }
 
         double maxAngle = 0;
+
         /// <summary>
         /// Gets the largest angle.
         /// </summary>
-        public double LargestAngle { get { return maxAngle; } }
+        public double LargestAngle
+        {
+            get { return maxAngle; }
+        }
 
         int inVetrices = 0;
+
         /// <summary>
         /// Gets the number of input vertices.
         /// </summary>
-        public int InputVertices { get { return inVetrices; } }
+        public int InputVertices
+        {
+            get { return inVetrices; }
+        }
 
         int inTriangles = 0;
+
         /// <summary>
         /// Gets the number of input triangles.
         /// </summary>
-        public int InputTriangles { get { return inTriangles; } }
+        public int InputTriangles
+        {
+            get { return inTriangles; }
+        }
 
         int inSegments = 0;
+
         /// <summary>
         /// Gets the number of input segments.
         /// </summary>
-        public int InputSegments { get { return inSegments; } }
+        public int InputSegments
+        {
+            get { return inSegments; }
+        }
 
         int inHoles = 0;
+
         /// <summary>
         /// Gets the number of input holes.
         /// </summary>
-        public int InputHoles { get { return inHoles; } }
+        public int InputHoles
+        {
+            get { return inHoles; }
+        }
 
         int outVertices = 0;
+
         /// <summary>
         /// Gets the number of mesh vertices.
         /// </summary>
-        public int Vertices { get { return outVertices; } }
+        public int Vertices
+        {
+            get { return outVertices; }
+        }
 
         int outTriangles = 0;
+
         /// <summary>
         /// Gets the number of mesh triangles.
         /// </summary>
-        public int Triangles { get { return outTriangles; } }
+        public int Triangles
+        {
+            get { return outTriangles; }
+        }
 
         int outEdges = 0;
+
         /// <summary>
         /// Gets the number of mesh edges.
         /// </summary>
-        public int Edges { get { return outEdges; } }
+        public int Edges
+        {
+            get { return outEdges; }
+        }
 
         int boundaryEdges = 0;
+
         /// <summary>
         /// Gets the number of exterior boundary edges.
         /// </summary>
-        public int BoundaryEdges { get { return boundaryEdges; } }
+        public int BoundaryEdges
+        {
+            get { return boundaryEdges; }
+        }
 
         int intBoundaryEdges = 0;
+
         /// <summary>
         /// Gets the number of interior boundary edges.
         /// </summary>
-        public int InteriorBoundaryEdges { get { return intBoundaryEdges; } }
+        public int InteriorBoundaryEdges
+        {
+            get { return intBoundaryEdges; }
+        }
 
         int constrainedEdges = 0;
+
         /// <summary>
         /// Gets the number of constrained edges.
         /// </summary>
-        public int ConstrainedEdges { get { return constrainedEdges; } }
+        public int ConstrainedEdges
+        {
+            get { return constrainedEdges; }
+        }
 
         int[] angleTable;
+
         /// <summary>
         /// Gets the angle histogram.
         /// </summary>
-        public int[] AngleHistogram { get { return angleTable; } }
+        public int[] AngleHistogram
+        {
+            get { return angleTable; }
+        }
 
         int[] minAngles;
+
         /// <summary>
         /// Gets the min angles histogram.
         /// </summary>
-        public int[] MinAngleHistogram { get { return minAngles; } }
+        public int[] MinAngleHistogram
+        {
+            get { return minAngles; }
+        }
 
         int[] maxAngles;
+
         /// <summary>
         /// Gets the max angles histogram.
         /// </summary>
-        public int[] MaxAngleHistogram { get { return maxAngles; } }
+        public int[] MaxAngleHistogram
+        {
+            get { return maxAngles; }
+        }
 
         #endregion
 
@@ -197,9 +283,11 @@ namespace TriangleNet.Tools
             double[] ratiotable;
 
             aspecttable = new int[16];
-            ratiotable = new double[] { 
-                1.5, 2.0, 2.5, 3.0, 4.0, 6.0, 10.0, 15.0, 25.0, 50.0, 
-                100.0, 300.0, 1000.0, 10000.0, 100000.0, 0.0 };
+            ratiotable = new double[]
+            {
+                1.5, 2.0, 2.5, 3.0, 4.0, 6.0, 10.0, 15.0, 25.0, 50.0,
+                100.0, 300.0, 1000.0, 10000.0, 100000.0, 0.0
+            };
 
 
             Otri tri = default(Otri);
@@ -238,7 +326,7 @@ namespace TriangleNet.Tools
 
                 //triarea = Primitives.CounterClockwise(p[0], p[1], p[2]);
                 triarea = Math.Abs((p[2].x - p[0].x) * (p[1].y - p[0].y) -
-                    (p[1].x - p[0].x) * (p[2].y - p[0].y)) / 2.0;
+                                   (p[1].x - p[0].x) * (p[2].y - p[0].y)) / 2.0;
 
                 triminaltitude2 = triarea * triarea / trilongest2;
 
@@ -249,14 +337,15 @@ namespace TriangleNet.Tools
                 {
                     aspectindex++;
                 }
+
                 aspecttable[aspectindex]++;
             }
         }
 
         #endregion
 
-        static readonly int[] plus1Mod3 = { 1, 2, 0 };
-        static readonly int[] minus1Mod3 = { 2, 0, 1 };
+        static readonly int[] plus1Mod3 = {1, 2, 0};
+        static readonly int[] minus1Mod3 = {2, 0, 1};
 
         /// <summary>
         /// Update statistics about the quality of the mesh.
@@ -270,9 +359,9 @@ namespace TriangleNet.Tools
             inHoles = mesh.holes.Count;
             outVertices = mesh.vertices.Count - mesh.undeads;
             outTriangles = mesh.triangles.Count;
-            outEdges = (int)mesh.edges;
-            boundaryEdges = (int)mesh.hullsize;
-            intBoundaryEdges = mesh.subsegs.Count - (int)mesh.hullsize;
+            outEdges = (int) mesh.edges;
+            boundaryEdges = (int) mesh.hullsize;
+            intBoundaryEdges = mesh.subsegs.Count - (int) mesh.hullsize;
             constrainedEdges = mesh.subsegs.Count;
 
             Point[] p = new Point[3];
@@ -308,6 +397,7 @@ namespace TriangleNet.Tools
                 cosSquareTable[i] = Math.Cos(radconst * (i + 1));
                 cosSquareTable[i] = cosSquareTable[i] * cosSquareTable[i];
             }
+
             for (int i = 0; i < sampleDegrees; i++)
             {
                 angleTable[i] = 0;
@@ -367,7 +457,7 @@ namespace TriangleNet.Tools
 
                 //triarea = Primitives.CounterClockwise(p[0], p[1], p[2]);
                 triArea = Math.Abs((p[2].X - p[0].X) * (p[1].Y - p[0].Y) -
-                    (p[1].X - p[0].X) * (p[2].Y - p[0].Y));
+                                   (p[1].X - p[0].X) * (p[2].Y - p[0].Y));
 
                 if (triArea < minArea)
                 {
@@ -415,6 +505,7 @@ namespace TriangleNet.Tools
                         {
                             minAngle = cosSquare;
                         }
+
                         if (acuteBiggest && (cosSquare < maxAngle))
                         {
                             maxAngle = cosSquare;
@@ -425,6 +516,7 @@ namespace TriangleNet.Tools
                         {
                             triMinAngle = cosSquare;
                         }
+
                         if (acuteBiggestTri && (cosSquare < triMaxAngle))
                         {
                             triMaxAngle = cosSquare;
@@ -458,6 +550,7 @@ namespace TriangleNet.Tools
                         degreeStep = j;
                     }
                 }
+
                 minAngles[degreeStep]++;
 
                 // Update max angle histogram

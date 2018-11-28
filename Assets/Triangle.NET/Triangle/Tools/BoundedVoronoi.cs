@@ -358,8 +358,7 @@ namespace TriangleNet.Tools
 
                 // Call f_next the next triangle counterclockwise around x
                 f_next.OnextSelf();
-            }
-            while (!f.Equal(f_init));
+            } while (!f.Equal(f_init));
 
             // Output: Bounded Voronoi cell of x in counterclockwise order.
             region.Add(vpoints);
@@ -392,6 +391,7 @@ namespace TriangleNet.Tools
             {
                 throw new Exception("ConstructBoundaryBvdCell: inconsistent topology.");
             }
+
             // Let f be initialized to f_init
             f_init.Copy(ref f);
             // Call f_next the next triangle counterclockwise around x
@@ -580,8 +580,7 @@ namespace TriangleNet.Tools
 
                 // Call f_next the next triangle counterclockwise around x
                 f_next.OnextSelf();
-            }
-            while (!f.Equal(f_init));
+            } while (!f.Equal(f_init));
 
             // Output: Bounded Voronoi cell of x in counterclockwise order.
             region.Add(vpoints);
@@ -616,15 +615,18 @@ namespace TriangleNet.Tools
 
             //  Fail if the segments share an end-point.
             if (Ax == Cx && Ay == Cy || Bx == Cx && By == Cy
-            || Ax == Dx && Ay == Dy || Bx == Dx && By == Dy)
+                                     || Ax == Dx && Ay == Dy || Bx == Dx && By == Dy)
             {
                 return false;
             }
 
             //  (1) Translate the system so that point A is on the origin.
-            Bx -= Ax; By -= Ay;
-            Cx -= Ax; Cy -= Ay;
-            Dx -= Ax; Dy -= Ay;
+            Bx -= Ax;
+            By -= Ay;
+            Cx -= Ax;
+            Cy -= Ay;
+            Dx -= Ax;
+            Dy -= Ay;
 
             //  Discover the length of segment A-B.
             distAB = Math.Sqrt(Bx * Bx + By * By);
@@ -633,9 +635,11 @@ namespace TriangleNet.Tools
             theCos = Bx / distAB;
             theSin = By / distAB;
             newX = Cx * theCos + Cy * theSin;
-            Cy = Cy * theCos - Cx * theSin; Cx = newX;
+            Cy = Cy * theCos - Cx * theSin;
+            Cx = newX;
             newX = Dx * theCos + Dy * theSin;
-            Dy = Dy * theCos - Dx * theSin; Dx = newX;
+            Dy = Dy * theCos - Dx * theSin;
+            Dx = newX;
 
             //  Fail if segment C-D doesn't cross line A-B.
             if (Cy < 0 && Dy < 0 || Cy >= 0 && Dy >= 0 && strictIntersect) return false;

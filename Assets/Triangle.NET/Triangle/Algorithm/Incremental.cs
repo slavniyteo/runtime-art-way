@@ -37,10 +37,12 @@ namespace TriangleNet.Algorithm
             {
                 width = box.Height;
             }
+
             if (width == 0.0)
             {
                 width = 1.0;
             }
+
             // Create the vertices of the bounding box.
             mesh.infvertex1 = new Vertex(box.Xmin - 50.0 * width, box.Ymin - 40.0 * width);
             mesh.infvertex2 = new Vertex(box.Xmax + 50.0 * width, box.Ymin - 40.0 * width);
@@ -101,6 +103,7 @@ namespace TriangleNet.Algorithm
                 searchedge.LprevSelf();
                 searchedge.SymSelf();
             }
+
             // Find a new boundary edge to search from, as the current search
             // edge lies on a bounding box triangle and will be deleted.
             Mesh.dummytri.neighbors[0] = searchedge;
@@ -127,6 +130,7 @@ namespace TriangleNet.Algorithm
                         }
                     }
                 }
+
                 // Disconnect the bounding box triangle from the mesh triangle.
                 dissolveedge.Dissolve();
                 nextedge.Lnext(ref deadtriangle);
@@ -140,6 +144,7 @@ namespace TriangleNet.Algorithm
                     dissolveedge.Copy(ref nextedge);
                 }
             }
+
             mesh.TriangleDealloc(finaledge.triangle);
 
             return hullsize;
@@ -167,13 +172,15 @@ namespace TriangleNet.Algorithm
                 {
                     if (Behavior.Verbose)
                     {
-                        SimpleLog.Instance.Warning("A duplicate vertex appeared and was ignored.", 
+                        SimpleLog.Instance.Warning("A duplicate vertex appeared and was ignored.",
                             "Incremental.IncrementalDelaunay()");
                     }
+
                     v.type = VertexType.UndeadVertex;
                     mesh.undeads++;
                 }
             }
+
             // Remove the bounding box.
             return RemoveBox();
         }

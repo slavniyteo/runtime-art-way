@@ -1,26 +1,25 @@
 using UnityEngine;
 
-namespace EditorWindowTools {
-
+namespace EditorWindowTools
+{
     public delegate void DrawOverviewDelegate();
 
-    public class Overview {
-
-        public Overview (string message) {
-
+    public class Overview
+    {
+        public Overview(string message)
+        {
         }
 
-        public Overview (DrawOverviewDelegate draw){
-
+        public Overview(DrawOverviewDelegate draw)
+        {
         }
 
-        public void Draw(Rect rect) {
-
+        public void Draw(Rect rect)
+        {
         }
 
-        public void DrawLayout() {
-
+        public void DrawLayout()
+        {
         }
-
     }
 }

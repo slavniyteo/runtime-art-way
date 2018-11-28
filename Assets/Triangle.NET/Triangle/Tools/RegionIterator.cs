@@ -80,7 +80,7 @@ namespace TriangleNet.Tools
                     // Make sure the neighbor exists, is not already infected, and
                     // isn't protected by a subsegment.
                     if ((neighbor.triangle != Mesh.dummytri) && !neighbor.IsInfected()
-                        && (neighborsubseg.seg == Mesh.dummysub))
+                                                             && (neighborsubseg.seg == Mesh.dummysub))
                     {
                         // Infect the neighbor.
                         neighbor.Infect();
@@ -88,6 +88,7 @@ namespace TriangleNet.Tools
                         viri.Add(neighbor.triangle);
                     }
                 }
+
                 // Remark the triangle as infected, so it doesn't get added to the
                 // virus pool again.
                 testtri.Infect();

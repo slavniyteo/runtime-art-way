@@ -32,14 +32,15 @@ namespace TriangleNet.Data
             {
                 return "O-TID [null]";
             }
+
             return String.Format("O-TID {0}", triangle.hash);
         }
 
         #region Otri primitives
 
         // For fast access
-        static readonly int[] plus1Mod3 = { 1, 2, 0 };
-        static readonly int[] minus1Mod3 = { 2, 0, 1 };
+        static readonly int[] plus1Mod3 = {1, 2, 0};
+        static readonly int[] minus1Mod3 = {2, 0, 1};
 
         // The following handle manipulation primitives are all described by Guibas
         // and Stolfi. However, Guibas and Stolfi use an edge-based data structure,

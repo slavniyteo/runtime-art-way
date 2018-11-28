@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="C:\Users\Оля\.Rider2018.2\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\Оля\.Rider2018.2\system\resharper-host\local\Transient\ReSharperHost\v182\SolutionCaches\_runtime-art-way.2071728136.00" t="ExcludeRecursive" />
+    <e p="D:\code\Unity\runtime-art-way" t="IncludeRecursive">
+      <e p="Assembly-CSharp-Editor.csproj" t="IncludeRecursive" />
+      <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
+      <e p="Assets" t="Include">
+        <e p="Ewt" t="Include">
+          <e p="Editor" t="Include">
+            <e p="AbstractEditorTool.cs" t="Include" />
+            <e p="IEditorTool.cs" t="Include" />
+            <e p="Overview.cs" t="Include" />
+            <e p="Shortcuts.cs" t="Include" />
+            <e p="Tests" t="Include">
+              <e p="EditorToolTest.cs" t="Include" />
+              <e p="ToolBoxTest.cs" t="Include" />
+              <e p="Tools" t="Include">
+                <e p="DelegateEditorTool.cs" t="Include" />
+                <e p="ExpectedExceptionAttribute.cs" t="Include" />
+              </e>
+            </e>
+            <e p="ToolBox.cs" t="Include" />
+          </e>
+        </e>
+        <e p="Raw" t="Include">
+          <e p="Scripts" t="Include">
+            <e p="Editor" t="Include">
+              <e p="ArtWindow" t="Include">
+                <e p="ArtWindow.cs" t="Include" />
+                <e p="Layers" t="Include">
+                  <e p="Layer.cs" t="Include" />
+                  <e p="Layers.cs" t="Include" />
+                </e>
+                <e p="Preview" t="Include">
+                  <e p="Drawer.cs" t="Include" />
+                  <e p="Drawing.cs" t="Include" />
+                  <e p="Preview.cs" t="Include" />
+                </e>
+                <e p="Settings" t="Include">
+                  <e p="ArtWindowSettings.cs" t="Include" />
+                  <e p="SettingsLoader.cs" t="Include" />
+                </e>
+                <e p="Target" t="Include">
+                  <e p="History.cs" t="Include" />
+                  <e p="SaveButton.cs" t="Include" />
+                  <e p="Target.cs" t="Include" />
+                </e>
+                <e p="Utils" t="Include">
+                  <e p="TextureGenerator.cs" t="Include" />
+                </e>
+              </e>
+              <e p="Tests" t="Include">
+                <e p="BaseTest.cs" t="Include" />
+                <e p="CircuitCalculatorTest.cs" t="Include" />
+                <e p="CwUtilTest.cs" t="Include" />
+                <e p="EqualDistanceUtilTest.cs" t="Include" />
+              </e>
+              <e p="TriangulatePreviewEditor.cs" t="Include" />
+            </e>
+            <e p="Sample.cs" t="Include" />
+            <e p="SampleBuilder.cs" t="Include" />
+            <e p="TriangulateExample.cs" t="Include" />
+            <e p="Utils" t="Include">
+              <e p="CircuitCalculator.cs" t="Include" />
+              <e p="CwUtil.cs" t="Include" />
+              <e p="EqualDistanceUtil.cs" t="Include" />
+              <e p="MeshGenerator.cs" t="Include" />
+              <e p="ThirdPartyMeshGenerator.cs" t="Include" />
+              <e p="uv" t="Include">
+                <e p="IUvCalculator.cs" t="Include" />
+                <e p="MaskUvCalculator.cs" t="Include" />
+                <e p="SequenceUvCalculator.cs" t="Include" />
+                <e p="UvAlgoritm.cs" t="Include" />
+              </e>
+            </e>
+          </e>
+        </e>
+        <e p="RectEx" t="Include">
+          <e p="ColumnExtensions.cs" t="Include" />
+          <e p="CutFromExtensions.cs" t="Include" />
+          <e p="GridExtensions.cs" t="Include" />
+          <e p="Internal" t="Include">
+            <e p="IEnumerableExtension.cs" t="Include" />
+          </e>
+          <e p="MiscellaniousExtensions.cs" t="Include" />
+          <e p="MoveToExtensions.cs" t="Include" />
+          <e p="RowExtensions.cs" t="Include" />
+        </e>
+        <e p="Triangle.NET" t="Include">
+          <e p="Triangle" t="Include">
+            <e p="Algorithm" t="Include">
+              <e p="Dwyer.cs" t="Include" />
+              <e p="Incremental.cs" t="Include" />
+              <e p="ITriangulator.cs" t="Include" />
+              <e p="SweepLine.cs" t="Include" />
+            </e>
+            <e p="BadTriQueue.cs" t="Include" />
+            <e p="Behavior.cs" t="Include" />
+            <e p="Carver.cs" t="Include" />
+            <e p="Data" t="Include">
+              <e p="BadSubseg.cs" t="Include" />
+              <e p="BadTriangle.cs" t="Include" />
+              <e p="Osub.cs" t="Include" />
+              <e p="Otri.cs" t="Include" />
+              <e p="Segment.cs" t="Include" />
+              <e p="Triangle.cs" t="Include" />
+              <e p="Vertex.cs" t="Include" />
+            </e>
+            <e p="Enums.cs" t="Include" />
+            <e p="Geometry" t="Include">
+              <e p="BoundingBox.cs" t="Include" />
+              <e p="Edge.cs" t="Include" />
+              <e p="EdgeEnumerator.cs" t="Include" />
+              <e p="InputGeometry.cs" t="Include" />
+              <e p="ISegment.cs" t="Include" />
+              <e p="ITriangle.cs" t="Include" />
+              <e p="Point.cs" t="Include" />
+              <e p="RegionPointer.cs" t="Include" />
+            </e>
+            <e p="IO" t="Include">
+              <e p="DataReader.cs" t="Include" />
+              <e p="DebugWriter.cs" t="Include" />
+              <e p="FileReader.cs" t="Include" />
+              <e p="FileWriter.cs" t="Include" />
+              <e p="IGeometryFormat.cs" t="Include" />
+              <e p="IMeshFormat.cs" t="Include" />
+              <e p="InputTriangle.cs" t="Include" />
+              <e p="TriangleFormat.cs" t="Include" />
+            </e>
+            <e p="Log" t="Include">
+              <e p="ILog.cs" t="Include" />
+              <e p="ILogItem.cs" t="Include" />
+              <e p="SimpleLog.cs" t="Include" />
+              <e p="SimpleLogItem.cs" t="Include" />
+            </e>
+            <e p="Mesh.cs" t="Include" />
+            <e p="NewLocation.cs" t="Include" />
+            <e p="Primitives.cs" t="Include" />
+            <e p="Quality.cs" t="Include" />
+            <e p="Sampler.cs" t="Include" />
+            <e p="Smoothing" t="Include">
+              <e p="ISmoother.cs" t="Include" />
+              <e p="SimpleSmoother.cs" t="Include" />
+            </e>
+            <e p="Tools" t="Include">
+              <e p="AdjacencyMatrix.cs" t="Include" />
+              <e p="BoundedVoronoi.cs" t="Include" />
+              <e p="CuthillMcKee.cs" t="Include" />
+              <e p="IVoronoi.cs" t="Include" />
+              <e p="QuadTree.cs" t="Include" />
+              <e p="QualityMeasure.cs" t="Include" />
+              <e p="RegionIterator.cs" t="Include" />
+              <e p="Statistic.cs" t="Include" />
+              <e p="Voronoi.cs" t="Include" />
+              <e p="VoronoiRegion.cs" t="Include" />
+            </e>
+            <e p="TriangleLocator.cs" t="Include" />
+          </e>
+        </e>
+        <e p="VSCode" t="Include">
+          <e p="Plugins" t="Include">
+            <e p="Editor" t="Include">
+              <e p="VSCode.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+      </e>
+      <e p="Library" t="ExcludeRecursive" />
+      <e p="obj" t="ExcludeRecursive" />
+      <e p="packages" t="ExcludeRecursive" />
+      <e p="runtime-art-way.sln" t="IncludeFlat" />
+      <e p="Temp" t="ExcludeRecursive">
+        <e p="bin" t="ExcludeRecursive" />
+      </e>
+    </e>
+  </component>
+</project>

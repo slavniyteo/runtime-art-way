@@ -34,7 +34,7 @@ namespace NUnit.Framework
                 _expectedType = expectedType;
             }
 
-            public override TestResult Execute(TestExecutionContext context)
+            public override TestResult Execute(ITestExecutionContext context)
             {
                 Type caughtType = null;
 

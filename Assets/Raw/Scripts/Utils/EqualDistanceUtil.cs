@@ -34,13 +34,13 @@ public class EqualDistanceUtil
     {
         var diff = to - from;
         var step = diff.normalized * stepValue;
-        var stepsCount = diff.magnitude / step.magnitude;
+        float stepsCount = diff.magnitude / step.magnitude;
         for (int i = 1; i < stepsCount; i++)
         {
             yield return from + step * i;
         }
 
-        if (stepsCount - (int) stepsCount < float.MinValue)
+        if (stepsCount - Math.Floor(stepsCount) < 0.5f)
         {
             yield return to;
         }

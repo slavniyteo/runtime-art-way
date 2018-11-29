@@ -106,6 +106,8 @@ namespace RuntimeArtWay
                 DrawDots(rect, verticles, Color.red);
             }
 
+            if (layers.Value == Layer.HandMade) return;
+
             if (!target.IsPropagated) return;
 
             if ((layers.Value & Layer.Propogated) == Layer.Propogated)

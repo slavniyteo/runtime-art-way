@@ -25,7 +25,7 @@ namespace RuntimeArtWay
             int toIndex = GetToIndex(list.Count);
 
             if (fromIndex == 0 && toIndex == 0) return list;
-            return list.GetRange(fromIndex, toIndex - fromIndex);
+            return list.GetRange(fromIndex, toIndex - fromIndex + 1);
         }
 
         private int GetFromIndex(int maxValue)

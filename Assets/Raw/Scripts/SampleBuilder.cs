@@ -12,7 +12,7 @@ namespace RuntimeArtWay
         public static SampleBuilder CreateSample(Vector2 position)
         {
             var sample = ScriptableObject.CreateInstance<Sample>();
-            sample.verticles.Add(position);
+            sample.vertices.Add(position);
 
             return new SampleBuilder(sample);
         }
@@ -20,7 +20,7 @@ namespace RuntimeArtWay
         public static SampleBuilder UpdateSample(Sample sample, Vector2 position)
         {
             Assert.IsFalse(sample.IsDrawn, "Sample must be empty");
-            sample.verticles.Add(position);
+            sample.vertices.Add(position);
 
             return new SampleBuilder(sample);
         }
@@ -58,21 +58,21 @@ namespace RuntimeArtWay
 
         public void Add(Vector2 position)
         {
-            sample.verticles.Add(position);
+            sample.vertices.Add(position);
         }
 
         public void Add(IEnumerable<Vector2> positions)
         {
-            sample.verticles.AddRange(positions);
+            sample.vertices.AddRange(positions);
         }
 
         public Sample Build(float step)
         {
-            Assert.IsTrue(sample.verticles.Count > 1, "Sample must contain at least 2 dots");
+            Assert.IsTrue(sample.vertices.Count > 1, "Sample must contain at least 2 dots");
 
             isBuild = true;
 
-            sample.equalDistance = EqualDistanceUtil.Prepare(sample.verticles, step);
+            sample.equalDistance = EqualDistanceUtil.Prepare(sample.vertices, step);
             sample.circuit = new CircuitCalculator().Calculate(sample.equalDistance, step);
 
             return sample;

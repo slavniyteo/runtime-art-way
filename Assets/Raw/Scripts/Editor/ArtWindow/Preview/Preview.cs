@@ -17,7 +17,6 @@ namespace RuntimeArtWay
         private readonly Func<Material> getMaterial;
 
         private readonly ILayers layers;
-        private bool drawFullPreview = false;
 
         private readonly float dotSize;
 
@@ -25,8 +24,8 @@ namespace RuntimeArtWay
 
         private Vector2 scrollPosition;
         private float zoom = 1;
+        private int offset = 0;
         private int limit = 0;
-
 
         private Material Material => getMaterial();
 
@@ -58,6 +57,7 @@ namespace RuntimeArtWay
             drawer.Hide();
 
             limit = 0;
+            offset = 0;
             fixFactor = false;
         }
 
@@ -65,6 +65,9 @@ namespace RuntimeArtWay
 
         protected override void OnDraw()
         {
+            offset = EditorGUILayout.IntSlider("Offset", offset, 0, target.Count);
+            offset = Math.Min(offset, limit);
+            target.Offset = offset;
             limit = EditorGUILayout.IntSlider("Limit", limit, 0, target.Count);
             target.Limit = limit;
 
@@ -94,11 +97,11 @@ namespace RuntimeArtWay
 
             if (!target.IsDrawn) return;
 
-            var factor = Factor(rect, target.verticles);
+            var factor = Factor(rect, target.vertices);
 
             if ((layers.Value & Layer.HandMade) == Layer.HandMade)
             {
-                var verticles = NormilizedVerticles(target.Verticles, factor);
+                var verticles = NormilizedVerticles(target.Vertices, factor);
                 DrawDots(rect, verticles, Color.red);
             }
 

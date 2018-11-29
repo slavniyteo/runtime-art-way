@@ -7,7 +7,7 @@ public class CircuitCalculator
     public List<Vector2> Calculate(List<Vector2> equalDistanceCloud, float step)
     {
         var cw = CwUtil.IsLineClockWise(equalDistanceCloud);
-        var result = FindCircuit(equalDistanceCloud, step * 1.501f, cw);
+        var result = FindCircuit(equalDistanceCloud, step * 1.101f, cw);
         return result;
     }
 
@@ -40,7 +40,7 @@ public class CircuitCalculator
     private static bool FindNext(List<Point> points, Vector2 previous, Vector2 current, float radius, bool cw,
         out Vector2 result)
     {
-        var candidates = FindCandidates(points, previous, current, radius, 90, cw);
+        var candidates = FindCandidates(points, previous, current, radius, 179, cw);
         if (!candidates.Any(x => x.Point.Enabled))
         {
             // Debug.Log($"{current} => Candidates count = 0. Find far away");

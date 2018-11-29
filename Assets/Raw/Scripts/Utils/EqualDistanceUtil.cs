@@ -33,16 +33,12 @@ public class EqualDistanceUtil
     private static IEnumerable<Vector2> GetEqualDistances(Vector2 from, Vector2 to, float stepValue)
     {
         var diff = to - from;
-        var step = diff.normalized * stepValue;
-        float stepsCount = diff.magnitude / step.magnitude;
-        for (int i = 1; i < stepsCount; i++)
+        int stepsCount = (int) Math.Ceiling(diff.magnitude / stepValue);
+        var realStepValue = diff.magnitude / stepsCount;
+        var step = diff.normalized * realStepValue;
+        for (int i = 1; i <= stepsCount; i++)
         {
             yield return from + step * i;
-        }
-
-        if (stepsCount - Math.Floor(stepsCount) < 0.5f)
-        {
-            yield return to;
         }
     }
 }

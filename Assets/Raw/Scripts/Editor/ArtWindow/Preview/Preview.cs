@@ -24,8 +24,8 @@ namespace RuntimeArtWay
 
         private Vector2 scrollPosition;
         private float zoom = 1;
-        private int offset = 0;
-        private int limit = 0;
+        private int fromIndex = 0;
+        private int toIndex = 0;
 
         private Material Material => getMaterial();
 
@@ -56,8 +56,8 @@ namespace RuntimeArtWay
         {
             drawer.Hide();
 
-            limit = 0;
-            offset = 0;
+            toIndex = 0;
+            fromIndex = 0;
             fixFactor = false;
         }
 
@@ -65,11 +65,12 @@ namespace RuntimeArtWay
 
         protected override void OnDraw()
         {
-            offset = EditorGUILayout.IntSlider("Offset", offset, 0, target.Count);
-            offset = Math.Min(offset, limit);
-            target.FromIndex = offset;
-            limit = EditorGUILayout.IntSlider("Limit", limit, 0, target.Count);
-            target.ToIndex = limit;
+            fromIndex = EditorGUILayout.IntSlider("From Index", fromIndex, 0, target.Count);
+            fromIndex = Math.Min(fromIndex, toIndex);
+            target.FromIndex = fromIndex;
+            
+            toIndex = EditorGUILayout.IntSlider("To Index", toIndex, 0, target.Count);
+            target.ToIndex = toIndex;
 
             zoom = EditorGUILayout.Slider("Zoom", zoom, 0.1f, 10);
             const int height = 500;
@@ -204,7 +205,8 @@ namespace RuntimeArtWay
             var vertices = mesh.Vertices.ToList();
             for (int i = 0; i < vertices.Count; i++)
             {
-                DrawVerticle(rect, vertices[i], color * ((float) i / vertices.Count));
+                var resultColor = Color.Lerp(color * 0.5f, color, (float) i / vertices.Count);
+                DrawVerticle(rect, vertices[i], resultColor);
             }
         }
 

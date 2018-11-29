@@ -7,7 +7,7 @@ public class CircuitCalculator
     public List<Vector2> Calculate(List<Vector2> equalDistanceCloud, float step)
     {
         var cw = CwUtil.IsLineClockWise(equalDistanceCloud);
-        var result = FindCircuit(equalDistanceCloud, step * 1.101f, cw);
+        var result = FindCircuit(equalDistanceCloud, step * 1.501f, cw);
         return result;
     }
 
@@ -40,12 +40,7 @@ public class CircuitCalculator
     private static bool FindNext(List<Point> points, Vector2 previous, Vector2 current, float radius, bool cw,
         out Vector2 result)
     {
-        var candidates = FindCandidates(points, previous, current, radius, 179, cw);
-        if (!candidates.Any(x => x.Point.Enabled))
-        {
-            // Debug.Log($"{current} => Candidates count = 0. Find far away");
-            candidates = FindCandidates(points, previous, current, radius * 1.5f, 179, cw);
-        }
+        var candidates = FindCandidates(points, previous, current, radius, 120, cw);
 
         var next = candidates.First().Point;
 
@@ -73,14 +68,13 @@ public class CircuitCalculator
 
         var result = from p in points
             where p.Position != previous && p.Position != current
-            // where p.Enabled
             where (p.Position - current).magnitude <= radius
             let direction = p.Position - current
             let angle = cw
                 ? Vector2.SignedAngle(prevDirection, direction)
                 : Vector2.SignedAngle(prevDirection, direction) * -1
             where angle > -angleBounds && angle < angleBounds
-            orderby angle ascending
+            orderby p.Enabled descending, angle ascending
             select new Candidate(point: p, angle: angle);
         return result;
     }

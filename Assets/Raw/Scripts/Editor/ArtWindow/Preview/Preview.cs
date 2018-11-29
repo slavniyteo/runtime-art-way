@@ -13,21 +13,22 @@ namespace RuntimeArtWay
 {
     public class Preview : AbstractEditorTool<Sample>
     {
-        private Drawer drawer;
+        private readonly Drawer drawer;
+        private readonly Func<Material> getMaterial;
 
-        private ILayers layers;
+        private readonly ILayers layers;
         private bool drawFullPreview = false;
 
-        private float dotSize;
+        private readonly float dotSize;
 
         private bool fixFactor;
 
         private Vector2 scrollPosition;
         private float zoom = 1;
+        private int limit = 0;
 
-        private Func<Material> getMaterial;
 
-        private Material material => getMaterial();
+        private Material Material => getMaterial();
 
         public Preview(ILayers layers, Func<Material> getMaterial, float dotSize = 5)
         {
@@ -56,6 +57,7 @@ namespace RuntimeArtWay
         {
             drawer.Hide();
 
+            limit = 0;
             fixFactor = false;
         }
 
@@ -63,7 +65,9 @@ namespace RuntimeArtWay
 
         protected override void OnDraw()
         {
-            target.Limit = EditorGUILayout.IntSlider("Limit", target.Limit, 1, target.Count);
+            limit = EditorGUILayout.IntSlider("Limit", limit, 0, target.Count);
+            target.Limit = limit;
+
             zoom = EditorGUILayout.Slider("Zoom", zoom, 0.1f, 10);
             const int height = 500;
 
@@ -78,6 +82,8 @@ namespace RuntimeArtWay
             scrollPosition = GUI.BeginScrollView(position, scrollPosition, viewRect);
             StatelessDraw(viewRect, target);
             GUI.EndScrollView();
+
+            target.Limit = 0;
         }
 
         public void StatelessDraw(Rect rect, Sample target)
@@ -122,7 +128,7 @@ namespace RuntimeArtWay
 
             if ((layers.Value & Layer.MeshVerticles) == Layer.MeshVerticles)
             {
-                DrawVerticles(rect, mesh);
+                DrawVerticles(rect, mesh, Color.blue);
             }
 
             if ((layers.Value & Layer.Texture) == Layer.Texture)
@@ -137,7 +143,7 @@ namespace RuntimeArtWay
         {
             var materialRect = rect.CutFromBottom(20)[1].MoveDown();
 
-            if (material == null) return;
+            if (Material == null) return;
 
             //For details see http://t-machine.org/index.php/2016/03/13/trying-to-paint-a-mesh-in-unity3d-so-hard-it-makes-you-hate-unity/
 
@@ -147,7 +153,7 @@ namespace RuntimeArtWay
             );
             Matrix4x4 matrix = Matrix4x4.TRS(position, Quaternion.Euler(180, 0, 0), Vector3.one);
 
-            if (material.SetPass(0))
+            if (Material.SetPass(0))
             {
                 Graphics.DrawMeshNow(mesh, matrix);
             }
@@ -190,11 +196,12 @@ namespace RuntimeArtWay
             }
         }
 
-        private void DrawVerticles(Rect rect, TriangleNet.Mesh mesh)
+        private void DrawVerticles(Rect rect, TriangleNet.Mesh mesh, Color color)
         {
-            foreach (var v in mesh.Vertices)
+            var vertices = mesh.Vertices.ToList();
+            for (int i = 0; i < vertices.Count; i++)
             {
-                DrawVerticle(rect, v, Color.blue);
+                DrawVerticle(rect, vertices[i], color * ((float) i / vertices.Count));
             }
         }
 

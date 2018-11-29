@@ -49,17 +49,17 @@ namespace RuntimeArtWay
 
         public bool IsDrawn
         {
-            get { return verticles != null && verticles.Count > 0; }
+            get { return Verticles != null && Verticles.Count > 0; }
         }
 
         public bool IsPropagated
         {
-            get { return equalDistance != null && equalDistance.Count > 0; }
+            get { return EqualDistance != null && EqualDistance.Count > 0; }
         }
 
         public bool HasCircuit
         {
-            get { return circuit != null && circuit.Count > 0; }
+            get { return Circuit != null && Circuit.Count > 2; }
         }
     }
 }

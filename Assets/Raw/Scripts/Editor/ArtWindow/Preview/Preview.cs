@@ -67,9 +67,9 @@ namespace RuntimeArtWay
         {
             offset = EditorGUILayout.IntSlider("Offset", offset, 0, target.Count);
             offset = Math.Min(offset, limit);
-            target.Offset = offset;
+            target.FromIndex = offset;
             limit = EditorGUILayout.IntSlider("Limit", limit, 0, target.Count);
-            target.Limit = limit;
+            target.ToIndex = limit;
 
             zoom = EditorGUILayout.Slider("Zoom", zoom, 0.1f, 10);
             const int height = 500;
@@ -86,7 +86,7 @@ namespace RuntimeArtWay
             StatelessDraw(viewRect, target);
             GUI.EndScrollView();
 
-            target.Limit = 0;
+            target.ToIndex = 0;
         }
 
         public void StatelessDraw(Rect rect, Sample target)

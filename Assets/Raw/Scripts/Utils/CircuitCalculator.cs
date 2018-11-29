@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -25,7 +24,7 @@ public class CircuitCalculator
 
         Vector2 previous = result[0];
         Vector2 current = result[1];
-        Vector2 next = Vector2.zero;
+        Vector2 next;
         while (FindNext(points, previous, current, radius, cw, out next))
         {
             result.Add(next);
@@ -38,11 +37,11 @@ public class CircuitCalculator
         return result;
     }
 
-    private bool FindNext(List<Point> points, Vector2 previous, Vector2 current, float radius, bool cw,
+    private static bool FindNext(List<Point> points, Vector2 previous, Vector2 current, float radius, bool cw,
         out Vector2 result)
     {
         var candidates = FindCandidates(points, previous, current, radius, 90, cw);
-        if (candidates.Where(x => x.Point.Enabled).Count() == 0)
+        if (!candidates.Any(x => x.Point.Enabled))
         {
             // Debug.Log($"{current} => Candidates count = 0. Find far away");
             candidates = FindCandidates(points, previous, current, radius * 1.5f, 179, cw);

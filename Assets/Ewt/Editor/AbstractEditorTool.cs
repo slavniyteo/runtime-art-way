@@ -88,11 +88,12 @@ namespace EditorWindowTools
 
         protected void SetDirty()
         {
-            throw new NotImplementedException();
+            onDirty?.Invoke();
         }
 
         protected void SetUndo(Action undo)
         {
+            throw new NotImplementedException();
         }
 
         #endregion

@@ -34,7 +34,7 @@ namespace RuntimeArtWay
 
         public static bool operator ==(SampleBuilder left, object right)
         {
-            if ((object.ReferenceEquals(left, null) || left.isBuild)
+            if ((object.ReferenceEquals(left, null) || left.isBuilt)
                 && object.ReferenceEquals(right, null))
             {
                 return true;
@@ -49,7 +49,7 @@ namespace RuntimeArtWay
         }
 
         private Sample sample;
-        private bool isBuild = false;
+        private bool isBuilt = false;
 
         private SampleBuilder(Sample sample)
         {
@@ -70,12 +70,17 @@ namespace RuntimeArtWay
         {
             Assert.IsTrue(sample.vertices.Count > 1, "Sample must contain at least 2 dots");
 
-            isBuild = true;
+            isBuilt = true;
 
-            sample.equalDistance = EqualDistanceUtil.Prepare(sample.vertices, step);
-            sample.circuit = new CircuitCalculator().Calculate(sample.equalDistance, step);
+            Rebuild(sample, step);
 
             return sample;
+        }
+
+        public static void Rebuild(Sample sample, float step)
+        {
+            sample.equalDistance = EqualDistanceUtil.Prepare(sample.vertices, step);
+            sample.circuit = new CircuitCalculator().Calculate(sample.equalDistance, step);
         }
     }
 }

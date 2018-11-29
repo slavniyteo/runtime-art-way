@@ -26,6 +26,7 @@ namespace RuntimeArtWay
 
         private Preview preview;
         private SaveButton saveButton;
+        private RecalculateButton recalculateButton = new RecalculateButton();
 
         private GUIStyle backNormal;
         private GUIStyle backActive;
@@ -179,8 +180,8 @@ namespace RuntimeArtWay
         {
             rect.height = 18;
             var rects = rect.Row(
-                new float[] {1, 0, 0},
-                new float[] {0, 18, 18}
+                new float[] {1, 0, 0, 0},
+                new float[] {0, 18, 18, 18}
             );
 
             target.name = GUI.TextField(rects[0], target.name);
@@ -193,7 +194,9 @@ namespace RuntimeArtWay
                 Add(newTarget);
             });
 
-            if (GUI.Button(rects[2], "H"))
+            recalculateButton.Draw(rects[2], target);
+
+            if (GUI.Button(rects[3], "H"))
             {
                 history.Remove(target);
                 onModify();

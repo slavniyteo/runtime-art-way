@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public class CircuitCalculator
 {
@@ -40,9 +43,16 @@ public class CircuitCalculator
     private static bool FindNext(List<Point> points, Vector2 previous, Vector2 current, float radius, bool cw,
         out Vector2 result)
     {
-        var candidates = FindCandidates(points, previous, current, radius, 120, cw);
+        var candidates = FindCandidates(points, previous, current, radius, cw).ToList();
 
-        var next = candidates.First().Point;
+        if (!candidates.Any())
+        {
+            Debug.LogWarning("Finish here with zero candidates");
+            result = Vector2.zero;
+            return false;
+        }
+
+        var next = SelectBestCandidate(candidates).Point;
 
         // DebugLog(points, current, candidates);
         if (next.Enabled)
@@ -61,8 +71,38 @@ public class CircuitCalculator
         }
     }
 
+    private static Candidate SelectBestCandidate(IEnumerable<Candidate> candidates)
+    {
+        var sequence = new float[] {60, 120, 180, 240, 300, 360};
+
+        candidates = candidates
+            .OrderByDescending(c => c.Point.Enabled)
+            .ThenBy(c => c.Angle)
+            .ToList();
+
+        IEnumerable<Candidate> matches = null;
+        Candidate result = null;
+        for (int i = 0; i < sequence.Length; i++)
+        {
+            float angle = sequence[i];
+            matches = from c in candidates
+                where c.Point.Enabled
+                      && c.Angle > 30
+                      && c.Angle <= angle
+                select c;
+
+            result = matches.FirstOrDefault();
+            if (result != null)
+            {
+                return result;
+            }
+        }
+
+        return candidates.First();
+    }
+
     private static IEnumerable<Candidate> FindCandidates(IEnumerable<Point> points, Vector2 previous, Vector2 current,
-        float radius, float angleBounds, bool cw)
+        float radius, bool cw)
     {
         var prevDirection = current - previous;
 
@@ -70,11 +110,9 @@ public class CircuitCalculator
             where p.Position != previous && p.Position != current
             where (p.Position - current).magnitude <= radius
             let direction = p.Position - current
-            let angle = cw
-                ? Vector2.SignedAngle(prevDirection, direction)
-                : Vector2.SignedAngle(prevDirection, direction) * -1
-            where angle > -angleBounds && angle < angleBounds
-            orderby p.Enabled descending, angle ascending
+            let angle = 180 + (cw
+                            ? Vector2.SignedAngle(prevDirection, direction)
+                            : Vector2.SignedAngle(prevDirection, direction) * -1)
             select new Candidate(point: p, angle: angle);
         return result;
     }
@@ -104,6 +142,11 @@ public class CircuitCalculator
             Position = position;
             Enabled = true;
         }
+
+        public override string ToString()
+        {
+            return $"{Enabled}; {Position}";
+        }
     }
 
     private class Candidate
@@ -115,6 +158,11 @@ public class CircuitCalculator
         {
             Point = point;
             Angle = angle;
+        }
+
+        public override string ToString()
+        {
+            return $"{Point} => {Angle}";
         }
     }
 }

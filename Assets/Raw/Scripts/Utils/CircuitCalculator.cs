@@ -4,26 +4,47 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Networking;
+using Random = System.Random;
 
 public class CircuitCalculator
 {
     public List<Vector2> Calculate(List<Vector2> equalDistanceCloud, float step)
     {
-        var cw = CwUtil.IsLineClockWise(equalDistanceCloud);
-        var result = FindCircuit(equalDistanceCloud, step * 1.501f, cw);
+        var result = FindCircuit(equalDistanceCloud, step * 1.501f);
         return result;
     }
 
-    public List<Vector2> FindCircuit(List<Vector2> cloud, float radius, bool cw)
+    public List<Vector2> FindCircuit(List<Vector2> cloud, float radius)
     {
-        // Debug.Log("===============================================");
+        int startPoint = FindStartPoint(cloud, radius);
+        int secondPoint = startPoint == cloud.Count - 1 ? 0 : startPoint + 1;
+
+        var cw = FindCircuitInDirection(cloud, startPoint, secondPoint, radius, true);
+        var ccw = FindCircuitInDirection(cloud, startPoint, secondPoint, radius, false);
+
+        if (cw.Count > ccw.Count)
+        {
+            return cw;
+        }
+        else
+        {
+            return ccw;
+        }
+    }
+
+    private List<Vector2> FindCircuitInDirection(List<Vector2> cloud, int startPoint, int secondPoint, float radius,
+        bool cw)
+    {
+        var points = cloud.Select(x => new Point(x)).ToList();
+        points.RemoveAt(points.Count - 1);
+
         var result = new List<Vector2>();
 
-        var points = cloud.Select(x => new Point(x)).ToList();
-        points[0].Enabled = false;
-        result.Add(points[0].Position);
-        points[1].Enabled = false;
-        result.Add(points[1].Position);
+        result.Add(points[startPoint].Position);
+        points[startPoint].Enabled = false;
+
+        result.Add(points[secondPoint].Position);
+        points[secondPoint].Enabled = false;
 
         Vector2 previous = result[0];
         Vector2 current = result[1];
@@ -40,6 +61,36 @@ public class CircuitCalculator
         return result;
     }
 
+    private int FindStartPoint(List<Vector2> cloud, float step)
+    {
+        var random = new Random();
+        float min = cloud[0].y;
+        float max = cloud[0].y;
+        for (int i = 0; i < 10; i++)
+        {
+            min = Math.Min(min, cloud[random.Next() % cloud.Count].y);
+            max = Math.Max(max, cloud[random.Next() % cloud.Count].y);
+        }
+
+        float average = (min + max) / 2;
+
+        float radius = step * 2;
+        int result = 0;
+        float lastX = float.MaxValue;
+        for (int i = 0; i < cloud.Count; i++)
+        {
+            Vector2 p = cloud[i];
+            float distanceY = Math.Abs(p.y - average);
+            if (distanceY < radius && lastX > p.x)
+            {
+                result = i;
+                lastX = p.x;
+            }
+        }
+
+        return result;
+    }
+
     private static bool FindNext(List<Point> points, Vector2 previous, Vector2 current, float radius, bool cw,
         out Vector2 result)
     {
@@ -47,14 +98,13 @@ public class CircuitCalculator
 
         if (!candidates.Any())
         {
-            Debug.LogWarning("Finish here with zero candidates");
+            Debug.LogError("Finish here with zero candidates");
             result = Vector2.zero;
             return false;
         }
 
         var next = SelectBestCandidate(candidates).Point;
 
-        // DebugLog(points, current, candidates);
         if (next.Enabled)
         {
             result = next.Position;
@@ -63,8 +113,6 @@ public class CircuitCalculator
         }
         else
         {
-            DebugLog(points, current, candidates);
-
             result = next.Position;
             next.Enabled = false;
             return false;
@@ -115,21 +163,6 @@ public class CircuitCalculator
                             : Vector2.SignedAngle(prevDirection, direction) * -1)
             select new Candidate(point: p, angle: angle);
         return result;
-    }
-
-    private static void DebugLog(List<Point> points, Vector2 current, IEnumerable<Candidate> candidates)
-    {
-        Debug.Log($"Current: {current}");
-        candidates.ToList().ForEach(x =>
-            Debug.LogFormat("Position: {0}, angle: {1}, Enabled: {2}", x.Point.Position, x.Angle, x.Point.Enabled));
-        var index = points.FindIndex(x => x.Position == current);
-        var message = "Points: ";
-        for (int i = Mathf.Max(0, index - 5); i < Mathf.Min(points.Count, index + 5); i++)
-        {
-            message += $"({points[i].Position}, {points[i].Enabled}),";
-        }
-
-        Debug.Log(message);
     }
 
     private class Point

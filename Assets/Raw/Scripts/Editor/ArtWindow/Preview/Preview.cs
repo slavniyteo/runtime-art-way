@@ -68,7 +68,7 @@ namespace RuntimeArtWay
             fromIndex = EditorGUILayout.IntSlider("From Index", fromIndex, 0, target.Count);
             fromIndex = Math.Min(fromIndex, toIndex);
             target.FromIndex = fromIndex;
-            
+
             toIndex = EditorGUILayout.IntSlider("To Index", toIndex, 0, target.Count);
             target.ToIndex = toIndex;
 

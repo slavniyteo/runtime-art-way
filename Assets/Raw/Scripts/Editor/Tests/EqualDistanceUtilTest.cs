@@ -3,6 +3,7 @@ using System.Linq;
 using UnityEngine;
 using NUnit.Framework;
 using System.Collections;
+using RuntimeArtWay.Circuit;
 
 public class EqualDistanceUtilTest : BaseTest
 {

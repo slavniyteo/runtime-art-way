@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using RuntimeArtWay.Circuit;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -15,8 +16,6 @@ namespace RuntimeArtWay
         public LineRenderer equalDistance;
 
         public float step = 10;
-
-        private CircuitCalculator circuitCalculator = new CircuitCalculator();
 
         private List<Vector2> verticles;
 

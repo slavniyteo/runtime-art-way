@@ -29,9 +29,10 @@ namespace RuntimeArtWay
 
         private Material Material => getMaterial();
 
-        public Preview(ILayers layers, Func<Material> getMaterial, float dotSize = 5)
+        public Preview(Func<Sample> getNewTarget, ILayers layers, Func<Material> getMaterial, float dotSize = 5)
+            : base(getNewTarget)
         {
-            drawer = new Drawer();
+            drawer = new Drawer(getNewTarget);
             drawer.onStartDrawing += () => fixFactor = true;
             drawer.onFinishDrawing += () => fixFactor = false;
 
@@ -49,7 +50,7 @@ namespace RuntimeArtWay
 
         protected override void OnShow()
         {
-            drawer.Show(target);
+            drawer.Show();
         }
 
         protected override void OnHide()
@@ -147,8 +148,6 @@ namespace RuntimeArtWay
 
         private void DrawMeshPreview(Rect rect, Mesh mesh)
         {
-            var materialRect = rect.CutFromBottom(20)[1].MoveDown();
-
             if (Material == null) return;
 
             //For details see http://t-machine.org/index.php/2016/03/13/trying-to-paint-a-mesh-in-unity3d-so-hard-it-makes-you-hate-unity/

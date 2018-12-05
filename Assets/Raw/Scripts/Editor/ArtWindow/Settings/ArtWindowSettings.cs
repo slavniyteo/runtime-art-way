@@ -1,5 +1,7 @@
 using System;
+using UnityEditor.Graphs;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace RuntimeArtWay
 {
@@ -7,6 +9,7 @@ namespace RuntimeArtWay
     {
         Material PreviewMaterial { get; }
         string StorePath { get; }
+        float CircuitStep { get; }
     }
 
     public class ArtWindowSettings : ScriptableObject, IArtWindowSettings
@@ -39,5 +42,9 @@ namespace RuntimeArtWay
             }
             set { storePath = value; }
         }
+
+        [SerializeField] private float circuitStep;
+
+        public float CircuitStep => circuitStep;
     }
 }

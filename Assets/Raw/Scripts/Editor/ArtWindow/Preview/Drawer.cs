@@ -25,7 +25,8 @@ namespace RuntimeArtWay
 
         private Rect rect;
 
-        public Drawer()
+        public Drawer(Func<Sample> getNewTarget)
+            : base(getNewTarget)
         {
         }
 

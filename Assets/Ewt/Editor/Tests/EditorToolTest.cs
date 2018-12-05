@@ -9,19 +9,30 @@ namespace EditorWindowTools.Test
 {
     public class EditorToolTest
     {
+
+        private AbstractEditorTool<string> create(string target = "")
+        {
+            return new AbstractEditorTool<string>(() => target);
+        } 
+        
+        private AbstractEditorTool<string> create(Func<string> getTarget)
+        {
+            return new AbstractEditorTool<string>(getTarget);
+        } 
+        
         [Test]
         public void IsActiveBeforeShow()
         {
-            var tool = new AbstractEditorTool<string>();
+            var tool = create();
             Assert.IsFalse(tool.Active);
         }
 
         [Test]
         public void Show()
         {
-            var tool = new AbstractEditorTool<string>();
             var target = "I am target";
-            tool.Show(target);
+            var tool = create(target);
+            tool.Show();
 
             Assert.AreEqual(target, tool.target);
             Assert.IsTrue(tool.Active);
@@ -30,28 +41,27 @@ namespace EditorWindowTools.Test
         [Test, ExpectedException(typeof(ArgumentException))]
         public void ShowNullTarget()
         {
-            var tool = new AbstractEditorTool<string>();
-            tool.Show(null);
+            var tool = create(() => null);
+            tool.Show();
         }
 
         [Test]
         public void ShowTwice()
         {
-            var tool = new AbstractEditorTool<string>();
             var target = "I am target";
-            tool.Show(target);
-            var target2 = "I am another target";
-            tool.Show(target2);
+            var tool = create(() => target);
+            tool.Show();
+            target = "I am another target";
+            tool.Show();
 
-            Assert.AreEqual(target2, tool.target);
+            Assert.AreEqual(target, tool.target);
         }
 
         [Test]
         public void Hide()
         {
-            var tool = new AbstractEditorTool<string>();
-            var target = "I am target";
-            tool.Show(target);
+            var tool = create();
+            tool.Show();
             tool.Hide();
 
             Assert.AreEqual(null, tool.target);
@@ -61,7 +71,7 @@ namespace EditorWindowTools.Test
         [Test]
         public void HideBeforeShow()
         {
-            var tool = new DelegateEditorTool<string>();
+            var tool = new DelegateEditorTool<string>(() => "");
             int num = 0;
             tool.onHide += () => num++;
             tool.Hide();
@@ -74,9 +84,8 @@ namespace EditorWindowTools.Test
         [Test]
         public void HideTwice()
         {
-            var tool = new DelegateEditorTool<string>();
-            var target = "I am target";
-            tool.Show(target);
+            var tool = new DelegateEditorTool<string>(() => "");
+            tool.Show();
 
             int num = 0;
             tool.onHide += () => num++;
@@ -89,27 +98,26 @@ namespace EditorWindowTools.Test
         [Test]
         public void Draw()
         {
-            var tool = new AbstractEditorTool<string>();
-            var target = "I am target";
-            tool.Show(target);
+            var tool = create();
+            tool.Show();
             tool.Draw();
         }
 
         [Test, ExpectedException(typeof(InvalidOperationException))]
         public void DrawInNotActive()
         {
-            var tool = new AbstractEditorTool<string>();
+            var tool = create();
             tool.Draw();
         }
 
         [Test]
         public void OnShow()
         {
-            var tool = new DelegateEditorTool<string>();
+            var tool = new DelegateEditorTool<string>(() => "");
             var num = 0;
             tool.onShow += () => num++;
 
-            tool.Show("I am target");
+            tool.Show();
 
             Assert.AreEqual(1, num);
         }
@@ -117,11 +125,11 @@ namespace EditorWindowTools.Test
         [Test]
         public void OnHide()
         {
-            var tool = new DelegateEditorTool<string>();
+            var tool = new DelegateEditorTool<string>(() => "");
             var num = 0;
             tool.onHide += () => num++;
 
-            tool.Show("");
+            tool.Show();
             tool.Hide();
 
             Assert.AreEqual(1, num);
@@ -130,11 +138,11 @@ namespace EditorWindowTools.Test
         [Test]
         public void OnDraw()
         {
-            var tool = new DelegateEditorTool<string>();
+            var tool = new DelegateEditorTool<string>(() => "");
             var num = 0;
             tool.onDraw += () => num++;
 
-            tool.Show("");
+            tool.Show();
             tool.Draw();
 
             Assert.AreEqual(1, num);

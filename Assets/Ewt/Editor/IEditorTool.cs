@@ -2,9 +2,9 @@ namespace EditorWindowTools
 {
     public delegate void BecomeDirtyHandler();
 
-    public interface IEditorTool<T>
+    public interface IEditorTool
     {
-        void Show(T target);
+        void Show();
 
         void Hide();
 

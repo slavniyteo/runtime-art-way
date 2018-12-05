@@ -7,8 +7,12 @@ using System;
 
 namespace EditorWindowTools.Test
 {
-    public class DelegateEditorTool<T> : AbstractEditorTool<T>
+    public class DelegateEditorTool<T> : AbstractEditorTool<T> where T : class
     {
+        public DelegateEditorTool(Func<T> getNewTarget) : base(getNewTarget)
+        {
+        }
+
         public event Action onShow;
 
         protected override void OnShow()

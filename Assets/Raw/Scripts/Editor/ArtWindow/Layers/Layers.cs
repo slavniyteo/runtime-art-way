@@ -39,13 +39,15 @@ namespace RuntimeArtWay
             }
         }
 
-        public Layers(Layer value)
+        public Layers(Func<Sample> getNewTarget, Layer value)
+            : base(getNewTarget)
         {
             isValueFixed = true;
             this.Value = value;
         }
 
-        public Layers()
+        public Layers(Func<Sample> getNewTarget)
+            : base(getNewTarget)
         {
             isValueFixed = false;
         }

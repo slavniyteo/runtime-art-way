@@ -4,8 +4,10 @@ using UnityEngine;
 
 namespace EditorWindowTools
 {
-    public class AbstractEditorTool<T> : IEditorTool<T>
+    public class AbstractEditorTool<T> : IEditorTool
+        where T : class
     {
+        protected readonly Func<T> getNewTarget;
         internal T target { get; private set; }
         internal bool Active { get; private set; }
 
@@ -13,13 +15,18 @@ namespace EditorWindowTools
 
         private bool guiPrepared = false;
 
-        public void Show(T target)
+        public AbstractEditorTool(Func<T> getNewTarget)
         {
+            this.getNewTarget = getNewTarget ?? throw new ArgumentException("Target getter must not be null");
+        }
+
+        public void Show()
+        {
+            if (Active) Hide();
+            
+            target = getNewTarget();
             if (target == null) throw new ArgumentException("Target must be not null");
 
-            if (Active) Hide();
-
-            this.target = target;
             Active = true;
 
             OnShow();
@@ -29,7 +36,7 @@ namespace EditorWindowTools
         {
             bool needCallOnHide = Active;
 
-            this.target = default(T);
+            target = null;
             Active = false;
 
             guiPrepared = false;
@@ -42,6 +49,7 @@ namespace EditorWindowTools
 
         public void Draw()
         {
+            if (target == null) throw new ArgumentException("Target must be not null");
             if (!Active) throw new InvalidOperationException("Can not draw while is not active");
 
             if (!guiPrepared)
@@ -53,9 +61,9 @@ namespace EditorWindowTools
             OnDraw();
         }
 
-        public void DrawOnce(T target)
+        public void DrawOnce()
         {
-            Show(target);
+            Show();
             Draw();
             Hide();
         }

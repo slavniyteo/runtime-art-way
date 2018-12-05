@@ -16,41 +16,43 @@ namespace RuntimeArtWay
 
         private Target target;
 
-        private Sample Target
-        {
-            get { return target.Value; }
-        }
+        private Sample Target => target.Value;
 
         private IHistory history;
         private ISettingsLoader settings;
 
-        private IEditorTool<Sample> leftPanel;
-        private IEditorTool<Sample> rightPanel;
-        private IEditorTool<Sample> preview;
+        private IEditorTool leftPanel;
+        private IEditorTool rightPanel;
+        private IEditorTool centerPanel;
 
         public void OnEnable()
         {
+            settings = new SettingsLoader();
+            settings.Load();
+            var settingsPanel = new SettingsEditorTool(() => settings.Value as ArtWindowSettings);
+
             target = new Target();
             target.onChange += ShowAllTools;
             target.onReset += HideAllTools;
-            history = new History(() => settings.Value.StorePath);
-            target.onChange += () => history.Add(Target);
+            history = new History(() => target.Value, settings.Value);
+            target.onChange += () => history.Add(target.Value);
             history.onSelect += x => target.Value = x;
 
-            settings = new SettingsLoader();
-            settings.Load();
-
-            var layers = new Layers();
-            leftPanel = new ToolBox<Sample>()
+            var layers = new Layers(() => target.Value);
+            leftPanel = new ToolBox()
             {
-                layers
+                layers,
             };
-            rightPanel = new ToolBox<Sample>()
+            rightPanel = new ToolBox()
             {
-                history as IEditorTool<Sample>
+                settingsPanel,
+                history as IEditorTool,
             };
 
-            preview = new Preview(layers, () => settings.Value.PreviewMaterial);
+            centerPanel = new ToolBox()
+            {
+                new Preview(() => target.Value, layers, () => settings.Value.PreviewMaterial),
+            };
 
             history.LoadSavedData();
         }
@@ -64,14 +66,14 @@ namespace RuntimeArtWay
         {
             leftPanel.Hide();
             rightPanel.Hide();
-            preview.Hide();
+            centerPanel.Hide();
         }
 
         private void ShowAllTools()
         {
-            leftPanel.Show(Target);
-            rightPanel.Show(Target);
-            preview.Show(Target);
+            leftPanel.Show();
+            rightPanel.Show();
+            centerPanel.Show();
         }
 
         public void OnGUI()
@@ -101,7 +103,7 @@ namespace RuntimeArtWay
         private void DrawCenter()
         {
             GUILayout.BeginVertical(GUILayout.ExpandWidth(true));
-            preview.Draw();
+            centerPanel.Draw();
             GUILayout.EndVertical();
         }
 

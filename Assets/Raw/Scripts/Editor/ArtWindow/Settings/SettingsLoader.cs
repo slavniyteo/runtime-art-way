@@ -55,8 +55,8 @@ namespace RuntimeArtWay
 
             public SettingsPopup(ArtWindowSettings settings)
             {
-                tool = new SettingsEditorTool();
-                tool.Show(settings);
+                tool = new SettingsEditorTool(() => settings);
+                tool.Show();
             }
 
             public override void OnClose()
@@ -79,6 +79,10 @@ namespace RuntimeArtWay
 
         public class SettingsEditorTool : AbstractEditorTool<ArtWindowSettings>
         {
+            public SettingsEditorTool(Func<ArtWindowSettings> getNewTarget) : base(getNewTarget)
+            {
+            }
+
             protected override void OnDraw()
             {
                 target.PreviewMaterial =

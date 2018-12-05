@@ -4,17 +4,15 @@ using System.Collections.Generic;
 
 namespace EditorWindowTools
 {
-    public class ToolBox<T> : IEditorTool<T>, IEnumerable<IEditorTool<T>>
+    public class ToolBox : IEditorTool, IEnumerable<IEditorTool>
     {
-        private List<IEditorTool<T>> tools = new List<IEditorTool<T>>();
+        private List<IEditorTool> tools = new List<IEditorTool>();
 
-        public void Show(T target)
+        public void Show()
         {
-            if (target == null) throw new ArgumentNullException();
-
             foreach (var tool in tools)
             {
-                tool.Show(target);
+                tool.Show();
             }
         }
 
@@ -54,13 +52,13 @@ namespace EditorWindowTools
 
         #region IEnumerable
 
-        public void Add(IEditorTool<T> tool)
+        public void Add(IEditorTool tool)
         {
-            if (tool == null) throw new System.ArgumentNullException();
+            if (tool == null) throw new ArgumentNullException();
             tools.Add(tool);
         }
 
-        public IEnumerator<IEditorTool<T>> GetEnumerator()
+        public IEnumerator<IEditorTool> GetEnumerator()
         {
             return tools.GetEnumerator();
         }

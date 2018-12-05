@@ -20,20 +20,20 @@ namespace RuntimeArtWay
 
         private SettingsLoader settings;
 
-        private ToolBox<Sample> tools;
+        private ToolBox tools;
 
         public void OnEnable()
         {
             settings = new SettingsLoader();
             settings.Load();
 
-            var layers = new Layers();
-            tools = new ToolBox<Sample>()
+            var layers = new Layers(() => target);
+            tools = new ToolBox()
             {
                 layers,
-                new Preview(layers, () => settings.Value.PreviewMaterial)
+                new Preview(() => target, layers, () => settings.Value.PreviewMaterial)
             };
-            tools.Show(target);
+            tools.Show();
         }
 
         public void OnDestroy()

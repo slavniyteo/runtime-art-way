@@ -26,23 +26,24 @@ namespace RuntimeArtWay
 
         private Preview preview;
         private SaveButton saveButton;
-        private RecalculateButton recalculateButton = new RecalculateButton();
+        private RecalculateButton recalculateButton;
 
         private GUIStyle backNormal;
         private GUIStyle backActive;
 
-        private Func<String> getStorePath;
+        private IArtWindowSettings settings;
 
-        public History(Func<String> getStorePath)
+        public History(Func<Sample> getNewTarget, IArtWindowSettings settings) : base(getNewTarget)
         {
-            this.getStorePath = getStorePath;
+            this.settings = settings;
         }
 
         protected override void OnShow()
         {
-            preview = new Preview(new Layers(Layer.HandMade), null, 2);
+            preview = new Preview(getNewTarget, new Layers(getNewTarget, Layer.HandMade), null, 2);
 
-            saveButton = new SaveButton(getStorePath);
+            saveButton = new SaveButton(() => settings.StorePath);
+            recalculateButton = new RecalculateButton(settings);
 
             if (history == null) LoadSavedData();
         }
@@ -124,9 +125,9 @@ namespace RuntimeArtWay
         private int IndexOf(Sample sample)
         {
             int i = 0;
-            foreach (var target in history)
+            foreach (var s in history)
             {
-                if (target == sample)
+                if (s == sample)
                 {
                     return i;
                 }
@@ -140,18 +141,18 @@ namespace RuntimeArtWay
         protected override void OnDraw()
         {
             bool isModified = false;
-            Action onModify = () => isModified = true;
+            void onModify() => isModified = true;
+
             int i = 0;
-            foreach (var target in history)
+            foreach (var t in history)
             {
-                if (target == null)
+                if (t == null)
                 {
-                    history.Remove(target);
+                    history.Remove(t);
                     break;
                 }
 
-                int count = history.Count;
-                DrawElement(i, target, onModify);
+                DrawElement(i, t, onModify);
                 i++;
 
                 if (isModified)
@@ -161,7 +162,7 @@ namespace RuntimeArtWay
             }
         }
 
-        private void DrawElement(int index, Sample target, Action onModify)
+        private void DrawElement(int index, Sample sample, Action onModify)
         {
             var style = currentIndex == index ? backActive : backNormal;
             GUILayout.Box("", style, GUILayout.MinHeight(50), GUILayout.ExpandWidth(true));
@@ -169,24 +170,24 @@ namespace RuntimeArtWay
             var rect = GUILayoutUtility.GetLastRect().Intend(1);
             var rects = rect.CutFromLeft(50);
 
-            preview.StatelessDraw(rects[0].Intend(1), target);
+            preview.StatelessDraw(rects[0].Intend(1), sample);
 
-            DrawInfo(rects[1].Intend(1), index, target, onModify);
+            DrawInfo(rects[1].Intend(1), index, sample, onModify);
 
-            CheckSelection(rect, index, target, onModify);
+            CheckSelection(rect, index, sample, onModify);
         }
 
-        private void DrawInfo(Rect rect, int index, Sample target, Action onModify)
+        private void DrawInfo(Rect firstLine, int index, Sample sample, Action onModify)
         {
-            rect.height = 18;
-            var rects = rect.Row(
+            firstLine.height = 18;
+            var rects = firstLine.Row(
                 new float[] {1, 0, 0, 0},
                 new float[] {0, 18, 18, 18}
             );
 
-            target.name = GUI.TextField(rects[0], target.name);
+            sample.name = GUI.TextField(rects[0], sample.name);
 
-            saveButton.Draw(rects[1], target, (oldTarget, newTarget) =>
+            saveButton.Draw(rects[1], sample, (oldTarget, newTarget) =>
             {
                 history.Remove(oldTarget);
                 onModify();
@@ -194,11 +195,11 @@ namespace RuntimeArtWay
                 Add(newTarget);
             });
 
-            recalculateButton.Draw(rects[2], target);
+            recalculateButton.Draw(rects[2], sample);
 
             if (GUI.Button(rects[3], "H"))
             {
-                history.Remove(target);
+                history.Remove(sample);
                 onModify();
 
                 if (index == currentIndex)
@@ -213,15 +214,35 @@ namespace RuntimeArtWay
                     }
                 }
             }
+
+            var secondLine = firstLine.MoveDown();
+            DrawStepsStatistics(secondLine, sample);
         }
 
-        private void CheckSelection(Rect rect, int index, Sample target, Action onModify)
+        private void DrawStepsStatistics(Rect rect, Sample sample)
+        {
+            var minStep = float.MaxValue;
+            var maxStep = float.MinValue;
+            float sum = 0;
+            for (int i = 1; i < sample.vertices.Count; i++)
+            {
+                var step = (sample.vertices[i] - sample.vertices[i - 1]).magnitude;
+                if (step > 0) minStep = Math.Min(minStep, step);
+                maxStep = Math.Max(maxStep, step);
+                sum += step;
+            }
+
+            EditorGUI.LabelField(rect,
+                $"Min: {minStep}, Max: {maxStep}, Average: {sum / sample.vertices.Count}");
+        }
+
+        private void CheckSelection(Rect rect, int index, Sample sample, Action onModify)
         {
             if (Event.current.type != EventType.MouseDown) return;
 
             if (currentIndex != index && rect.Contains(Event.current.mousePosition))
             {
-                onSelect(target);
+                onSelect(sample);
                 onModify();
             }
         }

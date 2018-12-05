@@ -13,7 +13,7 @@ namespace RuntimeArtWay.Circuit
             return FindCircuit(equalDistanceCloud, step * 1.501f);
         }
 
-        public List<Vector2> FindCircuit(List<Vector2> cloud, float radius)
+        private List<Vector2> FindCircuit(List<Vector2> cloud, float radius)
         {
             int startPoint = FindStartPoint(cloud, radius);
 

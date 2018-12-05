@@ -14,18 +14,23 @@ namespace RuntimeArtWay.Circuit
         private readonly float radius;
         private readonly bool cw;
 
+        public Vector2 First { get; private set; }
         public Vector2 Previous { get; private set; }
         public Vector2 Current { get; private set; }
         public Vector2 Last { get; private set; }
 
-        public NextPointSeeker(List<Point> points, float radius, bool cw, Vector2 previous, Vector2 current)
+        public NextPointSeeker(List<Point> points, float radius, bool cw, int startPointIndex)
         {
             this.points = new List<Point>(points);
             this.radius = radius;
             this.cw = cw;
 
-            Previous = previous;
-            Current = current;
+            var startPoint = points[startPointIndex];
+            First = startPoint.Position;
+            startPoint.Enabled = false;
+            
+            Previous = cw ? Vector2.down : Vector2.up;
+            Current = First;
         }
 
         public bool FindNext()

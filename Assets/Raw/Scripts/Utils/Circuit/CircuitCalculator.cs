@@ -67,14 +67,9 @@ namespace RuntimeArtWay.Circuit
 
             var result = new List<Vector2>();
 
-            result.Add(points[startPoint].Position);
-            points[startPoint].Enabled = false;
-
-            int secondPoint = startPoint == cloud.Count - 1 ? 0 : startPoint + 1;
-            result.Add(points[secondPoint].Position);
-            points[secondPoint].Enabled = false;
-
-            var seeker = new NextPointSeeker(points, radius, cw, result[0], result[1]);
+            var seeker = new NextPointSeeker(points, radius, cw, startPoint);
+            result.Add(seeker.First);
+            
             while (seeker.FindNext())
             {
                 result.Add(seeker.Current);

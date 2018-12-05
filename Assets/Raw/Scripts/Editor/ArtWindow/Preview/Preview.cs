@@ -23,6 +23,7 @@ namespace RuntimeArtWay
         private bool fixFactor;
 
         private Vector2 scrollPosition;
+        private float size = 500;
         private float zoom = 1;
         private int fromIndex = 0;
         private int toIndex = 0;
@@ -73,11 +74,10 @@ namespace RuntimeArtWay
             toIndex = EditorGUILayout.IntSlider("To Index", toIndex, 0, target.Count);
             target.ToIndex = toIndex;
 
+            size = EditorGUILayout.Slider("Size", size, 200, 1000);
             zoom = EditorGUILayout.Slider("Zoom", zoom, 0.1f, 10);
-            const int height = 500;
 
-            var position = GUILayoutUtility.GetRect(-1, height);
-
+            var position = GUILayoutUtility.GetRect(-1, size);
 
             var width = position.width - 20;
             var viewRect = new Rect(position.position, new Vector2(width * zoom, width * zoom));

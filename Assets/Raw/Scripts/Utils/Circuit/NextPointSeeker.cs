@@ -14,10 +14,12 @@ namespace RuntimeArtWay.Circuit
         private readonly float radius;
         private readonly bool cw;
 
-        public Vector2 First { get; private set; }
+        public Vector2 First { get; }
         public Vector2 Previous { get; private set; }
         public Vector2 Current { get; private set; }
         public Vector2 Last { get; private set; }
+
+        private int iteration = 0;
 
         public NextPointSeeker(List<Point> points, float radius, bool cw, int startPointIndex)
         {
@@ -28,13 +30,14 @@ namespace RuntimeArtWay.Circuit
             var startPoint = points[startPointIndex];
             First = startPoint.Position;
             startPoint.Enabled = false;
-            
+
             Previous = cw ? Vector2.down : Vector2.up;
             Current = First;
         }
 
         public bool FindNext()
         {
+            iteration += 1;
             var candidates = FindCandidates().ToList();
 
             if (!candidates.Any())
@@ -79,8 +82,18 @@ namespace RuntimeArtWay.Circuit
             return result;
         }
 
-        private Candidate SelectBestCandidate(IEnumerable<Candidate> candidates)
+        private Candidate SelectBestCandidate(List<Candidate> candidates)
         {
+            if (iteration > 5)
+            {
+                var startPointCandidates = candidates.FirstOrDefault(c => c.Point.Position == First);
+                if (startPointCandidates != null)
+                {
+                    Debug.Log($"Found first point at {iteration}! [{startPointCandidates}]; First: {First}");
+                    return startPointCandidates;
+                }
+            }
+
             candidates = candidates
                 .OrderByDescending(c => c.Point.Enabled)
                 .ThenBy(c => c.Angle)

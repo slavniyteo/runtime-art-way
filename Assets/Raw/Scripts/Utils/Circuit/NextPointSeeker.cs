@@ -29,7 +29,7 @@ namespace RuntimeArtWay.Circuit
             First = startPoint.Position;
             startPoint.Enabled = false;
 
-            Previous = cw ? Vector2.down : Vector2.up;
+            Previous = cw ? First + new Vector2(-0.01f, 1f) : First + new Vector2(-0.01f, -1f);
             Current = First;
         }
 

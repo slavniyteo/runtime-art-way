@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 using Random = System.Random;
 
@@ -26,28 +27,15 @@ namespace RuntimeArtWay.Circuit
 
         private static int FindStartPoint(List<Vector2> cloud, float step)
         {
-            var random = new Random();
-            float min = cloud[0].y;
-            float max = cloud[0].y;
-            for (int i = 0; i < 10; i++)
-            {
-                min = Math.Min(min, cloud[random.Next() % cloud.Count].y);
-                max = Math.Max(max, cloud[random.Next() % cloud.Count].y);
-            }
-
-            float average = (min + max) / 2;
-
-            float radius = step * 2;
             int result = 0;
-            float lastX = float.MaxValue;
+            float minX = float.MaxValue;
             for (int i = 0; i < cloud.Count; i++)
             {
                 Vector2 p = cloud[i];
-                float distanceY = Math.Abs(p.y - average);
-                if (distanceY < radius && lastX > p.x)
+                if (p.x < minX)
                 {
                     result = i;
-                    lastX = p.x;
+                    minX = p.x;
                 }
             }
 

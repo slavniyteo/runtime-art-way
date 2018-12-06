@@ -21,14 +21,7 @@ namespace RuntimeArtWay.Circuit
             var cw = FindCircuitInDirection(cloud, startPoint, radius, true);
             var ccw = FindCircuitInDirection(cloud, startPoint, radius, false);
 
-            if (cw.Count > ccw.Count)
-            {
-                return cw;
-            }
-            else
-            {
-                return ccw;
-            }
+            return cw.Count > ccw.Count ? cw : ccw;
         }
 
         private static int FindStartPoint(List<Vector2> cloud, float step)
@@ -69,7 +62,7 @@ namespace RuntimeArtWay.Circuit
 
             var seeker = new NextPointSeeker(points, radius, cw, startPoint);
             result.Add(seeker.First);
-            
+
             while (seeker.FindNext())
             {
                 result.Add(seeker.Current);

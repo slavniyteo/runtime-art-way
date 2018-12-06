@@ -80,8 +80,11 @@ namespace RuntimeArtWay
 
         public static void Rebuild(Sample sample, float step)
         {
+            var startTime = System.DateTime.Now;
             sample.equalDistance = EqualDistanceUtil.Prepare(sample.vertices, step);
             sample.circuit = new CircuitCalculator().Calculate(sample.equalDistance, step);
+            var endTime = System.DateTime.Now;
+            Debug.Log($"Rebuild sample in {(endTime - startTime).TotalMilliseconds} ms");
         }
     }
 }

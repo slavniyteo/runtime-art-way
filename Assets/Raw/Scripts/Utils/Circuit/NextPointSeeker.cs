@@ -19,7 +19,7 @@ namespace RuntimeArtWay.Circuit
         public Vector2 Current { get; private set; }
         public Vector2 Last { get; private set; }
 
-        private int iteration = 0;
+        private int iteration;
 
         public NextPointSeeker(List<Point> points, float radius, bool cw, int startPointIndex)
         {
@@ -89,7 +89,6 @@ namespace RuntimeArtWay.Circuit
                 var startPointCandidates = candidates.FirstOrDefault(c => c.Point.Position == First);
                 if (startPointCandidates != null)
                 {
-                    Debug.Log($"Found first point at {iteration}! [{startPointCandidates}]; First: {First}");
                     return startPointCandidates;
                 }
             }

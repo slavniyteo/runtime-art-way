@@ -10,7 +10,7 @@ namespace RuntimeArtWay.Circuit
     {
         public List<Vector2> Calculate(List<Vector2> equalDistanceCloud, float step)
         {
-            return FindCircuit(equalDistanceCloud, step * 1.501f);
+            return FindCircuit(equalDistanceCloud, step * 1.401f);
         }
 
         private List<Vector2> FindCircuit(List<Vector2> cloud, float radius)

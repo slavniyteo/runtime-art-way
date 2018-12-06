@@ -7,8 +7,6 @@ namespace RuntimeArtWay.Circuit
     internal class NextPointSeeker
     {
         private const float MIN_ANGLE = 30;
-        private static readonly float[] ANGLES_SEQUENCE = new float[] {60, 120, 180, 240, 300, 360};
-
 
         private readonly List<Point> points;
         private readonly float radius;
@@ -38,18 +36,15 @@ namespace RuntimeArtWay.Circuit
         public bool FindNext()
         {
             iteration += 1;
-            var candidates = FindCandidates().ToList();
+            var candidates = FindCandidates(radius).ToList();
+            var next = SelectBestCandidate(candidates).Point;
 
-            if (!candidates.Any())
+            if (!next.Enabled && next.Position != First)
             {
-                Debug.LogError("Finish here with zero candidates");
-                Previous = Current;
-                Current = Vector2.zero;
-                Last = Current;
-                return false;
+                candidates = FindCandidates(radius * 3).ToList();
+                next = SelectBestCandidate(candidates).Point;
             }
 
-            var next = SelectBestCandidate(candidates).Point;
             Previous = Current;
             Current = next.Position;
 
@@ -60,13 +55,12 @@ namespace RuntimeArtWay.Circuit
             }
             else
             {
-                next.Enabled = false;
                 Last = Current;
                 return false;
             }
         }
 
-        private IEnumerable<Candidate> FindCandidates()
+        private IEnumerable<Candidate> FindCandidates(float radius)
         {
             var prevDirection = Current - Previous;
 
@@ -84,6 +78,12 @@ namespace RuntimeArtWay.Circuit
 
         private Candidate SelectBestCandidate(List<Candidate> candidates)
         {
+            if (candidates.Count == 0)
+            {
+                Debug.LogError("Finish here with zero candidates");
+                return new Candidate(new Point(Vector2.zero, false), 0);
+            }
+
             if (iteration > 5)
             {
                 var startPointCandidates = candidates.FirstOrDefault(c => c.Point.Position == First);
@@ -98,18 +98,10 @@ namespace RuntimeArtWay.Circuit
                 .ThenBy(c => c.Angle)
                 .ToList();
 
-            foreach (var angle in ANGLES_SEQUENCE)
-            {
-                var result = candidates.FirstOrDefault(c => c.Point.Enabled
-                                                            && c.Angle > MIN_ANGLE
-                                                            && c.Angle <= angle);
-                if (result != null)
-                {
-                    return result;
-                }
-            }
-
-            return candidates.First();
+            var result = candidates
+                .FirstOrDefault(c => c.Point.Enabled
+                                     && c.Angle > MIN_ANGLE);
+            return result ?? candidates.First();
         }
     }
 }

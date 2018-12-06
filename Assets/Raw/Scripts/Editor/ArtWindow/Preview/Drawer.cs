@@ -18,10 +18,7 @@ namespace RuntimeArtWay
 
         private SampleBuilder builder;
 
-        private bool isDrawing
-        {
-            get { return builder != null; }
-        }
+        private bool isDrawing => builder != null;
 
         private Rect rect;
 

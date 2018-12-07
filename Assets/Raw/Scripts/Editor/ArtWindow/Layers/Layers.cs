@@ -13,7 +13,7 @@ namespace RuntimeArtWay
         Layer Value { get; }
     }
 
-    public class Layers : AbstractEditorTool<Sample>, ILayers
+    public class Layers : AbstractEditorTool<ISample>, ILayers
     {
         private static readonly string EDITOR_PREFS_KEY = "ArtWindow_Layers_key";
         private static readonly int DEFAULT_LAYERS = (int) (Layer.HandMade | Layer.MeshCircuit);
@@ -39,14 +39,14 @@ namespace RuntimeArtWay
             }
         }
 
-        public Layers(Func<Sample> getNewTarget, Layer value)
+        public Layers(Func<ISample> getNewTarget, Layer value)
             : base(getNewTarget)
         {
             isValueFixed = true;
             this.Value = value;
         }
 
-        public Layers(Func<Sample> getNewTarget)
+        public Layers(Func<ISample> getNewTarget)
             : base(getNewTarget)
         {
             isValueFixed = false;

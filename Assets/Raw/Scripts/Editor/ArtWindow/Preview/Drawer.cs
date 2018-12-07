@@ -1,17 +1,10 @@
 ﻿using System;
-using System.Collections;
-using System.Linq;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
-using TriangleNet.Data;
-using TriangleNet.Tools;
-using TriangleNet.Geometry;
 using EditorWindowTools;
 
 namespace RuntimeArtWay
 {
-    public class Drawer : AbstractEditorTool<Sample>
+    public class Drawer : AbstractEditorTool<ISample>
     {
         public event Action onStartDrawing = () => { };
         public event Action onFinishDrawing = () => { };
@@ -22,7 +15,7 @@ namespace RuntimeArtWay
 
         private Rect rect;
 
-        public Drawer(Func<Sample> getNewTarget)
+        public Drawer(Func<ISample> getNewTarget)
             : base(getNewTarget)
         {
         }
@@ -78,7 +71,7 @@ namespace RuntimeArtWay
 
             if (!position.IsInsideRect) return;
 
-            builder = SampleBuilder.UpdateSample(target, position.Position);
+            builder = SampleBuilder.UpdateSample(target as IEditableSample, position.Position);
 
             onStartDrawing();
             Debug.Log("Begin");

@@ -10,12 +10,12 @@ using EditorWindowTools;
 
 namespace RuntimeArtWay
 {
-    [CustomEditor(typeof(Sample))]
+    [CustomEditor(typeof(ISample))]
     public class TriangulatePreviewEditor : Editor
     {
-        private new Sample target
+        private new ISample target
         {
-            get { return base.target as Sample; }
+            get { return base.target as ISample; }
         }
 
         private SettingsLoader settings;

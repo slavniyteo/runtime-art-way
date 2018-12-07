@@ -1,9 +1,6 @@
 using System;
-using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-using EditorWindowTools;
-using RectEx;
 
 namespace RuntimeArtWay
 {
@@ -13,7 +10,7 @@ namespace RuntimeArtWay
         private GUIStyle namePersistent;
         private GUIStyle nameConflict;
 
-        private Func<String> getStorePath;
+        private readonly Func<String> getStorePath;
 
         public SaveButton(Func<String> getStorePath)
         {
@@ -22,36 +19,39 @@ namespace RuntimeArtWay
 
         public void PrepareGUI()
         {
-            nameTemporary = new GUIStyle(GUI.skin.box);
-            nameTemporary.normal.background = TextureGenerator.GenerateBox(10, 10, Color.gray);
+            nameTemporary = new GUIStyle(GUI.skin.box)
+            {
+                normal = {background = TextureGenerator.GenerateBox(10, 10, Color.gray)}
+            };
 
-            namePersistent = new GUIStyle(GUI.skin.box);
-            namePersistent.normal.background = TextureGenerator.GenerateBox(10, 10, Color.green);
+            namePersistent = new GUIStyle(GUI.skin.box)
+            {
+                normal = {background = TextureGenerator.GenerateBox(10, 10, Color.green)}
+            };
 
-            nameConflict = new GUIStyle(GUI.skin.box);
-            nameConflict.normal.background = TextureGenerator.GenerateBox(10, 10, Color.cyan);
+            nameConflict = new GUIStyle(GUI.skin.box)
+            {
+                normal = {background = TextureGenerator.GenerateBox(10, 10, Color.cyan)}
+            };
         }
 
-        public void Draw(Rect rect, Sample target, Action<Sample, Sample> updateAsset)
+        public void Draw(Rect rect, ISample target, Action<ISample, ISample> updateAsset)
         {
-            if (updateAsset == null) throw new ArgumentNullException("UpdateAsset event is null");
+            if (!(target is Sample)) return;
+            if (updateAsset == null) throw new ArgumentNullException(nameof(updateAsset));
 
-            bool isPersistent = EditorUtility.IsPersistent(target);
+            Sample sample = (Sample) target;
+            bool isPersistent = EditorUtility.IsPersistent(sample);
             var path = isPersistent
-                ? AssetDatabase.GetAssetPath(target)
-                : string.Format("Assets/{0}/{1}.asset", getStorePath(), target.name);
-            var objectAtPath = AssetDatabase.LoadAssetAtPath(path, typeof(Sample));
+                ? AssetDatabase.GetAssetPath(sample)
+                : $"Assets/{getStorePath()}/{target.name}.asset";
+            var objectAtPath = AssetDatabase.LoadAssetAtPath(path, typeof(ISample));
 
             if (objectAtPath != null)
             {
-                if (objectAtPath == target)
-                {
-                    GUI.Box(rect, "S", namePersistent);
-                }
-                else
-                {
-                    GUI.Box(rect, "S", nameConflict);
-                }
+                GUI.Box(rect, "S",
+                    ReferenceEquals(objectAtPath, target) ? namePersistent : nameConflict
+                );
             }
             else
             {
@@ -61,9 +61,9 @@ namespace RuntimeArtWay
                 }
                 else if (GUI.Button(rect, "S", nameTemporary))
                 {
-                    AssetDatabase.CreateAsset(target, path);
+                    AssetDatabase.CreateAsset(sample, path);
                     AssetDatabase.ImportAsset(path);
-                    var newTarget = AssetDatabase.LoadAssetAtPath(path, typeof(Sample)) as Sample;
+                    var newTarget = AssetDatabase.LoadAssetAtPath(path, typeof(ISample)) as ISample;
                     updateAsset(target, newTarget);
                 }
             }

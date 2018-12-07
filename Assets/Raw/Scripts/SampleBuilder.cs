@@ -13,20 +13,20 @@ namespace RuntimeArtWay
         public static SampleBuilder CreateSample(Vector2 position)
         {
             var sample = ScriptableObject.CreateInstance<Sample>();
-            sample.vertices.Add(position);
+            sample.Add(position);
 
             return new SampleBuilder(sample);
         }
 
-        public static SampleBuilder UpdateSample(Sample sample, Vector2 position)
+        public static SampleBuilder UpdateSample(IEditableSample sample, Vector2 position)
         {
             Assert.IsFalse(sample.IsDrawn, "Sample must be empty");
-            sample.vertices.Add(position);
+            sample.Add(position);
 
             return new SampleBuilder(sample);
         }
 
-        public static Sample CreateSample(IList<Vector2> line, float step)
+        public static ISample CreateSample(IList<Vector2> line, float step)
         {
             var builder = CreateSample(line[0]);
             builder.Add(line.Skip(1));
@@ -49,41 +49,44 @@ namespace RuntimeArtWay
             return !(left == right);
         }
 
-        private Sample sample;
+        private IEditableSample sample;
         private bool isBuilt = false;
 
-        private SampleBuilder(Sample sample)
+        private SampleBuilder(IEditableSample sample)
         {
             this.sample = sample;
         }
 
         public void Add(Vector2 position)
         {
-            sample.vertices.Add(position);
+            sample.Add(position);
         }
 
         public void Add(IEnumerable<Vector2> positions)
         {
-            sample.vertices.AddRange(positions);
+            sample.AddRange(positions);
         }
 
-        public Sample Build(float step)
+        public ISample Build(float step)
         {
-            Assert.IsTrue(sample.vertices.Count > 1, "Sample must contain at least 2 dots");
+            Assert.IsTrue(sample.Count > 1, "Sample must contain at least 2 dots");
 
             isBuilt = true;
 
-            Rebuild(sample, step);
+            Rebuild(sample);
 
             return sample;
         }
 
-        public static void Rebuild(Sample sample, float step)
+        public static void Rebuild(IEditableSample sample)
         {
-            var startTime = System.DateTime.Now;
-            sample.equalDistance = EqualDistanceUtil.Prepare(sample.vertices, step);
-            sample.circuit = new CircuitCalculator().Calculate(sample.equalDistance, step);
-            var endTime = System.DateTime.Now;
+            var startTime = DateTime.Now;
+
+            float step = sample.AverageStep / 3;
+            sample.EqualDistance = EqualDistanceUtil.Prepare(sample.Vertices, step);
+            sample.Circuit = new CircuitCalculator().Calculate(sample.EqualDistance, step);
+
+            var endTime = DateTime.Now;
             Debug.Log($"Rebuild sample in {(endTime - startTime).TotalMilliseconds} ms");
         }
     }

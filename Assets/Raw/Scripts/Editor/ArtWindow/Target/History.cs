@@ -10,19 +10,19 @@ namespace RuntimeArtWay
 {
     public interface IHistory
     {
-        event Action<Sample> onSelect;
-        void Add(Sample current);
+        event Action<ISample> onSelect;
+        void Add(ISample current);
         void LoadSavedData();
     }
 
-    public class History : AbstractEditorTool<Sample>, IHistory
+    public class History : AbstractEditorTool<ISample>, IHistory
     {
         private const String EDITOR_PREFS_KEY = "ArtWindow_History";
 
-        private LinkedList<Sample> history;
+        private LinkedList<ISample> history;
         private int currentIndex = -1;
 
-        public event Action<Sample> onSelect = x => { };
+        public event Action<ISample> onSelect = x => { };
 
         private Preview preview;
         private SaveButton saveButton;
@@ -33,7 +33,7 @@ namespace RuntimeArtWay
 
         private IArtWindowSettings settings;
 
-        public History(Func<Sample> getNewTarget, IArtWindowSettings settings) : base(getNewTarget)
+        public History(Func<ISample> getNewTarget, IArtWindowSettings settings) : base(getNewTarget)
         {
             this.settings = settings;
         }
@@ -67,15 +67,15 @@ namespace RuntimeArtWay
             }
         }
 
-        private static LinkedList<Sample> LoadFromPrefs()
+        private static LinkedList<ISample> LoadFromPrefs()
         {
-            var result = new LinkedList<Sample>();
+            var result = new LinkedList<ISample>();
 
             if (EditorPrefs.HasKey(EDITOR_PREFS_KEY))
             {
                 var saved = EditorPrefs.GetString(EDITOR_PREFS_KEY)
                     .Split('|')
-                    .Select(x => AssetDatabase.LoadAssetAtPath(x, typeof(Sample)) as Sample);
+                    .Select(x => AssetDatabase.LoadAssetAtPath(x, typeof(ISample)) as ISample);
 
                 foreach (var sample in saved)
                 {
@@ -87,11 +87,16 @@ namespace RuntimeArtWay
             return result;
         }
 
-        private static void SaveToPrefs(LinkedList<Sample> history)
+        private static void SaveToPrefs(LinkedList<ISample> history)
         {
             EditorPrefs.DeleteKey(EDITOR_PREFS_KEY);
-            var result = history.Where(EditorUtility.IsPersistent)
-                .Select(AssetDatabase.GetAssetPath);
+            var result = history
+                .Where(s => s is Sample)
+                .Cast<Sample>()
+                .Where(EditorUtility.IsPersistent)
+                .Select(AssetDatabase.GetAssetPath)
+                .ToArray();
+
             if (result.Any())
             {
                 var toSave = result.Aggregate((x, y) => x + "|" + y);
@@ -109,7 +114,7 @@ namespace RuntimeArtWay
             saveButton.PrepareGUI();
         }
 
-        public void Add(Sample current)
+        public void Add(ISample current)
         {
             if (!history.Contains(current))
             {
@@ -122,7 +127,7 @@ namespace RuntimeArtWay
             }
         }
 
-        private int IndexOf(Sample sample)
+        private int IndexOf(ISample sample)
         {
             int i = 0;
             foreach (var s in history)
@@ -162,7 +167,7 @@ namespace RuntimeArtWay
             }
         }
 
-        private void DrawElement(int index, Sample sample, Action onModify)
+        private void DrawElement(int index, ISample sample, Action onModify)
         {
             var style = currentIndex == index ? backActive : backNormal;
             GUILayout.Box("", style, GUILayout.MinHeight(50), GUILayout.ExpandWidth(true));
@@ -177,7 +182,7 @@ namespace RuntimeArtWay
             CheckSelection(rect, index, sample, onModify);
         }
 
-        private void DrawInfo(Rect firstLine, int index, Sample sample, Action onModify)
+        private void DrawInfo(Rect firstLine, int index, ISample sample, Action onModify)
         {
             firstLine.height = 18;
             var rects = firstLine.Row(
@@ -216,27 +221,10 @@ namespace RuntimeArtWay
             }
 
             var secondLine = firstLine.MoveDown();
-            DrawStepsStatistics(secondLine, sample);
+            EditorGUI.LabelField(secondLine, $"Average Step: {sample.AverageStep}");
         }
 
-        private void DrawStepsStatistics(Rect rect, Sample sample)
-        {
-            var minStep = float.MaxValue;
-            var maxStep = float.MinValue;
-            float sum = 0;
-            for (int i = 1; i < sample.vertices.Count; i++)
-            {
-                var step = (sample.vertices[i] - sample.vertices[i - 1]).magnitude;
-                if (step > 0) minStep = Math.Min(minStep, step);
-                maxStep = Math.Max(maxStep, step);
-                sum += step;
-            }
-
-            EditorGUI.LabelField(rect,
-                $"Min: {minStep}, Max: {maxStep}, Average: {sum / sample.vertices.Count}");
-        }
-
-        private void CheckSelection(Rect rect, int index, Sample sample, Action onModify)
+        private void CheckSelection(Rect rect, int index, ISample sample, Action onModify)
         {
             if (Event.current.type != EventType.MouseDown) return;
 

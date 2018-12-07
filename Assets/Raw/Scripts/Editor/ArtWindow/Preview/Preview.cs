@@ -11,7 +11,7 @@ using UnityEngine.Assertions;
 
 namespace RuntimeArtWay
 {
-    public class Preview : AbstractEditorTool<Sample>
+    public class Preview : AbstractEditorTool<PreviewSample>
     {
         private readonly Drawer drawer;
         private readonly Func<Material> getMaterial;
@@ -30,8 +30,8 @@ namespace RuntimeArtWay
 
         private Material Material => getMaterial();
 
-        public Preview(Func<Sample> getNewTarget, ILayers layers, Func<Material> getMaterial, float dotSize = 5)
-            : base(getNewTarget)
+        public Preview(Func<ISample> getNewTarget, ILayers layers, Func<Material> getMaterial, float dotSize = 5)
+            : base(() => new PreviewSample(getNewTarget()))
         {
             drawer = new Drawer(getNewTarget);
             drawer.onStartDrawing += () => fixFactor = true;
@@ -91,7 +91,7 @@ namespace RuntimeArtWay
             target.ToIndex = 0;
         }
 
-        public void StatelessDraw(Rect rect, Sample target)
+        public void StatelessDraw(Rect rect, ISample target)
         {
             if (Event.current.type == EventType.Layout) return;
 
@@ -99,7 +99,7 @@ namespace RuntimeArtWay
 
             if (!target.IsDrawn) return;
 
-            var factor = Factor(rect, target.vertices);
+            var factor = Factor(rect, target.Vertices);
 
             if ((layers.Value & Layer.HandMade) == Layer.HandMade)
             {
@@ -284,6 +284,73 @@ namespace RuntimeArtWay
         {
             return rect.position + new Vector2(position.x, rect.height - position.y) + Vector2.one * dotSize / 2;
         }
+
+        #endregion
+    }
+
+    public class PreviewSample : ISample
+    {
+        private readonly ISample origin;
+
+        public PreviewSample(ISample origin)
+        {
+            this.origin = origin;
+        }
+
+        public int FromIndex { get; set; }
+        public int ToIndex { get; set; }
+
+        public List<Vector2> EqualDistance
+        {
+            get => CutList(origin.EqualDistance);
+        }
+
+        public List<Vector2> Circuit
+        {
+            get => CutList(origin.Circuit);
+        }
+
+        private List<Vector2> CutList(List<Vector2> list)
+        {
+            int fromIndex = GetFromIndex(list.Count);
+            int toIndex = GetToIndex(list.Count);
+
+            if (fromIndex == 0 && toIndex == 0) return list;
+            return list.GetRange(fromIndex, toIndex - fromIndex + 1);
+        }
+
+        private int GetFromIndex(int maxValue)
+        {
+            return Math.Max(0, Math.Min(ToIndex, Math.Min(FromIndex, maxValue - 1)));
+        }
+
+        private int GetToIndex(int maxValue)
+        {
+            return Math.Max(0, Math.Min(ToIndex, maxValue - 1));
+        }
+
+        #region Delegate
+
+        public string name
+        {
+            get => origin.name;
+            set => origin.name = value;
+        }
+
+        public int Count => origin.Count;
+
+        public float AverageStep => origin.AverageStep;
+
+        public List<Vector2> Vertices
+        {
+            get => origin.Vertices;
+        }
+
+        public bool IsDrawn => origin.IsDrawn;
+
+        public bool IsPropagated => origin.IsPropagated;
+
+        public bool HasCircuit => origin.HasCircuit;
 
         #endregion
     }

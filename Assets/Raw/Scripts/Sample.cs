@@ -1,56 +1,100 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace RuntimeArtWay
 {
+    public interface ISample
+    {
+        string name { get; set; }
+        int Count { get; }
+
+        float AverageStep { get; }
+
+        List<Vector2> Vertices { get; }
+        List<Vector2> EqualDistance { get; }
+        List<Vector2> Circuit { get; }
+
+        bool IsDrawn { get; }
+        bool IsPropagated { get; }
+        bool HasCircuit { get; }
+    }
+
+    public interface IEditableSample : ISample
+    {
+        List<Vector2> EqualDistance { get; set; }
+        List<Vector2> Circuit { get; set; }
+
+        void Add(Vector2 point);
+        void AddRange(IEnumerable<Vector2> points);
+    }
+
     [CreateAssetMenu]
-    public class Sample : ScriptableObject
+    public class Sample : ScriptableObject, IEditableSample
     {
         public List<Vector2> vertices = new List<Vector2>();
         public List<Vector2> equalDistance = new List<Vector2>();
         public List<Vector2> circuit = new List<Vector2>();
 
-        public int FromIndex { get; set; }
-        public int ToIndex { get; set; }
         public int Count => Math.Max(vertices.Count, Math.Max(equalDistance.Count, circuit.Count));
 
-        public List<Vector2> Vertices => vertices;
-        public List<Vector2> EqualDistance => CutList(equalDistance);
-        public List<Vector2> Circuit => CutList(circuit);
-
-        private List<Vector2> CutList(List<Vector2> list)
+        public List<Vector2> Vertices
         {
-            int fromIndex = GetFromIndex(list.Count);
-            int toIndex = GetToIndex(list.Count);
-
-            if (fromIndex == 0 && toIndex == 0) return list;
-            return list.GetRange(fromIndex, toIndex - fromIndex + 1);
+            get => vertices;
+            set => vertices = value;
         }
 
-        private int GetFromIndex(int maxValue)
+        public List<Vector2> EqualDistance
         {
-            return Math.Max(0, Math.Min(ToIndex, Math.Min(FromIndex, maxValue - 1)));
+            get => equalDistance;
+            set => equalDistance = value;
         }
 
-        private int GetToIndex(int maxValue)
+        public List<Vector2> Circuit
         {
-            return Math.Max(0, Math.Min(ToIndex, maxValue - 1));
+            get => circuit;
+            set => circuit = value;
         }
 
-        public bool IsDrawn
+        public void Add(Vector2 point)
         {
-            get { return Vertices != null && Vertices.Count > 0; }
+            vertices.Add(point);
         }
 
-        public bool IsPropagated
+        public void AddRange(IEnumerable<Vector2> points)
         {
-            get { return EqualDistance != null && EqualDistance.Count > 0; }
+            vertices.AddRange(points);
         }
 
-        public bool HasCircuit
+        public float AverageStep
         {
-            get { return Circuit != null && Circuit.Count > 2; }
+            get
+            {
+                var minStep = float.MaxValue;
+                var maxStep = float.MinValue;
+                float sum = 0;
+                for (int i = 1; i < vertices.Count; i++)
+                {
+                    var step = (vertices[i] - vertices[i - 1]).magnitude;
+
+                    if (step > 0)
+                    {
+                        minStep = Math.Min(minStep, step);
+                    }
+
+                    maxStep = Math.Max(maxStep, step);
+                    sum += step;
+                }
+
+                return sum / vertices.Count;
+            }
         }
+
+        public bool IsDrawn => Vertices != null && Vertices.Count > 0;
+
+        public bool IsPropagated => EqualDistance != null && EqualDistance.Count > 0;
+
+        public bool HasCircuit => Circuit != null && Circuit.Count > 2;
     }
 }

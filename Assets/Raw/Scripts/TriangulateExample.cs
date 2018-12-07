@@ -52,11 +52,11 @@ namespace RuntimeArtWay
         {
             var sample = SampleBuilder.CreateSample(verticles, step);
 
-            var equalDistanceCloud = sample.equalDistance;
+            var equalDistanceCloud = sample.EqualDistance;
             equalDistance.positionCount = equalDistanceCloud.Count;
             equalDistance.SetPositions(equalDistanceCloud.Select(x => (Vector3) x).ToArray());
 
-            var circuitPositions = sample.circuit;
+            var circuitPositions = sample.Circuit;
             circuit.positionCount = circuitPositions.Count;
             circuit.SetPositions(circuitPositions.Select(x => (Vector3) x).ToArray());
         }

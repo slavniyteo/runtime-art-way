@@ -13,7 +13,7 @@ namespace RuntimeArtWay
 
         public Sample Value
         {
-            get { return value; }
+            get => value;
             set
             {
                 if (value != this.value)
@@ -47,7 +47,7 @@ namespace RuntimeArtWay
 
             if (GUILayout.Button("+", GUILayout.Width(20)))
             {
-                Value = Sample.CreateInstance<Sample>();
+                Value = ScriptableObject.CreateInstance<Sample>();
                 Value.name = "New Sample";
             }
             else

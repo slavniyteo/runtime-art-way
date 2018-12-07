@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEditor;
 using EditorWindowTools;
@@ -10,13 +9,13 @@ namespace RuntimeArtWay
         [MenuItem("ArtWay/ArtWindow")]
         public static void ShowWindow()
         {
-            var window = EditorWindow.GetWindow<ArtWindow>();
+            var window = GetWindow<ArtWindow>();
             window.Show();
         }
 
         private Target target;
 
-        private Sample Target => target.Value;
+        private ISample Target => target.Value;
 
         private IHistory history;
         private ISettingsLoader settings;
@@ -36,7 +35,7 @@ namespace RuntimeArtWay
             target.onReset += HideAllTools;
             history = new History(() => target.Value, settings.Value);
             target.onChange += () => history.Add(target.Value);
-            history.onSelect += x => target.Value = x;
+            history.onSelect += x => target.Value = x as Sample;
 
             var layers = new Layers(() => target.Value);
             leftPanel = new ToolBox()

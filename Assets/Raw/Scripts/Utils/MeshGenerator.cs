@@ -13,11 +13,6 @@ namespace RuntimeArtWay
         {
             switch (algorithm)
             {
-                case UvAlgorithm.Sequence:
-                {
-                    uvCalculator = new SequenceUvCalculator();
-                    break;
-                }
                 case UvAlgorithm.Mask:
                 {
                     uvCalculator = new MaskUvCalculator();

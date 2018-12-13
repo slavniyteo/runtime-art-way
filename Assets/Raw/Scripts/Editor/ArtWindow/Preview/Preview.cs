@@ -30,10 +30,14 @@ namespace RuntimeArtWay
 
         private Material Material => getMaterial();
 
-        public Preview(Func<ISample> getNewTarget, ILayers layers, Func<Material> getMaterial, float dotSize = 5)
+        public Preview(
+            Func<ISample> getNewTarget, ILayers layers,
+            Func<Material> getMaterial, Func<float> getStepDivider,
+            float dotSize = 5
+        )
             : base(() => new PreviewSample(getNewTarget()))
         {
-            drawer = new Drawer(getNewTarget);
+            drawer = new Drawer(getNewTarget, getStepDivider);
             drawer.onStartDrawing += () => fixFactor = true;
             drawer.onFinishDrawing += () => fixFactor = false;
 

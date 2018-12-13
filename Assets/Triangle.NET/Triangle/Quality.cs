@@ -26,7 +26,9 @@ namespace TriangleNet
         NewLocation newLocation;
 
         // Not used at the moment
+#pragma warning disable 649
         Func<Point, Point, Point, double, bool> userTest;
+#pragma warning restore 649
 
         ILog<SimpleLogItem> logger;
 

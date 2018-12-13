@@ -14,18 +14,19 @@ namespace RuntimeArtWay.Circuit
             return FindCircuit(equalDistanceCloud, step * 1.401f);
         }
 
-        private List<Vector2> FindCircuit(List<Vector2> cloud, float radius)
+        private static List<Vector2> FindCircuit(List<Vector2> cloud, float radius)
         {
-            int startPoint = FindStartPoint(cloud, radius);
-
             cloud.RemoveAt(cloud.Count - 1);
+
+            int startPoint = FindStartPoint(cloud);
+
             var cw = FindCircuitInDirection(cloud, startPoint, radius, true);
             var ccw = FindCircuitInDirection(cloud, startPoint, radius, false);
 
             return cw.Count > ccw.Count ? cw : ccw;
         }
 
-        private static int FindStartPoint(List<Vector2> cloud, float step)
+        private static int FindStartPoint(IReadOnlyList<Vector2> cloud)
         {
             int result = 0;
             float minX = float.MaxValue;
@@ -42,7 +43,9 @@ namespace RuntimeArtWay.Circuit
             return result;
         }
 
-        private List<Vector2> FindCircuitInDirection(List<Vector2> cloud, int startPoint, float radius, bool cw)
+        private static List<Vector2> FindCircuitInDirection(
+            IEnumerable<Vector2> cloud, int startPoint, float radius, bool cw
+        )
         {
             var points = cloud.Select(x => new Point(x)).ToList();
 

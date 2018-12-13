@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: Settings
   m_EditorClassIdentifier: 
   previewMaterial: {fileID: 2100000, guid: 1a515405e93e54aaead11e13e044779c, type: 2}
-  storePath: 
+  storePath: Raw/Examples
+  circuitRelativeStepMultiplier: 0.33

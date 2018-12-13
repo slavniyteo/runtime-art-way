@@ -16,7 +16,7 @@ namespace RuntimeArtWay
         {
             if (GUI.Button(rect, "R"))
             {
-                SampleBuilder.Rebuild(target as Sample);
+                SampleBuilder.Rebuild(target as Sample, settings.CircuitRelativeStep);
             }
         }
     }

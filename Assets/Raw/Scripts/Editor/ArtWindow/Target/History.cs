@@ -40,7 +40,7 @@ namespace RuntimeArtWay
 
         protected override void OnShow()
         {
-            preview = new Preview(getNewTarget, new Layers(getNewTarget, Layer.HandMade), null, 2);
+            preview = new Preview(getNewTarget, new Layers(getNewTarget, Layer.HandMade), null, null, 2);
 
             saveButton = new SaveButton(() => settings.StorePath);
             recalculateButton = new RecalculateButton(settings);

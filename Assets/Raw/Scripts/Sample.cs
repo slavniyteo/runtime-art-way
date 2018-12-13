@@ -23,8 +23,8 @@ namespace RuntimeArtWay
 
     public interface IEditableSample : ISample
     {
-        List<Vector2> EqualDistance { get; set; }
-        List<Vector2> Circuit { get; set; }
+        new List<Vector2> EqualDistance { get; set; }
+        new List<Vector2> Circuit { get; set; }
 
         void Add(Vector2 point);
         void AddRange(IEnumerable<Vector2> points);

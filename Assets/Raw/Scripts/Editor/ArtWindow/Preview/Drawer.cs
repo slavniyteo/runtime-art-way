@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.ConstrainedExecution;
 using UnityEngine;
 using EditorWindowTools;
 
@@ -9,15 +10,18 @@ namespace RuntimeArtWay
         public event Action onStartDrawing = () => { };
         public event Action onFinishDrawing = () => { };
 
+        private readonly Func<float> getStepDivider;
+
         private SampleBuilder builder;
 
         private bool isDrawing => builder != null;
 
         private Rect rect;
 
-        public Drawer(Func<ISample> getNewTarget)
+        public Drawer(Func<ISample> getNewTarget, Func<float> getStepDivider)
             : base(getNewTarget)
         {
+            this.getStepDivider = getStepDivider;
         }
 
 
@@ -90,7 +94,7 @@ namespace RuntimeArtWay
         {
             if (!isDrawing) return;
 
-            builder.Build(5);
+            builder.Build(getStepDivider());
 
             onFinishDrawing();
             Debug.Log("Finished");

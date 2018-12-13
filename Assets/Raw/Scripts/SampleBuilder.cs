@@ -67,22 +67,22 @@ namespace RuntimeArtWay
             sample.AddRange(positions);
         }
 
-        public ISample Build(float step)
+        public ISample Build(float stepMultiplier)
         {
             Assert.IsTrue(sample.Count > 1, "Sample must contain at least 2 dots");
 
             isBuilt = true;
 
-            Rebuild(sample);
+            Rebuild(sample, stepMultiplier);
 
             return sample;
         }
 
-        public static void Rebuild(IEditableSample sample)
+        public static void Rebuild(IEditableSample sample, float stepMultiplier)
         {
             var startTime = DateTime.Now;
 
-            float step = sample.AverageStep / 3;
+            float step = sample.AverageStep * stepMultiplier;
             sample.EqualDistance = EqualDistanceUtil.Prepare(sample.Vertices, step);
             sample.Circuit = new CircuitCalculator().Calculate(sample.EqualDistance, step);
 

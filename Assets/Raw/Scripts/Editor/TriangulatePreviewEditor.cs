@@ -31,7 +31,9 @@ namespace RuntimeArtWay
             tools = new ToolBox()
             {
                 layers,
-                new Preview(() => target, layers, () => settings.Value.PreviewMaterial)
+                new Preview(() => target, layers,
+                    () => settings.Value.PreviewMaterial,
+                    () => settings.Value.CircuitRelativeStep)
             };
             tools.Show();
         }

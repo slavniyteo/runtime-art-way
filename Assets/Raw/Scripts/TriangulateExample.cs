@@ -8,14 +8,14 @@ using UnityEngine.UI;
 
 namespace RuntimeArtWay
 {
-    [ExecuteInEditMode]
     public class TriangulateExample : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler
     {
         public LineRenderer line;
         public LineRenderer circuit;
         public LineRenderer equalDistance;
 
-        public float step = 10;
+        [Range(0.1f, 2)]
+        public float step = 0.3f;
 
         private List<Vector2> verticles;
 

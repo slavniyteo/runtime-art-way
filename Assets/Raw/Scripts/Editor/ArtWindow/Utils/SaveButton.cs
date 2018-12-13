@@ -35,22 +35,22 @@ namespace RuntimeArtWay
             };
         }
 
-        public void Draw(Rect rect, ISample target, Action<ISample, ISample> updateAsset)
+        public void Draw<T>(Rect rect, T target, Action<T, T> updateAsset) where T : class
         {
-            if (!(target is Sample)) return;
+            if (!(target is ScriptableObject)) return;
             if (updateAsset == null) throw new ArgumentNullException(nameof(updateAsset));
 
-            Sample sample = (Sample) target;
+            ScriptableObject sample = target as ScriptableObject;
             bool isPersistent = EditorUtility.IsPersistent(sample);
             var path = isPersistent
                 ? AssetDatabase.GetAssetPath(sample)
-                : $"Assets/{getStorePath()}/{target.name}.asset";
-            var objectAtPath = AssetDatabase.LoadAssetAtPath(path, typeof(ISample));
+                : $"Assets/{getStorePath()}/{sample.name}.asset";
+            var objectAtPath = AssetDatabase.LoadAssetAtPath(path, typeof(ScriptableObject));
 
             if (objectAtPath != null)
             {
                 GUI.Box(rect, "S",
-                    ReferenceEquals(objectAtPath, target) ? namePersistent : nameConflict
+                    ReferenceEquals(objectAtPath, sample) ? namePersistent : nameConflict
                 );
             }
             else
@@ -63,7 +63,7 @@ namespace RuntimeArtWay
                 {
                     AssetDatabase.CreateAsset(sample, path);
                     AssetDatabase.ImportAsset(path);
-                    var newTarget = AssetDatabase.LoadAssetAtPath(path, typeof(ISample)) as ISample;
+                    var newTarget = AssetDatabase.LoadAssetAtPath(path, typeof(T)) as T;
                     updateAsset(target, newTarget);
                 }
             }

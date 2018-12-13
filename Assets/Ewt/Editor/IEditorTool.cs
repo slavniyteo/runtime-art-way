@@ -1,7 +1,5 @@
 namespace EditorWindowTools
 {
-    public delegate void BecomeDirtyHandler();
-
     public interface IEditorTool
     {
         void Show();
@@ -9,7 +7,5 @@ namespace EditorWindowTools
         void Hide();
 
         void Draw();
-
-        event BecomeDirtyHandler onDirty;
     }
 }

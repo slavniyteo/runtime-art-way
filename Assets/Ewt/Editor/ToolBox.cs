@@ -32,24 +32,6 @@ namespace EditorWindowTools
             }
         }
 
-        public event BecomeDirtyHandler onDirty
-        {
-            add
-            {
-                foreach (var tool in tools)
-                {
-                    tool.onDirty += value;
-                }
-            }
-            remove
-            {
-                foreach (var tool in tools)
-                {
-                    tool.onDirty -= value;
-                }
-            }
-        }
-
         #region IEnumerable
 
         public void Add(IEditorTool tool)

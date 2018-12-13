@@ -13,10 +13,13 @@ namespace RuntimeArtWay
     [Serializable]
     public class RequestForShape : IRequestForShape
     {
-        [SerializeField] private UvAlgorithm uvAlgorithm = UvAlgorithm.Mask;
+        [SerializeField] public UvAlgorithm uvAlgorithm = UvAlgorithm.Mask;
         public UvAlgorithm UvAlgorithm => uvAlgorithm;
 
-        [NotNull] [SerializeField] private string label = "{{Placeholder}}";
+        [SerializeField] public string label = "{{Placeholder}}";
         public string Label => label;
+
+        [SerializeField] public Texture2D texture = null;
+        public Texture2D Texture => texture;
     }
 }

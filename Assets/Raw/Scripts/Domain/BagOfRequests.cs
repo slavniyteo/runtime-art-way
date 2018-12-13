@@ -12,7 +12,7 @@ namespace RuntimeArtWay
 
     public class BagOfRequests : ScriptableObject, IBagOfRequests
     {
-        [SerializeField] private List<RequestForShape> requests = new List<RequestForShape>();
+        [SerializeField] public List<RequestForShape> requests = new List<RequestForShape>();
 
         public int Count => requests.Count;
 

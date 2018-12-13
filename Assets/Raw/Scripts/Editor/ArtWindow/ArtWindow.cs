@@ -13,6 +13,7 @@ namespace RuntimeArtWay
             window.Show();
         }
 
+        private IRequestTool request;
         private Target target;
 
         private ISample Target => target.Value;
@@ -30,6 +31,7 @@ namespace RuntimeArtWay
             settings.Load();
             var settingsPanel = new SettingsEditorTool(() => settings.Value as ArtWindowSettings);
 
+            request = new RequestTool();
             target = new Target();
             target.onChange += ShowAllTools;
             target.onReset += HideAllTools;
@@ -37,10 +39,12 @@ namespace RuntimeArtWay
             target.onChange += () => history.Add(target.Value);
             history.onSelect += x => target.Value = x as Sample;
 
+
             var layers = new Layers(() => target.Value);
             leftPanel = new ToolBox()
             {
                 layers,
+                request as IEditorTool
             };
             rightPanel = new ToolBox()
             {

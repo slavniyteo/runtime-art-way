@@ -11,8 +11,6 @@ namespace EditorWindowTools
         internal T target { get; private set; }
         internal bool Active { get; private set; }
 
-        public event BecomeDirtyHandler onDirty;
-
         private bool guiPrepared = false;
 
         public AbstractEditorTool(Func<T> getNewTarget)
@@ -23,7 +21,7 @@ namespace EditorWindowTools
         public void Show()
         {
             if (Active) Hide();
-            
+
             target = getNewTarget();
             if (target == null) throw new ArgumentException("Target must be not null");
 
@@ -93,11 +91,6 @@ namespace EditorWindowTools
         #endregion
 
         #region Protected
-
-        protected void SetDirty()
-        {
-            onDirty?.Invoke();
-        }
 
         protected void SetUndo(Action undo)
         {

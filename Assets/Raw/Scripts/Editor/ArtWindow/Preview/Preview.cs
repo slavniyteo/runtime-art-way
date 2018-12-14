@@ -157,8 +157,8 @@ namespace RuntimeArtWay
             //For details see http://t-machine.org/index.php/2016/03/13/trying-to-paint-a-mesh-in-unity3d-so-hard-it-makes-you-hate-unity/
 
             var position = new Vector2(
-                x: rect.position.x,
-                y: rect.position.y + rect.height
+                x: rect.position.x + 2.5f,
+                y: rect.position.y + rect.height + 2.5f
             );
             Matrix4x4 matrix = Matrix4x4.TRS(position, Quaternion.Euler(180, 0, 0), Vector3.one);
 

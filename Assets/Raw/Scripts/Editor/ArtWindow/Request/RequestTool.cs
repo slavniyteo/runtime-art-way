@@ -1,10 +1,9 @@
 using System;
-using System.Text;
 using EditorWindowTools;
 using RectEx;
+using RuntimeArtWay.Storage;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace RuntimeArtWay
 {
@@ -25,7 +24,14 @@ namespace RuntimeArtWay
         public event Action onChange = () => { };
         public event Action onReset = () => { };
 
-        private BagOfRequests value;
+        private readonly IStorage<BagOfRequests> storage =
+            new EditorPrefsStorage<BagOfRequests>("ArtWindow.BagOfRequests");
+
+        private BagOfRequests value
+        {
+            get => storage.Value;
+            set => storage.Value = value;
+        }
 
         public BagOfRequests Value
         {
@@ -52,10 +58,12 @@ namespace RuntimeArtWay
 
         public void Show()
         {
+            storage.Load();
         }
 
         public void Hide()
         {
+            storage.Save();
         }
 
         public void Draw()
@@ -73,8 +81,10 @@ namespace RuntimeArtWay
 
             backNormal = new GUIStyle(GUI.skin.box);
 
-            backActive = new GUIStyle(GUI.skin.box);
-            backActive.normal.background = TextureGenerator.GenerateBox(10, 10, Color.red);
+            backActive = new GUIStyle(GUI.skin.box)
+            {
+                normal = {background = TextureGenerator.GenerateBox(10, 10, Color.red)}
+            };
 
             texturePreview = new GUIStyle(GUI.skin.box);
         }

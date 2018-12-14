@@ -5,21 +5,23 @@ using UnityEditor;
 using UnityEngine;
 using EditorWindowTools;
 using RectEx;
+using RuntimeArtWay.Storage;
 
 namespace RuntimeArtWay
 {
     public interface IHistory
     {
         event Action<ISample> onSelect;
-        void Add(ISample current);
+        void Add(ISample sample);
         void LoadSavedData();
     }
 
     public class History : AbstractEditorTool<ISample>, IHistory
     {
-        private const String EDITOR_PREFS_KEY = "ArtWindow_History";
+        private readonly IArtWindowSettings settings;
+        private readonly IStorage<List<Sample>> storage;
 
-        private LinkedList<ISample> history;
+        private IList<Sample> history => storage.Value;
         private int currentIndex = -1;
 
         public event Action<ISample> onSelect = x => { };
@@ -31,11 +33,10 @@ namespace RuntimeArtWay
         private GUIStyle backNormal;
         private GUIStyle backActive;
 
-        private IArtWindowSettings settings;
-
         public History(Func<ISample> getNewTarget, IArtWindowSettings settings) : base(getNewTarget)
         {
             this.settings = settings;
+            storage = new EditorPrefsListStorage<Sample>("ArtWindow_History");
         }
 
         protected override void OnShow()
@@ -50,7 +51,7 @@ namespace RuntimeArtWay
 
         protected override void OnHide()
         {
-            SaveToPrefs(history);
+            storage.Save();
         }
 
         public void LoadSavedData()
@@ -58,49 +59,12 @@ namespace RuntimeArtWay
             if (history != null) throw new InvalidOperationException();
             if (Active) throw new InvalidOperationException();
 
-            history = LoadFromPrefs();
+            storage.Load();
 
             if (currentIndex < 0 && history.Any())
             {
                 currentIndex = 0;
-                onSelect(history.First.Value);
-            }
-        }
-
-        private static LinkedList<ISample> LoadFromPrefs()
-        {
-            var result = new LinkedList<ISample>();
-
-            if (EditorPrefs.HasKey(EDITOR_PREFS_KEY))
-            {
-                var saved = EditorPrefs.GetString(EDITOR_PREFS_KEY)
-                    .Split('|')
-                    .Select(x => AssetDatabase.LoadAssetAtPath(x, typeof(ISample)) as ISample);
-
-                foreach (var sample in saved)
-                {
-                    result.AddLast(sample);
-                }
-            }
-
-
-            return result;
-        }
-
-        private static void SaveToPrefs(LinkedList<ISample> history)
-        {
-            EditorPrefs.DeleteKey(EDITOR_PREFS_KEY);
-            var result = history
-                .Where(s => s is Sample)
-                .Cast<Sample>()
-                .Where(EditorUtility.IsPersistent)
-                .Select(AssetDatabase.GetAssetPath)
-                .ToArray();
-
-            if (result.Any())
-            {
-                var toSave = result.Aggregate((x, y) => x + "|" + y);
-                EditorPrefs.SetString(EDITOR_PREFS_KEY, toSave);
+                onSelect(history[0]);
             }
         }
 
@@ -118,7 +82,7 @@ namespace RuntimeArtWay
         {
             if (!history.Contains(current))
             {
-                history.AddFirst(current);
+                history.Add(current as Sample);
                 currentIndex = 0;
             }
             else
@@ -132,7 +96,7 @@ namespace RuntimeArtWay
             int i = 0;
             foreach (var s in history)
             {
-                if (s == sample)
+                if (ReferenceEquals(s, sample))
                 {
                     return i;
                 }
@@ -167,7 +131,7 @@ namespace RuntimeArtWay
             }
         }
 
-        private void DrawElement(int index, ISample sample, Action onModify)
+        private void DrawElement(int index, Sample sample, Action onModify)
         {
             var style = currentIndex == index ? backActive : backNormal;
             GUILayout.Box("", style, GUILayout.MinHeight(50), GUILayout.ExpandWidth(true));
@@ -182,7 +146,7 @@ namespace RuntimeArtWay
             CheckSelection(rect, index, sample, onModify);
         }
 
-        private void DrawInfo(Rect firstLine, int index, ISample sample, Action onModify)
+        private void DrawInfo(Rect firstLine, int index, Sample sample, Action onModify)
         {
             firstLine.height = 18;
             var rects = firstLine.Row(
@@ -209,14 +173,7 @@ namespace RuntimeArtWay
 
                 if (index == currentIndex)
                 {
-                    if (history.Count > 0)
-                    {
-                        onSelect(history.First.Value);
-                    }
-                    else
-                    {
-                        onSelect(null);
-                    }
+                    onSelect(history.FirstOrDefault());
                 }
             }
 

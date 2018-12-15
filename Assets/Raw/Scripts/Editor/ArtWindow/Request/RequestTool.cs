@@ -53,7 +53,13 @@ namespace RuntimeArtWay
 
         public RequestForShape ActiveRequest
         {
-            get => Value?.requests[activeRequestStorage.Value];
+            get
+            {
+                if (Value is null) return null;
+                if (activeRequestStorage.Value >= Value.requests.Count) return null;
+
+                return Value.requests[activeRequestStorage.Value];
+            }
             private set => activeRequestStorage.Value = Value.requests.IndexOf(value);
         }
 
@@ -134,15 +140,19 @@ namespace RuntimeArtWay
             if (Value is null) return;
 
             var rect = GUILayoutUtility.GetRect(-1, 18);
-            var rects = rect.Row(new float[] {1, 0}, new float[] {0, 18});
+            var rects = rect.Row(new float[] {1, 0, 0}, new float[] {0, 18, 18});
 
-            if (GUI.Button(rects[0], "+"))
+            EditorGUI.BeginDisabledGroup(EditorUtility.IsPersistent(Value));
+            Value.name = EditorGUI.TextField(rects[0], Value.name);
+            EditorGUI.EndDisabledGroup();
+
+            if (GUI.Button(rects[1], "+"))
             {
                 Value.requests.Add(new RequestForShape());
                 EditorUtility.SetDirty(Value);
             }
 
-            saveButton.Draw(rects[1], Value, (oldValue, newValue) => Value = newValue);
+            saveButton.Draw(rects[2], Value, (oldValue, newValue) => Value = newValue);
         }
 
         private void DrawRequests()

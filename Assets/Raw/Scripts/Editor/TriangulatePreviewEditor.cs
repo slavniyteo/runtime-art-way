@@ -10,13 +10,10 @@ using EditorWindowTools;
 
 namespace RuntimeArtWay
 {
-    [CustomEditor(typeof(ISample))]
+    [CustomEditor(typeof(Sample))]
     public class TriangulatePreviewEditor : Editor
     {
-        private new ISample target
-        {
-            get { return base.target as ISample; }
-        }
+        private new ISample target => base.target as ISample;
 
         private SettingsLoader settings;
 
@@ -34,7 +31,7 @@ namespace RuntimeArtWay
                 new Preview(() => target, layers,
                     () => settings.Value.PreviewMaterial,
                     () => settings.Value.CircuitRelativeStep,
-                    () => settings.Value.Texture)
+                    () => Texture2D.whiteTexture)
             };
             tools.Show();
         }

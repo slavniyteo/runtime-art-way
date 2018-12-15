@@ -7,7 +7,6 @@ namespace RuntimeArtWay
         Material PreviewMaterial { get; }
         string StorePath { get; }
         float CircuitRelativeStep { get; }
-        Texture2D Texture { get; }
     }
 
     public class ArtWindowSettings : ScriptableObject, IArtWindowSettings
@@ -48,8 +47,5 @@ namespace RuntimeArtWay
             get => circuitRelativeStepMultiplier;
             set => circuitRelativeStepMultiplier = value;
         }
-
-        public Texture2D texture;
-        public Texture2D Texture => texture;
     }
 }

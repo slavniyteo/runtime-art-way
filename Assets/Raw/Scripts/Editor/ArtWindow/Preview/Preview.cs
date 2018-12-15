@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using EditorWindowTools;
-using RectEx;
 using TriangleNet.Data;
+using TriangleNet.Geometry;
 using UnityEditor;
-using UnityEditor.Experimental.UIElements.GraphView;
 using UnityEngine;
-using UnityEngine.Assertions;
 
 namespace RuntimeArtWay
 {
@@ -29,8 +27,8 @@ namespace RuntimeArtWay
         private Vector2 scrollPosition;
         private float size = 500;
         private float zoom = 1;
-        private int fromIndex = 0;
-        private int toIndex = 0;
+        private int fromIndex;
+        private int toIndex;
 
 
         public Preview(
@@ -99,35 +97,35 @@ namespace RuntimeArtWay
             target.ToIndex = 0;
         }
 
-        public void StatelessDraw(Rect rect, ISample target)
+        public void StatelessDraw(Rect rect, ISample sample)
         {
             if (Event.current.type == EventType.Layout) return;
 
             EditorGUI.DrawRect(rect, Color.gray);
 
-            if (!target.IsDrawn) return;
+            if (!sample.IsDrawn) return;
 
-            var factor = Factor(rect, target.Vertices);
+            var factor = Factor(rect, sample.Vertices);
 
             if ((layers.Value & Layer.HandMade) == Layer.HandMade)
             {
-                var verticles = NormilizedVerticles(target.Vertices, factor);
+                var verticles = NormalizedVertices(sample.Vertices, factor);
                 DrawDots(rect, verticles, Color.red);
             }
 
             if (layers.Value == Layer.HandMade) return;
 
-            if (!target.IsPropagated) return;
+            if (!sample.IsPropagated) return;
 
             if ((layers.Value & Layer.Propogated) == Layer.Propogated)
             {
-                var equalDistance = NormilizedVerticles(target.EqualDistance, factor);
+                var equalDistance = NormalizedVertices(sample.EqualDistance, factor);
                 DrawDots(rect, equalDistance, Color.green);
             }
 
-            if (!target.HasCircuit) return;
+            if (!sample.HasCircuit) return;
 
-            var meshCircuit = NormilizedVerticles(target.Circuit, factor);
+            var meshCircuit = NormalizedVertices(sample.Circuit, factor);
             var mesh = ThirdPartyMeshGenerator.Generate(meshCircuit);
 
             if ((layers.Value & Layer.MeshSegments) == Layer.MeshSegments)
@@ -137,13 +135,13 @@ namespace RuntimeArtWay
 
             if ((layers.Value & Layer.MeshCircuit) == Layer.MeshCircuit)
             {
-                var circuit = NormilizedVerticles(target.Circuit, factor);
+                var circuit = NormalizedVertices(sample.Circuit, factor);
                 DrawLine(rect, circuit, Color.magenta);
             }
 
             if ((layers.Value & Layer.MeshVerticles) == Layer.MeshVerticles)
             {
-                DrawVerticles(rect, mesh, Color.blue);
+                DrawVertices(rect, mesh, Color.blue);
             }
 
             if ((layers.Value & Layer.Texture) == Layer.Texture)
@@ -178,7 +176,7 @@ namespace RuntimeArtWay
         {
             for (int i = 1; i < line.Count; i++)
             {
-                DrawPoint(rect, ToVector2(rect, line[i]), color);
+                DrawPoint(rect, line[i], color);
             }
         }
 
@@ -186,18 +184,7 @@ namespace RuntimeArtWay
         {
             for (int i = 1; i < line.Count; i++)
             {
-                DrawLine(rect, ToVector2(rect, line[i - 1]), ToVector2(rect, line[i]), color);
-            }
-        }
-
-        private void DrawSegments(Rect rect, TriangleNet.Mesh mesh)
-        {
-            foreach (var s in mesh.Segments)
-            {
-                if (s.GetTriangle(0) == null || s.GetTriangle(1) == null)
-                {
-                    DrawLine(rect, s.GetVertex(0), s.GetVertex(1), Color.blue);
-                }
+                DrawLine(rect, line[i - 1], line[i], color);
             }
         }
 
@@ -211,13 +198,13 @@ namespace RuntimeArtWay
             }
         }
 
-        private void DrawVerticles(Rect rect, TriangleNet.Mesh mesh, Color color)
+        private void DrawVertices(Rect rect, TriangleNet.Mesh mesh, Color color)
         {
             var vertices = mesh.Vertices.ToList();
             for (int i = 0; i < vertices.Count; i++)
             {
                 var resultColor = Color.Lerp(color * 0.5f, color, (float) i / vertices.Count);
-                DrawVerticle(rect, vertices[i], resultColor);
+                DrawPoint(rect, ToVector2(vertices[i]), resultColor);
             }
         }
 
@@ -225,7 +212,7 @@ namespace RuntimeArtWay
 
         #region Tools
 
-        private Func<Vector2, Vector2> Factor(Rect rect, IEnumerable<Vector2> verticles)
+        private Func<Vector2, Vector2> Factor(Rect rect, IReadOnlyCollection<Vector2> vertices)
         {
             Vector2 min;
             Vector2 max;
@@ -237,8 +224,8 @@ namespace RuntimeArtWay
             }
             else
             {
-                min = verticles.Aggregate((v, res) => new Vector2(Mathf.Min(v.x, res.x), Mathf.Min(v.y, res.y)));
-                max = verticles.Aggregate((v, res) => new Vector2(Mathf.Max(v.x, res.x), Mathf.Max(v.y, res.y)));
+                min = vertices.Aggregate((v, res) => new Vector2(Mathf.Min(v.x, res.x), Mathf.Min(v.y, res.y)));
+                max = vertices.Aggregate((v, res) => new Vector2(Mathf.Max(v.x, res.x), Mathf.Max(v.y, res.y)));
                 max = max - min;
             }
 
@@ -257,110 +244,37 @@ namespace RuntimeArtWay
             };
         }
 
-        private List<Vector2> NormilizedVerticles(IEnumerable<Vector2> verticles, Func<Vector2, Vector2> factor)
+        private static List<Vector2> NormalizedVertices(IEnumerable<Vector2> vertices, Func<Vector2, Vector2> factor)
         {
-            return verticles.Select(factor).ToList();
-        }
-
-        private void DrawVerticle(Rect rect, Vertex verticle, Color color)
-        {
-            var position = ToVector2(rect, verticle);
-            DrawPoint(rect, position, color);
+            return vertices.Select(factor).ToList();
         }
 
         private void DrawPoint(Rect rect, Vector2 pos, Color color)
         {
-            var position = new Rect(pos - Vector2.one * dotSize / 2, Vector2.one * dotSize);
+            var scaledPosition = ToVector2(rect, pos);
+            var position = new Rect(scaledPosition - Vector2.one * dotSize / 2, Vector2.one * dotSize);
             EditorGUI.DrawRect(position, color);
         }
 
         private void DrawLine(Rect rect, Vertex from, Vertex to, Color color)
         {
-            DrawLine(rect, ToVector2(rect, from), ToVector2(rect, to), color);
+            DrawLine(rect, ToVector2(from), ToVector2(to), color);
         }
 
         private void DrawLine(Rect rect, Vector2 from, Vector2 to, Color color)
         {
-            Drawing.DrawLine(from, to, color, 2, false);
+            Drawing.DrawLine(ToVector2(rect, from), ToVector2(rect, to), color, 2, false);
         }
 
-        private Vector2 ToVector2(Rect rect, Vertex vertex)
+        private static Vector2 ToVector2(Point vertex)
         {
-            return rect.position + new Vector2((float) vertex.X, rect.height - (float) vertex.Y) +
-                   Vector2.one * dotSize / 2;
+            return new Vector2((float) vertex.X, (float) vertex.Y);
         }
 
         private Vector2 ToVector2(Rect rect, Vector2 position)
         {
             return rect.position + new Vector2(position.x, rect.height - position.y) + Vector2.one * dotSize / 2;
         }
-
-        #endregion
-    }
-
-    public class PreviewSample : ISample
-    {
-        private readonly ISample origin;
-
-        public PreviewSample(ISample origin)
-        {
-            this.origin = origin;
-        }
-
-        public int FromIndex { get; set; }
-        public int ToIndex { get; set; }
-
-        public List<Vector2> EqualDistance
-        {
-            get => CutList(origin.EqualDistance);
-        }
-
-        public List<Vector2> Circuit
-        {
-            get => CutList(origin.Circuit);
-        }
-
-        private List<Vector2> CutList(List<Vector2> list)
-        {
-            int fromIndex = GetFromIndex(list.Count);
-            int toIndex = GetToIndex(list.Count);
-
-            if (fromIndex == 0 && toIndex == 0) return list;
-            return list.GetRange(fromIndex, toIndex - fromIndex + 1);
-        }
-
-        private int GetFromIndex(int maxValue)
-        {
-            return Math.Max(0, Math.Min(ToIndex, Math.Min(FromIndex, maxValue - 1)));
-        }
-
-        private int GetToIndex(int maxValue)
-        {
-            return Math.Max(0, Math.Min(ToIndex, maxValue - 1));
-        }
-
-        #region Delegate
-
-        public string name
-        {
-            get => origin.name;
-            set => origin.name = value;
-        }
-
-        public int Count => origin.Count;
-
-        public float AverageStep => origin.AverageStep;
-
-        public List<Vector2> Vertices
-        {
-            get => origin.Vertices;
-        }
-
-        public bool IsDrawn => origin.IsDrawn;
-
-        public bool IsPropagated => origin.IsPropagated;
-
-        public bool HasCircuit => origin.HasCircuit;
 
         #endregion
     }

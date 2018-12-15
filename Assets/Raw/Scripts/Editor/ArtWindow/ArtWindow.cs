@@ -80,6 +80,7 @@ namespace RuntimeArtWay
 
         private void ShowAllTools()
         {
+            HideAllTools();
             leftPanel.Show();
             rightPanel.Show();
             centerPanel.Show();

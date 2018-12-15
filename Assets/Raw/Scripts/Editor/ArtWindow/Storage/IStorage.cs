@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
+using UnityEngine;
 
 namespace RuntimeArtWay.Storage
 {
@@ -17,50 +18,32 @@ namespace RuntimeArtWay.Storage
         private readonly string key;
         private readonly int defaultValue;
 
+        private int value;
+        private int oldValue;
+
         public EditorPrefsIntStorage(string key, int defaultValue = 0)
         {
             this.key = key;
             this.defaultValue = defaultValue;
         }
 
-        public int Value { get; set; }
+        public int Value
+        {
+            get => value;
+            set => this.value = value;
+        }
 
         public void Save()
         {
+            if (value == oldValue) return;
+
             EditorPrefs.SetInt(key, Value);
         }
 
         public void Load()
         {
             Value = EditorPrefs.GetInt(key, defaultValue);
-        }
-    }
-
-    public class EditorPrefsStringStorage : IStorage<string>
-    {
-        private readonly string key;
-        private readonly string defaultValue;
-
-        public EditorPrefsStringStorage(string key, string defaultValue = "")
-        {
-            this.key = key;
-            this.defaultValue = defaultValue;
-        }
-
-        public string Value { get; set; }
-
-        public void Save()
-        {
-            EditorPrefs.DeleteKey(key);
-
-            if (string.IsNullOrEmpty(Value)) return;
-
-            EditorPrefs.SetString(key, Value);
-        }
-
-        public void Load()
-        {
-            Value = EditorPrefs.GetString(key, defaultValue);
+            oldValue = Value;
         }
     }
 
@@ -78,14 +61,14 @@ namespace RuntimeArtWay.Storage
 
         public void Save()
         {
-            EditorPrefs.DeleteKey(key);
-
             if (Value is null) return;
             if (!EditorUtility.IsPersistent(Value)) return;
 
             var newValue = AssetDatabase.GetAssetPath(Value);
 
             if (newValue == oldValue) return;
+
+            EditorPrefs.DeleteKey(key);
 
             oldValue = newValue;
             EditorPrefs.SetString(key, newValue);

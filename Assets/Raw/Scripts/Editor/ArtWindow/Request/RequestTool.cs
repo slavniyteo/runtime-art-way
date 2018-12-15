@@ -1,5 +1,6 @@
 using System;
 using EditorWindowTools;
+using NUnit.Framework;
 using RectEx;
 using RuntimeArtWay.Storage;
 using UnityEditor;
@@ -13,6 +14,7 @@ namespace RuntimeArtWay
         event Action onReset;
 
         BagOfRequests Value { get; }
+        RequestForShape ActiveRequest { get; }
     }
 
     public class RequestTool : IEditorTool, IRequestTool
@@ -27,20 +29,14 @@ namespace RuntimeArtWay
         private readonly IStorage<BagOfRequests> storage =
             new EditorPrefsStorage<BagOfRequests>("ArtWindow.BagOfRequests");
 
-        private BagOfRequests value
-        {
-            get => storage.Value;
-            set => storage.Value = value;
-        }
-
         public BagOfRequests Value
         {
-            get => value;
+            get => storage.Value;
             private set
             {
-                if (value == this.value) return;
+                if (value == Value) return;
 
-                this.value = value;
+                storage.Value = value;
                 if (value == null)
                 {
                     onReset();
@@ -51,6 +47,8 @@ namespace RuntimeArtWay
                 }
             }
         }
+
+        public RequestForShape ActiveRequest { get; private set; }
 
         private SaveButton saveButton;
 
@@ -124,34 +122,39 @@ namespace RuntimeArtWay
 
         private void DrawCommandLine()
         {
-            if (value is null) return;
+            if (Value is null) return;
 
             var rect = GUILayoutUtility.GetRect(-1, 18);
             var rects = rect.Row(new float[] {1, 0}, new float[] {0, 18});
 
             if (GUI.Button(rects[0], "+"))
             {
-                value.requests.Add(new RequestForShape());
-                EditorUtility.SetDirty(value);
+                Value.requests.Add(new RequestForShape());
+                EditorUtility.SetDirty(Value);
             }
 
-            saveButton.Draw(rects[1], value, (oldValue, newValue) => value = newValue);
+            saveButton.Draw(rects[1], Value, (oldValue, newValue) => Value = newValue);
         }
 
         private void DrawRequests()
         {
-            if (value is null) return;
+            if (Value is null) return;
 
-            value.requests.RemoveAll(r => r is null);
-            foreach (var request in value.requests)
+            Value.requests.RemoveAll(r => r is null);
+            foreach (var request in Value.requests)
             {
+                if (ActiveRequest is null) ActiveRequest = request;
+
                 DrawRequest(request);
             }
         }
 
         private void DrawRequest(RequestForShape request)
         {
-            EditorGUILayout.BeginHorizontal(backNormal);
+            var backgroundStyle = ReferenceEquals(ActiveRequest, request) ? backActive : backNormal;
+            var rect = EditorGUILayout.BeginHorizontal(backgroundStyle);
+
+            var dragRect = GUILayoutUtility.GetRect(18, -1);
 
             var textureRect = GUILayoutUtility.GetAspectRect(1, texturePreview, GUILayout.MinWidth(36));
             texturePreview.normal.background = request.texture;
@@ -164,6 +167,12 @@ namespace RuntimeArtWay
             EditorGUILayout.EndVertical();
 
             EditorGUILayout.EndHorizontal();
+
+            if (Event.current.type == EventType.MouseDown
+                && rect.Contains(Event.current.mousePosition))
+            {
+                ActiveRequest = request;
+            }
         }
 
         #endregion

@@ -32,6 +32,9 @@ namespace RuntimeArtWay
             var settingsPanel = new SettingsEditorTool(() => settings.Value as ArtWindowSettings);
 
             request = new RequestTool();
+            request.onChange += Repaint;
+            request.onReset += Repaint;
+
             target = new Target();
             target.onChange += ShowAllTools;
             target.onReset += HideAllTools;
@@ -57,7 +60,7 @@ namespace RuntimeArtWay
                 new Preview(() => target.Value, layers,
                     () => settings.Value.PreviewMaterial,
                     () => settings.Value.CircuitRelativeStep,
-                    () => settings.Value.Texture),
+                    () => request.ActiveRequest?.texture),
             };
 
             history.LoadSavedData();

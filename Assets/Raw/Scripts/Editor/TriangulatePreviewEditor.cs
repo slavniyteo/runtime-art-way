@@ -33,7 +33,8 @@ namespace RuntimeArtWay
                 layers,
                 new Preview(() => target, layers,
                     () => settings.Value.PreviewMaterial,
-                    () => settings.Value.CircuitRelativeStep)
+                    () => settings.Value.CircuitRelativeStep,
+                    () => settings.Value.Texture)
             };
             tools.Show();
         }

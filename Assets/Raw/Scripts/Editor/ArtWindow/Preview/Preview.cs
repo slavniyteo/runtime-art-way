@@ -15,6 +15,10 @@ namespace RuntimeArtWay
     {
         private readonly Drawer drawer;
         private readonly Func<Material> getMaterial;
+        private readonly Func<Texture2D> getTexture;
+
+        private Material Material => getMaterial();
+        private Texture2D Texture => getTexture();
 
         private readonly ILayers layers;
 
@@ -28,11 +32,10 @@ namespace RuntimeArtWay
         private int fromIndex = 0;
         private int toIndex = 0;
 
-        private Material Material => getMaterial();
 
         public Preview(
             Func<ISample> getNewTarget, ILayers layers,
-            Func<Material> getMaterial, Func<float> getStepDivider,
+            Func<Material> getMaterial, Func<float> getStepDivider, Func<Texture2D> getTexture,
             float dotSize = 5
         )
             : base(() => new PreviewSample(getNewTarget()))
@@ -47,6 +50,7 @@ namespace RuntimeArtWay
             this.dotSize = dotSize;
 
             this.getMaterial = getMaterial;
+            this.getTexture = getTexture;
         }
 
         private void OnLayersChange(Layer oldValue, Layer newValue)
@@ -153,6 +157,8 @@ namespace RuntimeArtWay
         private void DrawMeshPreview(Rect rect, Mesh mesh)
         {
             if (Material == null) return;
+
+            Material.SetTexture("_MainTex", Texture);
 
             //For details see http://t-machine.org/index.php/2016/03/13/trying-to-paint-a-mesh-in-unity3d-so-hard-it-makes-you-hate-unity/
 

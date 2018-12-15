@@ -56,7 +56,8 @@ namespace RuntimeArtWay
             {
                 new Preview(() => target.Value, layers,
                     () => settings.Value.PreviewMaterial,
-                    () => settings.Value.CircuitRelativeStep),
+                    () => settings.Value.CircuitRelativeStep,
+                    () => settings.Value.Texture),
             };
 
             history.LoadSavedData();

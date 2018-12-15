@@ -12,6 +12,58 @@ namespace RuntimeArtWay.Storage
         void Load();
     }
 
+    public class EditorPrefsIntStorage : IStorage<int>
+    {
+        private readonly string key;
+        private readonly int defaultValue;
+
+        public EditorPrefsIntStorage(string key, int defaultValue = 0)
+        {
+            this.key = key;
+            this.defaultValue = defaultValue;
+        }
+
+        public int Value { get; set; }
+
+        public void Save()
+        {
+            EditorPrefs.SetInt(key, Value);
+        }
+
+        public void Load()
+        {
+            Value = EditorPrefs.GetInt(key, defaultValue);
+        }
+    }
+
+    public class EditorPrefsStringStorage : IStorage<string>
+    {
+        private readonly string key;
+        private readonly string defaultValue;
+
+        public EditorPrefsStringStorage(string key, string defaultValue = "")
+        {
+            this.key = key;
+            this.defaultValue = defaultValue;
+        }
+
+        public string Value { get; set; }
+
+        public void Save()
+        {
+            EditorPrefs.DeleteKey(key);
+
+            if (string.IsNullOrEmpty(Value)) return;
+
+            EditorPrefs.SetString(key, Value);
+        }
+
+        public void Load()
+        {
+            Value = EditorPrefs.GetString(key, defaultValue);
+        }
+    }
+
     public class EditorPrefsStorage<T> : IStorage<T> where T : UnityEngine.Object
     {
         private readonly string key;

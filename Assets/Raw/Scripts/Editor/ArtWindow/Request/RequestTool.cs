@@ -48,7 +48,14 @@ namespace RuntimeArtWay
             }
         }
 
-        public RequestForShape ActiveRequest { get; private set; }
+        private readonly IStorage<int> activeRequestStorage =
+            new EditorPrefsIntStorage("ArtWindow.BagOfRequests.Active");
+
+        public RequestForShape ActiveRequest
+        {
+            get => Value?.requests[activeRequestStorage.Value];
+            private set => activeRequestStorage.Value = Value.requests.IndexOf(value);
+        }
 
         private SaveButton saveButton;
 
@@ -57,11 +64,13 @@ namespace RuntimeArtWay
         public void Show()
         {
             storage.Load();
+            activeRequestStorage.Load();
         }
 
         public void Hide()
         {
             storage.Save();
+            activeRequestStorage.Save();
         }
 
         public void Draw()

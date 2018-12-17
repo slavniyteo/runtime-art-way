@@ -8,6 +8,7 @@ namespace RuntimeArtWay
     {
         string Label { get; }
         UvAlgorithm UvAlgorithm { get; }
+        Texture2D Texture { get; }
     }
 
     [Serializable]

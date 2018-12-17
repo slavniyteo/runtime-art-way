@@ -23,6 +23,7 @@ TagManager:
   - 
   - 
   - 
+  - BaseMesh
   - 
   - 
   - 
@@ -32,15 +33,17 @@ TagManager:
   - 
   - 
   - 
-  - 
-  - 
+  - Overlay
   - 
   - 
   - 
   m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
   - name: Line
     uniqueID: 1656016925
     locked: 0
-  - name: Default
-    uniqueID: 0
+  - name: LineParticles
+    uniqueID: 3722549483
     locked: 0

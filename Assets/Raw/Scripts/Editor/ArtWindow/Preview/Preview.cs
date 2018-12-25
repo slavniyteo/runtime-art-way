@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using EditorWindowTools;
+using RectEx;
 using TriangleNet.Data;
 using TriangleNet.Geometry;
 using UnityEditor;
@@ -30,6 +31,7 @@ namespace RuntimeArtWay
         private int fromIndex;
         private int toIndex;
 
+        private IPool pool;
 
         public Preview(
             Func<ISample> getNewTarget, ILayers layers,
@@ -58,6 +60,7 @@ namespace RuntimeArtWay
         protected override void OnShow()
         {
             drawer.Show();
+            pool = new MaxPool(getMaterial, target.AverageStep );
         }
 
         protected override void OnHide()
@@ -137,6 +140,8 @@ namespace RuntimeArtWay
             {
                 var circuit = NormalizedVertices(sample.Circuit, factor);
                 DrawLine(rect, circuit, Color.magenta);
+
+                pool?.DrawCachedConvolution(rect.Intend(dotSize), circuit);
             }
 
             if ((layers.Value & Layer.MeshVerticles) == Layer.MeshVerticles)

@@ -11,6 +11,7 @@ namespace RuntimeArtWay
         int Count { get; }
 
         float AverageStep { get; }
+        float EqualDistanceStep { get; }
 
         List<Vector2> Vertices { get; }
         List<Vector2> EqualDistance { get; }
@@ -25,6 +26,8 @@ namespace RuntimeArtWay
     {
         new List<Vector2> EqualDistance { get; set; }
         new List<Vector2> Circuit { get; set; }
+
+        new float EqualDistanceStep { get; set; }
 
         void Add(Vector2 point);
         void AddRange(IEnumerable<Vector2> points);
@@ -89,6 +92,14 @@ namespace RuntimeArtWay
 
                 return sum / vertices.Count;
             }
+        }
+
+        [SerializeField] private float equalDistanceStep;
+
+        public float EqualDistanceStep
+        {
+            get => equalDistanceStep;
+            set => equalDistanceStep = value;
         }
 
         public bool IsDrawn => Vertices != null && Vertices.Count > 0;

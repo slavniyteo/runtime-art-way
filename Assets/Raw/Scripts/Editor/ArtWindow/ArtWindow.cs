@@ -58,8 +58,7 @@ namespace RuntimeArtWay
             centerPanel = new ToolBox()
             {
                 new Preview(() => target.Value, layers,
-                    () => settings.Value.PreviewMaterial,
-                    () => settings.Value.CircuitRelativeStep,
+                    settings.Value,
                     () => request.ActiveRequest?.texture),
             };
 

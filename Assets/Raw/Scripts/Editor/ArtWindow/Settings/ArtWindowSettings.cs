@@ -9,7 +9,14 @@ namespace RuntimeArtWay
         float CircuitRelativeStep { get; }
     }
 
-    public class ArtWindowSettings : ScriptableObject, IArtWindowSettings
+    public interface IPreviewSettings
+    {
+        Material PreviewMaterial { get; }
+        float CircuitRelativeStep { get; }
+        float PoolingStepMultiplier { get; }
+    }
+
+    public class ArtWindowSettings : ScriptableObject, IArtWindowSettings, IPreviewSettings
     {
         [SerializeField] private Material previewMaterial;
 
@@ -40,12 +47,18 @@ namespace RuntimeArtWay
             set => storePath = value;
         }
 
-        [SerializeField] [Range(0.01f, 2f)] private float circuitRelativeStepMultiplier;
-
+        [SerializeField] [Range(0.01f, 2f)] private float circuitRelativeStepMultiplier = 1;
         public float CircuitRelativeStep
         {
             get => circuitRelativeStepMultiplier;
             set => circuitRelativeStepMultiplier = value;
+        }
+        
+        [SerializeField] [Range(0.01f, 2f)] private float poolingStepMultiplier = 1;
+        public float PoolingStepMultiplier
+        {
+            get => poolingStepMultiplier;
+            set => poolingStepMultiplier = value;
         }
     }
 }

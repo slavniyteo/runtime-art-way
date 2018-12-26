@@ -84,6 +84,7 @@ namespace RuntimeArtWay
 
             float step = sample.AverageStep * stepMultiplier;
             sample.EqualDistance = EqualDistanceUtil.Prepare(sample.Vertices, step);
+            sample.EqualDistanceStep = step;
             sample.Circuit = new CircuitCalculator().Calculate(sample.EqualDistance, step);
 
             var endTime = DateTime.Now;

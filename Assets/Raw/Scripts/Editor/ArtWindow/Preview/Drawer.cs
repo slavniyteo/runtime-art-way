@@ -10,7 +10,7 @@ namespace RuntimeArtWay
         public event Action onStartDrawing = () => { };
         public event Action onFinishDrawing = () => { };
 
-        private readonly Func<float> getStepDivider;
+        private readonly Func<float> getStepMultiplier;
 
         private SampleBuilder builder;
 
@@ -18,10 +18,10 @@ namespace RuntimeArtWay
 
         private Rect rect;
 
-        public Drawer(Func<ISample> getNewTarget, Func<float> getStepDivider)
+        public Drawer(Func<ISample> getNewTarget, Func<float> getStepMultiplier)
             : base(getNewTarget)
         {
-            this.getStepDivider = getStepDivider;
+            this.getStepMultiplier = getStepMultiplier;
         }
 
 
@@ -94,7 +94,7 @@ namespace RuntimeArtWay
         {
             if (!isDrawing) return;
 
-            builder.Build(getStepDivider());
+            builder.Build(getStepMultiplier());
 
             onFinishDrawing();
             Debug.Log("Finished");

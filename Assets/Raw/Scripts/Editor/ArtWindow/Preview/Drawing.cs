@@ -47,12 +47,10 @@ public static class Drawing
     {
         // Normally the static initializer does this, but to handle texture reinitialization
         // after editor play mode stops we need this check in the Editor.
-#if UNITY_EDITOR
         if (!lineTex)
         {
             Initialize();
         }
-#endif
 
         // Note that theta = atan2(dy, dx) is the angle we want to rotate by, but instead
         // of calculating the angle we just use the sine (dy/len) and cosine (dx/len).

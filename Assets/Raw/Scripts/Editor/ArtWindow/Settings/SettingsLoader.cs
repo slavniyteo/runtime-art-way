@@ -7,7 +7,7 @@ namespace RuntimeArtWay
 {
     public interface ISettingsLoader
     {
-        IArtWindowSettings Value { get; }
+        ArtWindowSettings Value { get; }
         void Load();
 
         void DrawButton(Rect rect);
@@ -15,14 +15,9 @@ namespace RuntimeArtWay
 
     public class SettingsLoader : ISettingsLoader
     {
-        private static readonly string SETTINGS_PATH = "Assets/Raw/Editor/Settings.asset";
+        private const string SETTINGS_PATH = "Assets/Raw/Editor/Settings.asset";
 
-        private ArtWindowSettings settings;
-
-        public IArtWindowSettings Value
-        {
-            get { return settings; }
-        }
+        public ArtWindowSettings Value { get; private set; }
 
         public void Load()
         {
@@ -35,16 +30,16 @@ namespace RuntimeArtWay
                 result = AssetDatabase.LoadAssetAtPath(SETTINGS_PATH, typeof(ArtWindowSettings)) as ArtWindowSettings;
             }
 
-            settings = result;
+            Value = result;
         }
 
         public void DrawButton(Rect rect)
         {
-            if (settings == null) throw new InvalidOperationException("Can't draw: Settings object is null.");
+            if (Value == null) throw new InvalidOperationException("Can't draw: Settings object is null.");
 
             if (GUI.Button(rect, "S"))
             {
-                var context = new SettingsPopup(settings);
+                var context = new SettingsPopup(Value);
                 PopupWindow.Show(rect, context);
             }
         }

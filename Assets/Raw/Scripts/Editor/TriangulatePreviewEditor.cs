@@ -29,9 +29,7 @@ namespace RuntimeArtWay
             {
                 layers,
                 new Preview(() => target, layers,
-                    () => settings.Value.PreviewMaterial,
-                    () => settings.Value.CircuitRelativeStep,
-                    () => Texture2D.whiteTexture)
+                    settings.Value, () => Texture2D.whiteTexture)
             };
             tools.Show();
         }

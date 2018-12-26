@@ -13,10 +13,9 @@ namespace RuntimeArtWay
     public class Preview : AbstractEditorTool<PreviewSample>
     {
         private readonly Drawer drawer;
-        private readonly Func<Material> getMaterial;
         private readonly Func<Texture2D> getTexture;
+        private readonly IPreviewSettings settings;
 
-        private Material Material => getMaterial();
         private Texture2D Texture => getTexture();
 
         private readonly ILayers layers;
@@ -35,12 +34,12 @@ namespace RuntimeArtWay
 
         public Preview(
             Func<ISample> getNewTarget, ILayers layers,
-            Func<Material> getMaterial, Func<float> getStepDivider, Func<Texture2D> getTexture,
+            IPreviewSettings settings, Func<Texture2D> getTexture,
             float dotSize = 5
         )
             : base(() => new PreviewSample(getNewTarget()))
         {
-            drawer = new Drawer(getNewTarget, getStepDivider);
+            drawer = new Drawer(getNewTarget, () => settings.PoolingStepMultiplier);
             drawer.onStartDrawing += () => fixFactor = true;
             drawer.onFinishDrawing += () => fixFactor = false;
 
@@ -49,7 +48,7 @@ namespace RuntimeArtWay
 
             this.dotSize = dotSize;
 
-            this.getMaterial = getMaterial;
+            this.settings = settings;
             this.getTexture = getTexture;
         }
 
@@ -60,7 +59,8 @@ namespace RuntimeArtWay
         protected override void OnShow()
         {
             drawer.Show();
-            pool = new MaxPool(getMaterial, target.AverageStep );
+            pool = new MaxPool(() => settings.PreviewMaterial,
+                settings.PoolingStepMultiplier * target.EqualDistanceStep, target.Circuit);
         }
 
         protected override void OnHide()
@@ -126,6 +126,11 @@ namespace RuntimeArtWay
                 DrawDots(rect, equalDistance, Color.green);
             }
 
+            if ((layers.Value & Layer.SubSample) == Layer.SubSample)
+            {
+                pool?.Draw(rect);
+            }
+
             if (!sample.HasCircuit) return;
 
             var meshCircuit = NormalizedVertices(sample.Circuit, factor);
@@ -140,8 +145,6 @@ namespace RuntimeArtWay
             {
                 var circuit = NormalizedVertices(sample.Circuit, factor);
                 DrawLine(rect, circuit, Color.magenta);
-
-                pool?.DrawCachedConvolution(rect.Intend(dotSize), circuit);
             }
 
             if ((layers.Value & Layer.MeshVerticles) == Layer.MeshVerticles)
@@ -159,8 +162,9 @@ namespace RuntimeArtWay
 
         private void DrawMeshPreview(Rect rect, Mesh mesh)
         {
-            if (Material == null) return;
+            if (settings.PreviewMaterial == null) return;
 
+            var Material = UnityEngine.Object.Instantiate(settings.PreviewMaterial);
             Material.SetTexture("_MainTex", Texture);
 
             //For details see http://t-machine.org/index.php/2016/03/13/trying-to-paint-a-mesh-in-unity3d-so-hard-it-makes-you-hate-unity/

@@ -50,11 +50,9 @@ namespace RuntimeArtWay
         public int Count => origin.Count;
 
         public float AverageStep => origin.AverageStep;
+        public float EqualDistanceStep => origin.EqualDistanceStep;
 
-        public List<Vector2> Vertices
-        {
-            get => origin.Vertices;
-        }
+        public List<Vector2> Vertices => origin.Vertices;
 
         public bool IsDrawn => origin.IsDrawn;
 

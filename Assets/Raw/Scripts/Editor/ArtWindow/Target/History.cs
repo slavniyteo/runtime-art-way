@@ -41,7 +41,7 @@ namespace RuntimeArtWay
 
         protected override void OnShow()
         {
-            preview = new Preview(getNewTarget, new Layers(getNewTarget, Layer.HandMade), null, null, null, 2);
+            preview = new Preview(getNewTarget, new Layers(getNewTarget, Layer.HandMade), null, null, 2);
 
             saveButton = new SaveButton(() => settings.StorePath);
             recalculateButton = new RecalculateButton(settings);
@@ -177,8 +177,9 @@ namespace RuntimeArtWay
                 }
             }
 
-            var secondLine = firstLine.MoveDown();
-            EditorGUI.LabelField(secondLine, $"Average Step: {sample.AverageStep}");
+            var secondLine = firstLine.MoveDown().Row(2);
+            EditorGUI.LabelField(secondLine[0], $"Average: {sample.AverageStep}");
+            EditorGUI.LabelField(secondLine[1], $"ED: {sample.EqualDistanceStep}");
         }
 
         private void CheckSelection(Rect rect, int index, ISample sample, Action onModify)

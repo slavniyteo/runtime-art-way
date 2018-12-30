@@ -19,11 +19,16 @@ namespace RuntimeArtWay
         {
             this.getMaterial = getMaterial;
             grid = new Grid(stride, positions);
+            
+            var graph = new Graph(getMaterial, positions, stride);
         }
 
         public void Draw(Rect rect)
         {
-            EditorGUI.DrawPreviewTexture(rect, grid.Texture, getMaterial(), ScaleMode.ScaleToFit);
+            if (grid.Texture)
+            {
+                EditorGUI.DrawPreviewTexture(rect, grid.Texture, getMaterial(), ScaleMode.ScaleToFit);
+            }
         }
     }
 }

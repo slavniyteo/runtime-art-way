@@ -128,7 +128,7 @@ namespace RuntimeArtWay
 
             if ((layers.Value & Layer.SubSample) == Layer.SubSample)
             {
-                pool?.Draw(rect);
+                pool?.Draw(rect.Intend(dotSize));
             }
 
             if (!sample.HasCircuit) return;

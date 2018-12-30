@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEditor.U2D;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -13,12 +14,23 @@ namespace RuntimeArtWay
         private readonly Dictionary<int, bool> dict;
         private Texture2D texture;
 
-        public Grid(float stride, List<Vector2> positions)
+        private Action<Vector2> nextPoint;
+        private Action<Vector2> crossPoint;
+
+        private int lastIndex = -1;
+
+        public Grid(float stride, List<Vector2> positions) : this(stride, positions, null, null)
+        {
+        }
+
+        public Grid(float stride, List<Vector2> positions, Action<Vector2> nextPoint, Action<Vector2> crossPoint)
         {
             Rect bounds = FindBounds(positions);
 
             Width = (int) Math.Ceiling(bounds.width / stride);
             Height = (int) Math.Ceiling(bounds.height / stride);
+            this.nextPoint = nextPoint;
+            this.crossPoint = crossPoint;
 
             dict = new Dictionary<int, bool>();
             Put(bounds, positions);
@@ -28,8 +40,17 @@ namespace RuntimeArtWay
         {
             foreach (var pos in positions)
             {
+                nextPoint?.Invoke(pos);
                 int index = GetIndex(bounds, pos);
+
+                if (index != lastIndex
+                    && dict.ContainsKey(index))
+                {
+                    crossPoint?.Invoke(pos);
+                }
+
                 dict[index] = true;
+                lastIndex = index;
             }
         }
 
@@ -65,9 +86,8 @@ namespace RuntimeArtWay
         {
             get
             {
+                if (dict.Count == 0) return null;
                 if (texture) return texture;
-
-                Assert.IsTrue(dict.Count > 0);
 
                 var result = new Texture2D(Width, Height, TextureFormat.RGBA32, false)
                 {

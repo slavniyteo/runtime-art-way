@@ -1,4 +1,5 @@
 *.sln
+*.DotSettings.user
 *.csproj
 .idea
 
@@ -8,3 +9,4 @@ Temp
 Library
 Logs
 Packages
+ProjectSettings

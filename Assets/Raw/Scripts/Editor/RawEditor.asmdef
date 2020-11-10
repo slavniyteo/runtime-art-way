@@ -1,0 +1,18 @@
+{
+    "name": "RawEditor",
+    "references": [
+        "GUID:30f7132b56ac31900b718b9d75b3c296",
+        "GUID:73c70a6eb6b6f444c878926f743350f6"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
